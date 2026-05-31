@@ -770,39 +770,52 @@
         callRef.on('value', async snap => {
             const call = snap.val();
             if (!call) {
-                // Если данные вызова удалены — закрываем интерфейс звонка и стримы
-                closeCallInterface();
-                return;
-            }
-            
-            const activeChat = chatsList.find(c => c.id === chatId);
-            const chatName = activeChat ? activeChat.name : "Собеседник";
-            
-            // Сценарий 1: Нам звонят (Входящий вызов)
-            if (call.status === 'dialing' && call.callerId !== myFrameId) {
-                showCallInterface(chatName, 'Входящий звонок...');
-                callAcceptBtn.style.display = 'flex';
-            }
-            
-            // Сценарий 2: Собеседник принял наш вызов (Начало разговора)
-            if (call.status === 'answered' && call.callerId === myFrameId && peerConnection && !peerConnection.currentRemoteDescription) {
-                callStatusEl.textContent = 'Разговор...';
-                try {
-                    await peerConnection.setRemoteDescription(new RTCSessionDescription(call.answerSDP));
-                } catch (e) { console.error("Ошибка установки remote SDP:", e); }
-            }
-            
-            // Сценарий 3: Получение новых ICE кандидатов (сетевых путей соединения)
-            if (call.candidates) {
-                Object.keys(call.candidates).forEach(key => {
-                    const cand = call.candidates[key];
-                    if (cand.senderId !== myFrameId && peerConnection && peerConnection.remoteDescription) {
-                        peerConnection.addIceCandidate(new RTCIceCandidate(cand.candidate)).catch(e => {});
-                    }
-                });
-            }
+                // 1. Постоянный слушатель (запускается один раз при загрузке чата)
+function setupCallListener(chatId) {
+    const callRef = database.ref('chats/' + chatId + '/call');
+
+    callRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        
+        // Если данных нет, ничего не делаем
+        if (!data) {
+            closeCallInterface();
+            return;
+        }
+
+        // Если пришел вызов от ДРУГОГО пользователя
+        if (data.status === 'calling' && data.caller !== myUserId) {
+            showIncomingCallUI(data.caller);
+        } 
+        // Если статус изменился на сброс или завершение
+        else if (data.status === 'declined' || data.status === 'ended') {
+            closeCallInterface();
+        }
+    });
+}
+
+// 2. Функция инициации звонка
+function startCall() {
+    const callRef = database.ref('chats/' + activeChatId + '/call');
+    
+    // Используем set с меткой времени, чтобы принудительно обновить Firebase
+    callRef.set({
+        status: 'calling',
+        caller: myUserId,
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+    });
+}
+
+// 3. Функция сброса/завершения
+function endCall() {
+    if (activeChatId) {
+        // Устанавливаем статус, а не удаляем узел полностью
+        database.ref('chats/' + activeChatId + '/call').update({ 
+            status: 'ended' 
         });
     }
+    closeCallInterface();
+}
 
     // Функция инициализации WebRTC соединения
     async function initWebRTC(chatId) {
