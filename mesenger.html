@@ -16,6 +16,7 @@
             --input-field: #f0f2f5;
             --blue: #1a8cee;
             --green: #4fae4e;
+            --red: #e74c3c;
             --dim: #8a9aaa;
             --border: #e0e0e0;
         }
@@ -99,6 +100,12 @@
         .nickname-input::placeholder { color: var(--dim); }
         .connect-id-btn { width: 34px; height: 34px; background: #f0f2f5; border: 1px solid #e0e0e0; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .connect-id-btn svg { width: 16px; height: 16px; fill: var(--blue); }
+        
+        /* КНОПКА ЗВОНКА */
+        .call-btn { width: 34px; height: 34px; background: rgba(79, 174, 78, 0.1); border: 1px solid rgba(79, 174, 78, 0.2); border-radius: 50%; cursor: pointer; display: none; align-items: center; justify-content: center; transition: background 0.2s; }
+        .call-btn.visible { display: flex; }
+        .call-btn:hover { background: rgba(79, 174, 78, 0.2); }
+        .call-btn svg { width: 16px; height: 16px; fill: var(--green); }
 
         /* TYPING BAR */
         .typing-bar { height: 0; overflow: hidden; background: var(--header); display: flex; align-items: center; padding: 0 16px; font-size: 12px; color: var(--blue); font-style: italic; transition: height 0.2s; flex-shrink: 0; }
@@ -201,6 +208,22 @@
         .empty-chat svg { width: 56px; height: 56px; fill: rgba(0,0,0,0.12); }
         .empty-chat-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.3); }
         .empty-chat-sub { font-size: 13px; color: var(--dim); line-height: 1.5; }
+
+        /* ИНТЕРФЕЙС ЗВОНКА ВСПЛЫВАЮЩИЙ */
+        .call-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 600; display: none; align-items: center; justify-content: center; padding: 20px; color: white; }
+        .call-card { background: #1c2434; padding: 30px; border-radius: 24px; width: 100%; max-width: 320px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.4); display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .call-avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--blue); font-size: 32px; font-weight: bold; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; box-shadow: 0 0 0 8px rgba(26, 140, 238, 0.2); }
+        .call-name { font-size: 20px; font-weight: 700; }
+        .call-status { font-size: 14px; color: var(--dim); animation: pulse 1.5s infinite ease-in-out; }
+        .call-actions { display: flex; gap: 20px; margin-top: 10px; width: 100%; justify-content: center; }
+        .call-btn-action { width: 54px; height: 54px; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.1s; }
+        .call-btn-action:active { transform: scale(0.9); }
+        .call-btn-action.accept { background: var(--green); }
+        .call-btn-action.decline { background: var(--red); }
+        .call-btn-action.mute { background: rgba(255,255,255,0.15); }
+        .call-btn-action.mute.active { background: rgba(231,57,57,0.4); }
+        .call-btn-action svg { width: 24px; height: 24px; fill: white; }
+        @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -241,6 +264,9 @@
             </div>
         </div>
         <div class="header-right">
+            <button class="call-btn" id="header-call-btn" title="Позвонить">
+                <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+            </button>
             <input type="text" id="nick-field" class="nickname-input" placeholder="Никнейм...">
             <button class="connect-id-btn" id="connect-id-open-btn" title="Подключиться по ID">
                 <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
@@ -288,7 +314,27 @@
     </div>
 </div>
 
-<!-- MODAL: Подключение по ID -->
+<div class="call-overlay" id="call-overlay">
+    <div class="call-card">
+        <div class="call-avatar" id="call-avatar-el">?</div>
+        <div class="call-name" id="call-name-el">Собеседник</div>
+        <div class="call-status" id="call-status-el">Вызов...</div>
+        <div class="call-actions">
+            <button class="call-btn-action mute" id="call-mute-btn" title="Выключить микрофон">
+                <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1 9h2c0 .55-.45 1-1 1s-1-.45-1-1zm6-12c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+            </button>
+            <button class="call-btn-action accept" id="call-accept-btn" style="display:none;" title="Принять">
+                <svg viewBox="0 0 24 24"><path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2c-2.83-1.44-5.15-3.75-6.59-6.59l2.2-2.2c.28-.27.36-.66.25-1.02C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/></svg>
+            </button>
+            <button class="call-btn-action decline" id="call-decline-btn" title="Сбросить">
+                <svg viewBox="0 0 24 24"><path d="M12 9c-2.2 0-4.3.3-6.2.9c-.2.1-.4.3-.4.5v3.2c0 .3.2.6.5.6c1.3-.4 2.6-.6 4-.6V21c0 .6.4 1 1 1h4c.6 0 1-.4 1-1v-7.4c1.4 0 2.7.2 4 .6c.3.1.5-.1.5-.4v-3.2c0-.2-.2-.4-.4-.5C16.3 9.3 14.2 9 12 9z"/></svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<audio id="remote-audio" autoplay></audio>
+
 <div class="modal-overlay" id="connect-id-modal">
     <div class="modal-card">
         <h3>Подключение по ID</h3>
@@ -307,7 +353,6 @@
     </div>
 </div>
 
-<!-- MODAL: Новый чат -->
 <div class="modal-overlay" id="new-chat-modal">
     <div class="modal-card">
         <div class="new-chat-step active" id="new-chat-step1">
@@ -326,7 +371,6 @@
     </div>
 </div>
 
-<!-- MODAL: Удаление чата -->
 <div class="modal-overlay" id="delete-chat-modal">
     <div class="modal-card">
         <h3>Удалить переписку?</h3>
@@ -336,7 +380,6 @@
     </div>
 </div>
 
-<!-- CONTEXT MENU -->
 <div class="context-menu" id="ctx-menu">
     <div class="context-item" id="menu-reply">Ответить</div>
     <div class="context-item" id="menu-edit">Редактировать</div>
@@ -422,6 +465,13 @@
     let peerStatusRef = null, myPresenceRef = null, deleteChatTarget = null;
     let chatsList = JSON.parse(localStorage.getItem('chatsList') || '[]');
 
+    // Переменные для WebRTC вызовов
+    let localStream = null;
+    let peerConnection = null;
+    let callRef = null;
+    let isPeerOnline = false;
+    const rtcConfig = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] }; // Бесплатный STUN сервер Google
+
     const chatBox = document.getElementById('chat-box');
     const msgField = document.getElementById('msg-field');
     const nickField = document.getElementById('nick-field');
@@ -466,6 +516,17 @@
     const deleteChatName = document.getElementById('delete-chat-name');
     const deleteChatConfirmBtn = document.getElementById('delete-chat-confirm-btn');
     const deleteChatCancelBtn = document.getElementById('delete-chat-cancel-btn');
+
+    // Элементы Звонка
+    const headerCallBtn = document.getElementById('header-call-btn');
+    const callOverlay = document.getElementById('call-overlay');
+    const callAvatarEl = document.getElementById('call-avatar-el');
+    const callNameEl = document.getElementById('call-name-el');
+    const callStatusEl = document.getElementById('call-status-el');
+    const callMuteBtn = document.getElementById('call-mute-btn');
+    const callAcceptBtn = document.getElementById('call-accept-btn');
+    const callDeclineBtn = document.getElementById('call-decline-btn');
+    const remoteAudio = document.getElementById('remote-audio');
 
     /* УТИЛИТЫ */
     function showToast(msg, d = 2200) { toastEl.textContent = msg; toastEl.classList.add('show'); setTimeout(() => toastEl.classList.remove('show'), d); }
@@ -512,11 +573,13 @@
             const data = snap.val();
             if (!activeChatId) return;
             if (data && data.online) {
+                isPeerOnline = true;
                 peerStatusDot.className = 'status-dot online';
                 chatSubtitle.textContent = 'в сети'; chatSubtitle.className = 'header-sub';
                 const dot = chatsList_el.querySelector('.chat-item[data-id="'+activeChatId+'"] .chat-item-online-dot');
                 if (dot) dot.classList.add('visible');
             } else {
+                isPeerOnline = false;
                 peerStatusDot.className = 'status-dot offline';
                 chatSubtitle.textContent = data && data.lastSeen ? formatLastSeen(data.lastSeen) : 'не в сети';
                 chatSubtitle.className = 'header-sub offline-status';
@@ -546,7 +609,7 @@
         myTypingTimer = setTimeout(() => setMyTyping(false), 3000);
     });
 
-    /* НИКНЕЙМ — сохраняется навсегда, меняется только вручную */
+    /* НИКНЕЙМ */
     function initNickname() {
         const saved = localStorage.getItem('myNickname');
         if (saved) { myCurrentNickname = saved; nickField.value = saved; }
@@ -603,12 +666,12 @@
             chatBox.innerHTML = ''; chatBox.appendChild(emptyState); emptyState.style.display='flex';
             chatTitle.textContent = 'Выберите чат'; chatSubtitle.textContent = '';
             peerStatusDot.className = 'status-dot'; typingBar.classList.remove('visible');
+            headerCallBtn.classList.remove('visible');
             if (peerStatusRef) { peerStatusRef.off(); peerStatusRef = null; }
         }
         renderChatsList(); deleteChatModal.style.display='none'; deleteChatTarget=null; showToast('Переписка «'+name+'» удалена');
     });
     deleteChatCancelBtn.addEventListener('click', () => { deleteChatModal.style.display='none'; deleteChatTarget=null; });
-    deleteChatModal.addEventListener('click', e => { if (e.target === deleteChatModal) { deleteChatModal.style.display='none'; deleteChatTarget=null; } });
 
     /* ОТПИСКА */
     function unsubscribeActiveChat() { activeListeners.forEach(({ref,event,handler}) => ref.off(event,handler)); activeListeners = []; setMyTyping(false); }
@@ -620,10 +683,15 @@
         const chat = chatsList.find(c => c.id === chatId);
         if (!chat) return;
         chatTitle.textContent = chat.name; chatSubtitle.textContent = ''; chatSubtitle.className = 'header-sub offline-status'; peerStatusDot.className = 'status-dot';
+        
+        // ВАЖНО: Кнопка звонка теперь показывается всегда, когда открыт чат
+        headerCallBtn.classList.add('visible');
+        
         const avatar = document.getElementById('chat-avatar');
         avatar.innerHTML = '<span style="font-size:16px;font-weight:700;color:#fff">'+getInitial(chat.name)+'</span>';
         avatar.style.background = 'hsl('+strToHue(chat.name)+',30%,60%)';
         chatBox.innerHTML = ''; emptyState.style.display = 'none';
+        
         const msgsRef = database.ref('chats/'+chatId+'/messages');
         const addedHandler = snapshot => {
             const id = snapshot.key;
@@ -642,10 +710,14 @@
         const limitedRef = msgsRef.limitToLast(100);
         limitedRef.on('child_added', addedHandler); msgsRef.on('child_changed', changedHandler); msgsRef.on('child_removed', removedHandler);
         activeListeners.push({ref:limitedRef,event:'child_added',handler:addedHandler},{ref:msgsRef,event:'child_changed',handler:changedHandler},{ref:msgsRef,event:'child_removed',handler:removedHandler});
+        
         watchPeerStatus(chat.peerId); watchTyping(chatId); renderChatsList();
+        
+        // Слушаем звонки именно для этого чата
+        setupCallListener(chatId);
     }
 
-    /* INBOX — авто-создание переписки у получателя */
+    /* INBOX */
     function listenInbox() {
         database.ref('inbox/'+myFrameId).on('child_added', snap => {
             const data = snap.val();
@@ -661,7 +733,6 @@
     /* MODAL: Подключение по ID */
     connectIdOpenBtn.addEventListener('click', () => { connectPeerIdInput.value=''; connectIdModal.style.display='flex'; });
     connectIdCancelBtn.addEventListener('click', () => { connectIdModal.style.display='none'; });
-    connectIdModal.addEventListener('click', e => { if(e.target===connectIdModal) connectIdModal.style.display='none'; });
     connectIdConfirmBtn.addEventListener('click', () => {
         const peerId = connectPeerIdInput.value.trim();
         if (!peerId) { showToast('Введите ID собеседника'); return; }
@@ -674,15 +745,12 @@
     /* MODAL: Новый чат */
     newChatOpenBtn.addEventListener('click', () => { newChatStep1.classList.add('active'); newChatStep2.classList.remove('active'); newChatNameInput.value=''; newChatPeerIdInput.value=''; newChatModal.style.display='flex'; });
     newChatCancelBtn.addEventListener('click', () => { newChatModal.style.display='none'; });
-    newChatModal.addEventListener('click', e => { if(e.target===newChatModal) newChatModal.style.display='none'; });
     newChatStep1Next.addEventListener('click', () => {
         if (!newChatNameInput.value.trim()) { showToast('Введите имя переписки'); return; }
         newChatNamePreview.textContent = newChatNameInput.value.trim();
         newChatStep1.classList.remove('active'); newChatStep2.classList.add('active'); newChatPeerIdInput.focus();
     });
     newChatBackBtn.addEventListener('click', () => { newChatStep2.classList.remove('active'); newChatStep1.classList.add('active'); });
-    newChatNameInput.addEventListener('keydown', e => { if(e.key==='Enter') newChatStep1Next.click(); });
-    newChatPeerIdInput.addEventListener('keydown', e => { if(e.key==='Enter') newChatConfirmBtn.click(); });
     newChatConfirmBtn.addEventListener('click', () => {
         const name = newChatNameInput.value.trim(), peerId = newChatPeerIdInput.value.trim();
         if (!peerId) { showToast('Введите ID собеседника'); return; }
@@ -692,6 +760,187 @@
         chatsList.unshift({ id: chatId, name, peerId, lastMsg:'', lastTime:'' }); saveChatsList(); renderChatsList();
         newChatModal.style.display='none'; openChat(chatId); closeChatsPanel(); showToast('Переписка «'+name+'» создана!');
     });
+
+    /* ЛОГИКА ГОЛОСОВЫХ ВЫЗОВОВ (WebRTC + Firebase) */
+    
+    function setupCallListener(chatId) {
+        if (callRef) callRef.off();
+        callRef = database.ref('chats/' + chatId + '/call');
+        
+        callRef.on('value', async snap => {
+            const call = snap.val();
+            if (!call) {
+                // Если данные вызова удалены — закрываем интерфейс звонка и стримы
+                closeCallInterface();
+                return;
+            }
+            
+            const activeChat = chatsList.find(c => c.id === chatId);
+            const chatName = activeChat ? activeChat.name : "Собеседник";
+            
+            // Сценарий 1: Нам звонят (Входящий вызов)
+            if (call.status === 'dialing' && call.callerId !== myFrameId) {
+                showCallInterface(chatName, 'Входящий звонок...');
+                callAcceptBtn.style.display = 'flex';
+            }
+            
+            // Сценарий 2: Собеседник принял наш вызов (Начало разговора)
+            if (call.status === 'answered' && call.callerId === myFrameId && peerConnection && !peerConnection.currentRemoteDescription) {
+                callStatusEl.textContent = 'Разговор...';
+                try {
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(call.answerSDP));
+                } catch (e) { console.error("Ошибка установки remote SDP:", e); }
+            }
+            
+            // Сценарий 3: Получение новых ICE кандидатов (сетевых путей соединения)
+            if (call.candidates) {
+                Object.keys(call.candidates).forEach(key => {
+                    const cand = call.candidates[key];
+                    if (cand.senderId !== myFrameId && peerConnection && peerConnection.remoteDescription) {
+                        peerConnection.addIceCandidate(new RTCIceCandidate(cand.candidate)).catch(e => {});
+                    }
+                });
+            }
+        });
+    }
+
+    // Функция инициализации WebRTC соединения
+    async function initWebRTC(chatId) {
+        try {
+            localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        } catch (e) {
+            showToast("Нет доступа к микрофону!");
+            endCall();
+            return false;
+        }
+
+        peerConnection = new RTCPeerConnection(rtcConfig);
+        
+        // Добавляем аудиодорожку в соединение
+        localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+        // Ловим входящий аудиопоток от собеседника
+        peerConnection.ontrack = event => {
+            if (event.streams && event.streams[0]) {
+                remoteAudio.srcObject = event.streams[0];
+            }
+        };
+
+        // Отправляем свои ICE-кандидаты в Firebase по мере их генерации браузером
+        peerConnection.onicecandidate = event => {
+            if (event.candidate && activeChatId) {
+                database.ref('chats/' + activeChatId + '/call/candidates').push({
+                    senderId: myFrameId,
+                    candidate: event.candidate.toJSON()
+                });
+            }
+        };
+
+        return true;
+    }
+
+    // Логика нажатия на зеленую трубку в шапке (Исходящий вызов)
+    headerCallBtn.addEventListener('click', async () => {
+        // ВАЖНО: Убрана проверка !isPeerOnline, теперь звонить можно всегда
+        if (!activeChatId) return;
+        
+        const activeChat = chatsList.find(c => c.id === activeChatId);
+        const chatName = activeChat ? activeChat.name : "Собеседник";
+        
+        showCallInterface(chatName, 'Вызов...');
+        callAcceptBtn.style.display = 'none';
+
+        const ok = await initWebRTC(activeChatId);
+        if (!ok) return;
+
+        // Создаем WebRTC Offer
+        const offer = await peerConnection.createOffer();
+        await peerConnection.setLocalDescription(offer);
+
+        // Пишем инфо о звонке в БД
+        database.ref('chats/' + activeChatId + '/call').set({
+            status: 'dialing',
+            callerId: myFrameId,
+            offerSDP: offer.toJSON()
+        });
+        
+        notifyPeer(); // Вызываем инбокс получателя
+    });
+
+    // Нажатие кнопки «Принять» (Ответ на вызов)
+    callAcceptBtn.addEventListener('click', async () => {
+        if (!activeChatId) return;
+        callStatusEl.textContent = 'Соединение...';
+        callAcceptBtn.style.display = 'none';
+
+        const ok = await initWebRTC(activeChatId);
+        if (!ok) return;
+
+        // Берем оффер звонящего из БД
+        database.ref('chats/' + activeChatId + '/call').on('value', async snap => {
+            const call = snap.val();
+            if (call && call.status === 'dialing' && call.offerSDP && !peerConnection.currentRemoteDescription) {
+                await peerConnection.setRemoteDescription(new RTCSessionDescription(call.offerSDP));
+                
+                // Создаем ответный Answer
+                const answer = await peerConnection.createAnswer();
+                await peerConnection.setLocalDescription(answer);
+                
+                // Обновляем статус в Firebase
+                database.ref('chats/' + activeChatId + '/call').update({
+                    status: 'answered',
+                    answerSDP: answer.toJSON()
+                });
+                callStatusEl.textContent = 'Разговор...';
+            }
+        });
+    });
+
+    // Нажатие кнопки «Сбросить»
+    callDeclineBtn.addEventListener('click', () => {
+        endCall();
+    });
+
+    function endCall() {
+        if (activeChatId) {
+            database.ref('chats/' + activeChatId + '/call').remove();
+        }
+        closeCallInterface();
+    }
+
+    // Выключение звука микрофона
+    callMuteBtn.addEventListener('click', () => {
+        if (localStream) {
+            const audioTrack = localStream.getAudioTracks()[0];
+            if (audioTrack) {
+                audioTrack.enabled = !audioTrack.enabled;
+                callMuteBtn.classList.toggle('active', !audioTrack.enabled);
+                showToast(audioTrack.enabled ? "Микрофон включен" : "Микрофон выключен");
+            }
+        }
+    });
+
+    function showCallInterface(name, status) {
+        callNameEl.textContent = name;
+        callAvatarEl.textContent = getInitial(name);
+        callAvatarEl.style.background = 'hsl('+strToHue(name)+',30%,60%)';
+        callStatusEl.textContent = status;
+        callMuteBtn.classList.remove('active');
+        callOverlay.style.display = 'flex';
+    }
+
+    function closeCallInterface() {
+        callOverlay.style.display = 'none';
+        if (localStream) {
+            localStream.getTracks().forEach(track => track.stop());
+            localStream = null;
+        }
+        if (peerConnection) {
+            peerConnection.close();
+            peerConnection = null;
+        }
+        remoteAudio.srcObject = null;
+    }
 
     /* СОЗДАНИЕ ЭЛЕМЕНТА СООБЩЕНИЯ */
     function createMessageElement(id, data) {
