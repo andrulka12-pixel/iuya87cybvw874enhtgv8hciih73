@@ -94,12 +94,7 @@
         .message-text { font-size: 15px; line-height: 1.5; color: #1a1a1a; }
         .message-meta-info { font-size: 11px; color: rgba(0,0,0,0.35); position: absolute; bottom: 5px; right: 10px; display: flex; align-items: center; gap: 3px; white-space: nowrap; }
         .message-row.my-row .message-meta-info { color: rgba(0,0,0,0.45); }
-        /* ГАЛОЧКИ ПРОЧИТАНО/ОТПРАВЛЕНО */
-        .msg-tick { display: none; }
-        .message-row.my-row .msg-tick { display: inline-flex; align-items: center; }
-        .msg-tick svg { width: 14px; height: 14px; }
-        .msg-tick.sent svg { fill: rgba(0,0,0,0.28); }       /* 1 галочка — отправлено, тусклая */
-        .msg-tick.read svg { fill: #1a8cee; }                 /* 1 галочка — прочитано, синяя яркая */
+        /* ГАЛОЧКИ УБРАНЫ */
         .swipe-indicator { position: absolute; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; background: rgba(0,0,0,0.08); border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.1s; right: -36px; }
         .swipe-indicator svg { width: 14px; height: 14px; fill: var(--blue); }
         .message-media img { max-width: 220px; max-height: 220px; border-radius: 8px; display: block; cursor: zoom-in; margin-bottom: 2px; }
@@ -969,8 +964,7 @@
             if(!ts) return;
             // mark all my messages as read
             document.querySelectorAll('.message-row.my-row').forEach(row=>{
-                const tick=row.querySelector('.msg-tick');
-                if(tick){tick.className='msg-tick read';tick.innerHTML=TICK_SVG;}
+                // галочки убраны
             });
         };
         rRef.on('value',handler);
@@ -999,8 +993,8 @@
         }
         const textPart=data.mediaType?'':(data.text?'<div class="message-text">'+escapeHtml(data.text)+'</div>':'');
         // галочка прочитано/отправлено — только для своих
-        const tickHTML=isMe?'<span class="msg-tick sent">'+TICK_SVG+'</span>':'';
-        row.innerHTML='<div class="message-bubble">'+replyHTML+'<div class="author-name">'+escapeHtml(data.author)+'</div>'+mediaHTML+textPart+'<div class="message-meta-info"><span>'+data.time+editedLabel+'</span>'+tickHTML+'</div></div><div class="swipe-indicator"><svg viewBox="0 0 24 24"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg></div>';
+        const tickHTML='';
+        row.innerHTML='<div class="message-bubble">'+replyHTML+'<div class="author-name">'+escapeHtml(data.author)+'</div>'+mediaHTML+textPart+'<div class="message-meta-info"><span>'+data.time+editedLabel+'</span></div></div><div class="swipe-indicator"><svg viewBox="0 0 24 24"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg></div>';
         // reaction badge
         if(data.reaction){
             const badge=document.createElement('div'); badge.className='msg-reaction'; badge.textContent=data.reaction;
