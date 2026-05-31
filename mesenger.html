@@ -334,28 +334,6 @@
         .main-input { width: 100%; padding: 12px 20px; border: 1px solid #e0e0e0; border-radius: 25px; font-size: 15px; outline: none; background-color: #f1f3f4; }
         .send-btn { background-color: #248bf2; color: #ffffff; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-        /* ─── MEDIA BUTTON ─── */
-        .media-btn {
-            width: 40px; height: 40px;
-            background: none; border: none;
-            cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-            border-radius: 50%;
-            transition: background 0.15s;
-            position: relative;
-        }
-        .media-btn:hover { background: #f0f2f5; }
-        .media-btn svg { width: 22px; height: 22px; fill: #94a3b8; }
-        .media-btn input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-
-        /* ─── MEDIA MESSAGE ─── */
-        .message-media img {
-            max-width: 240px; max-height: 240px;
-            border-radius: 8px; display: block; cursor: pointer;
-        }
-        .message-media audio { width: 200px; margin-top: 4px; }
-
         /* ─── TOAST ─── */
         .toast {
             position: fixed;
@@ -460,10 +438,6 @@
 
     <!-- INPUT AREA -->
     <div class="input-area">
-        <button class="media-btn" id="media-btn" title="Прикрепить фото или аудио">
-            <svg viewBox="0 0 24 24"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 015 0v10.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5V6H9v9.5a3.5 3.5 0 007 0V5a5 5 0 00-10 0v12.5c0 3.31 2.69 6 6 6s6-2.69 6-6V6h-1.5z"/></svg>
-            <input type="file" id="media-file-input" accept="image/*,audio/*">
-        </button>
         <div class="message-input-wrapper">
             <input type="text" id="msg-field" class="main-input" placeholder="Сообщение...">
         </div>
@@ -863,8 +837,8 @@
                 chatBox.innerHTML = '';
                 chatBox.appendChild(emptyState);
                 emptyState.style.display = 'flex';
-                chatTitle.textContent = 'Выберите чат';
-                chatSubtitle.textContent = 'Нет активного чата';
+                chatTitle.textContent = '0 чатов';
+                chatSubtitle.textContent = 'Актив. 0';
                 chatSubtitle.className = 'subtitle';
                 peerStatusDot.className = 'status-dot';
                 typingBar.classList.remove('visible');
@@ -906,9 +880,8 @@
 
             // Заголовок
             chatTitle.textContent = chat.name;
-            chatSubtitle.textContent = '';
+            chatSubtitle.textContent = ' ';
             chatSubtitle.className = 'subtitle offline-status';
-            peerStatusDot.className = 'status-dot';
 
             // Аватар
             const avatar = document.getElementById('chat-avatar');
@@ -1057,17 +1030,10 @@
                 replyHTML = `<div class="reply-in-bubble"><b>${escapeHtml(data.replyToAuthor)}</b>: ${escapeHtml(data.replyToText)}</div>`;
             }
             const editedLabel = data.edited ? ' (ред.)' : '';
-            let mediaHTML = '';
-            if (data.mediaType === 'image' && data.mediaData) {
-                mediaHTML = `<div class="message-media"><img src="${data.mediaData}" alt="${escapeHtml(data.mediaName || 'фото')}" onclick="window.open(this.src)"></div>`;
-            } else if (data.mediaType === 'audio' && data.mediaData) {
-                mediaHTML = `<div class="message-media"><audio controls src="${data.mediaData}"></audio></div>`;
-            }
             row.innerHTML = `
                 <div class="message-bubble">
                     ${replyHTML}
                     <div class="author-name">${escapeHtml(data.author)}</div>
-                    ${mediaHTML}
                     <div class="message-text">${escapeHtml(data.text)}</div>
                     <div class="message-meta-info">
                         <span>${data.time}${editedLabel}</span>
@@ -1202,14 +1168,6 @@
                     payload.replyToText   = actionDesc.textContent;
                 }
                 database.ref(`chats/${activeChatId}/messages`).push(payload);
-                // Уведомить собеседника о новом чате (если первое сообщение)
-                const activeChat = chatsList.find(c => c.id === activeChatId);
-                if (activeChat && activeChat.peerId) {
-                    database.ref(`inbox/${activeChat.peerId}/${activeChatId}`).set({
-                        chatId: activeChatId,
-                        peerId: myFrameId
-                    });
-                }
                 // Сбросить "печатает"
                 setMyTyping(false);
                 clearTimeout(myTypingTimer);
@@ -1221,78 +1179,10 @@
         msgField.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendOrUpdateMessage(); });
 
         /* ══════════════════════════════════════════════
-         *  МЕДИАФАЙЛЫ
-         * ══════════════════════════════════════════════ */
-        document.getElementById('media-file-input').addEventListener('change', function() {
-            const file = this.files[0];
-            if (!file) return;
-            if (!activeChatId) { showToast('Выберите переписку'); this.value = ''; return; }
-
-            const maxSize = 5 * 1024 * 1024; // 5MB
-            if (file.size > maxSize) { showToast('Файл слишком большой (макс. 5MB)'); this.value = ''; return; }
-
-            showToast('Загружаю файл...');
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const base64 = e.target.result;
-                const isImage = file.type.startsWith('image/');
-                const isAudio = file.type.startsWith('audio/');
-                const nickname = myCurrentNickname || "User";
-                const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                const payload = {
-                    frameId: myFrameId,
-                    author: nickname,
-                    text: isImage ? '[Фото]' : '[Аудио]',
-                    time: timeStr,
-                    edited: false,
-                    mediaType: isImage ? 'image' : 'audio',
-                    mediaData: base64,
-                    mediaName: file.name
-                };
-                database.ref(`chats/${activeChatId}/messages`).push(payload);
-                // Уведомить собеседника
-                const activeChat = chatsList.find(c => c.id === activeChatId);
-                if (activeChat && activeChat.peerId) {
-                    database.ref(`inbox/${activeChat.peerId}/${activeChatId}`).set({
-                        chatId: activeChatId,
-                        peerId: myFrameId
-                    });
-                }
-                showToast(isImage ? 'Фото отправлено!' : 'Аудио отправлено!');
-            };
-            reader.onerror = () => { showToast('Ошибка чтения файла'); };
-            reader.readAsDataURL(file);
-            this.value = '';
-        });
-
-        /* ══════════════════════════════════════════════
-         *  ВХОДЯЩИЕ ЧАТЫ — авто-создание переписки
-         * ══════════════════════════════════════════════ */
-        function listenInbox() {
-            database.ref(`inbox/${myFrameId}`).on('child_added', (snap) => {
-                const data = snap.val();
-                if (!data || !data.chatId || !data.peerId) return;
-                // Не добавлять если уже есть
-                if (chatsList.find(c => c.id === data.chatId)) return;
-                // Считаем номер для имени "Новый Чат N"
-                const existingNums = chatsList
-                    .map(c => { const m = c.name.match(/^Новый Чат (\d+)$/); return m ? parseInt(m[1]) : 0; })
-                    .filter(n => n > 0);
-                const nextNum = existingNums.length > 0 ? Math.max(...existingNums) + 1 : 1;
-                const newName = `Новый Чат ${nextNum}`;
-                chatsList.unshift({ id: data.chatId, name: newName, peerId: data.peerId, lastMsg: '', lastTime: '' });
-                saveChatsList();
-                renderChatsList();
-                showToast(`Новая переписка: ${newName}`);
-            });
-        }
-
-        /* ══════════════════════════════════════════════
          *  СТАРТ
          * ══════════════════════════════════════════════ */
         initNickname();
         setupMyPresence();
-        listenInbox();
         renderChatsList();
 
         // Открыть первый чат из сохранённых
