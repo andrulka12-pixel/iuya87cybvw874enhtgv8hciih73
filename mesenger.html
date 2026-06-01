@@ -66,10 +66,10 @@
         .nickname-input::placeholder { color: var(--dim); }
         .connect-id-btn { width: 34px; height: 34px; background: #f0f2f5; border: 1px solid #e0e0e0; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .connect-id-btn svg { width: 16px; height: 16px; fill: var(--blue); }
-        .call-btn { width: 34px; height: 34px; background: rgba(79,174,78,0.1); border: 1px solid rgba(79,174,78,0.2); border-radius: 50%; cursor: pointer; display: none; align-items: center; justify-content: center; transition: background 0.2s; }
+        .call-btn { width: 34px; height: 34px; background: rgba(50,50,60,0.08); border: 1px solid rgba(50,50,60,0.15); border-radius: 50%; cursor: pointer; display: none; align-items: center; justify-content: center; transition: background 0.2s; }
         .call-btn.visible { display: flex; }
-        .call-btn:hover { background: rgba(79,174,78,0.2); }
-        .call-btn svg { width: 16px; height: 16px; fill: var(--green); }
+        .call-btn:hover { background: rgba(50,50,60,0.15); }
+        .call-btn svg { width: 16px; height: 16px; fill: #3a3a4a; }
 
         /* TYPING BAR */
         .typing-bar { height: 0; overflow: hidden; background: var(--header); display: flex; align-items: center; padding: 0 16px; font-size: 12px; color: var(--blue); font-style: italic; transition: height 0.2s; flex-shrink: 0; }
@@ -140,13 +140,24 @@
         .send-btn:active { transform: scale(0.88); }
         .send-btn svg { width: 18px; height: 18px; margin-left: 2px; }
 
-        /* ATTACH MENU */
-        .attach-menu { position: absolute; bottom: 60px; left: 10px; background: #fff; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.18); display: none; flex-direction: column; z-index: 50; overflow: hidden; min-width: 180px; }
+        /* ATTACH MENU — gallery style */
+        .attach-menu { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(240,242,245,0.78); backdrop-filter: blur(28px) saturate(1.4); -webkit-backdrop-filter: blur(28px) saturate(1.4); border-radius: 22px 22px 0 0; box-shadow: 0 -2px 24px rgba(0,0,0,0.10); display: none; flex-direction: column; z-index: 50; overflow: hidden; padding-bottom: max(12px, env(safe-area-inset-bottom)); }
         .attach-menu.open { display: flex; }
-        .attach-item { display: flex; align-items: center; gap: 10px; padding: 12px 16px; cursor: pointer; font-size: 14px; transition: background 0.1s; }
-        .attach-item:hover { background: rgba(0,0,0,0.04); }
-        .attach-item-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .attach-item-icon svg { fill: #fff; width: 18px; height: 18px; }
+        /* gallery grid */
+        .attach-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; max-height: 300px; overflow-y: auto; }
+        .attach-gallery-item { aspect-ratio: 1; background: rgba(200,202,208,0.5); overflow: hidden; cursor: pointer; position: relative; }
+        .attach-gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .attach-gallery-placeholder { width: 100%; height: 100%; background: rgba(200,202,208,0.38); display: flex; align-items: center; justify-content: center; }
+        /* type carousel */
+        .attach-type-bar { display: flex; overflow-x: auto; gap: 0; padding: 10px 0 6px; scrollbar-width: none; justify-content: space-around; }
+        .attach-type-bar::-webkit-scrollbar { display: none; }
+        .attach-type-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 7px 10px; border-radius: 16px; cursor: pointer; flex: 1; transition: background 0.15s; border: none; background: none; }
+        .attach-type-btn.active { background: rgba(0,0,0,0.07); }
+        .attach-type-btn-icon { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.65); box-shadow: 0 1px 6px rgba(0,0,0,0.10); }
+        .attach-type-btn-icon svg { fill: #4a4a5a; width: 22px; height: 22px; }
+        .attach-type-btn.active .attach-type-btn-icon { background: rgba(255,255,255,0.9); box-shadow: 0 2px 10px rgba(0,0,0,0.13); }
+        .attach-type-btn-label { font-size: 11px; color: #5a5a6a; font-weight: 500; white-space: nowrap; }
+        .attach-type-btn.active .attach-type-btn-label { color: #1a1a2a; font-weight: 700; }
 
         /* MODALS */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 300; display: none; align-items: center; justify-content: center; padding: 20px; }
@@ -359,26 +370,39 @@
         </div>
     </div>
 
-    <!-- ATTACH MENU -->
+    <!-- ATTACH MENU — gallery style -->
     <div class="attach-menu" id="attach-menu">
-        <label class="attach-item">
-            <div class="attach-item-icon" style="background:#4fae4e"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
-            Фото / Аудио
-            <input type="file" id="media-file-input" accept="image/*,audio/*" style="display:none">
-        </label>
-        <label class="attach-item">
-            <div class="attach-item-icon" style="background:#9b59b6"><svg viewBox="0 0 24 24"><path d="M17 10.5V7a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h12a1 1 0 001-1v-3.5l4 4v-11l-4 4z"/></svg></div>
-            Видео
-            <input type="file" id="video-file-input" accept="video/*" style="display:none">
-        </label>
-        <label class="attach-item">
-            <div class="attach-item-icon" style="background:#1a8cee"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></div>
-            Документ
-            <input type="file" id="doc-file-input" accept="*/*" style="display:none">
-        </label>
-        <div class="attach-item" id="gif-open-btn">
-            <div class="attach-item-icon" style="background:#e74c3c"><svg viewBox="0 0 24 24"><path d="M11.5 2C6.81 2 3 5.81 3 10.5S6.81 19 11.5 19h.5v3c4.86-2.34 8-7 8-11.5C20 5.81 16.19 2 11.5 2zm1 14.5h-2v-6h2v6zm-1-8c-.83 0-1.5-.67-1.5-1.5S10.67 5.5 11.5 5.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg></div>
-            GIF
+        <!-- hidden file inputs -->
+        <input type="file" id="media-file-input" accept="image/*" style="display:none">
+        <input type="file" id="audio-file-input" accept="audio/*" style="display:none">
+        <input type="file" id="video-file-input" accept="video/*" style="display:none">
+        <input type="file" id="doc-file-input" accept="*/*" style="display:none">
+        <!-- gallery area -->
+        <div class="attach-gallery" id="attach-gallery">
+            <!-- filled by JS depending on active type -->
+        </div>
+        <!-- type carousel -->
+        <div class="attach-type-bar">
+            <button class="attach-type-btn active" data-type="photo">
+                <div class="attach-type-btn-icon"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
+                <span class="attach-type-btn-label">Фото</span>
+            </button>
+            <button class="attach-type-btn" data-type="video">
+                <div class="attach-type-btn-icon"><svg viewBox="0 0 24 24"><path d="M17 10.5V7a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h12a1 1 0 001-1v-3.5l4 4v-11l-4 4z"/></svg></div>
+                <span class="attach-type-btn-label">Видео</span>
+            </button>
+            <button class="attach-type-btn" data-type="gif">
+                <div class="attach-type-btn-icon"><svg viewBox="0 0 24 24"><path d="M11.5 2C6.81 2 3 5.81 3 10.5S6.81 19 11.5 19h.5v3c4.86-2.34 8-7 8-11.5C20 5.81 16.19 2 11.5 2zm1 14.5h-2v-6h2v6zm-1-8c-.83 0-1.5-.67-1.5-1.5S10.67 5.5 11.5 5.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg></div>
+                <span class="attach-type-btn-label">GIF</span>
+            </button>
+            <button class="attach-type-btn" data-type="audio">
+                <div class="attach-type-btn-icon"><svg viewBox="0 0 24 24"><path d="M12 3v9.28A4 4 0 1 0 14 16V7h4V3h-6z"/></svg></div>
+                <span class="attach-type-btn-label">Аудио</span>
+            </button>
+            <button class="attach-type-btn" data-type="document">
+                <div class="attach-type-btn-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></div>
+                <span class="attach-type-btn-label">Документы</span>
+            </button>
         </div>
     </div>
 
@@ -1087,7 +1111,65 @@
     });
 
     /* ── ATTACH TOGGLE ── */
-    attachToggleBtn.addEventListener('click',e=>{ e.stopPropagation(); attachMenu.classList.toggle('open'); });
+    let attachActiveType = 'photo';
+    const attachGallery = document.getElementById('attach-gallery');
+
+    function renderAttachGallery(type) {
+        attachGallery.innerHTML = '';
+        if (type === 'photo') {
+            const tile = document.createElement('div');
+            tile.className = 'attach-gallery-item';
+            tile.innerHTML = '<div class="attach-gallery-placeholder" style="flex-direction:column;gap:6px;"><svg viewBox="0 0 24 24" width="32" height="32"><path fill="#5a5a6a" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg><span style="font-size:11px;color:#5a5a6a;font-weight:600;">Выбрать фото</span></div>';
+            tile.addEventListener('click', () => document.getElementById('media-file-input').click());
+            attachGallery.appendChild(tile);
+        } else if (type === 'video') {
+            const tile = document.createElement('div');
+            tile.className = 'attach-gallery-item';
+            tile.innerHTML = '<div class="attach-gallery-placeholder" style="flex-direction:column;gap:6px;"><svg viewBox="0 0 24 24" width="32" height="32"><path fill="#5a5a6a" d="M17 10.5V7a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h12a1 1 0 001-1v-3.5l4 4v-11l-4 4z"/></svg><span style="font-size:11px;color:#5a5a6a;font-weight:600;">Выбрать видео</span></div>';
+            tile.addEventListener('click', () => document.getElementById('video-file-input').click());
+            attachGallery.appendChild(tile);
+        } else if (type === 'gif') {
+            const tile = document.createElement('div');
+            tile.className = 'attach-gallery-item';
+            tile.innerHTML = '<div class="attach-gallery-placeholder" style="flex-direction:column;gap:6px;"><svg viewBox="0 0 24 24" width="32" height="32"><path fill="#5a5a6a" d="M11.5 2C6.81 2 3 5.81 3 10.5S6.81 19 11.5 19h.5v3c4.86-2.34 8-7 8-11.5C20 5.81 16.19 2 11.5 2zm1 14.5h-2v-6h2v6zm-1-8c-.83 0-1.5-.67-1.5-1.5S10.67 5.5 11.5 5.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg><span style="font-size:11px;color:#5a5a6a;font-weight:600;">Открыть GIF</span></div>';
+            tile.addEventListener('click', () => { attachMenu.classList.remove('open'); gifPicker.classList.add('open'); loadGifs('trending','trending'); gifSearchInput.value=''; gifSearchInput.focus(); });
+            attachGallery.appendChild(tile);
+        } else if (type === 'audio') {
+            const tile = document.createElement('div');
+            tile.className = 'attach-gallery-item';
+            tile.innerHTML = '<div class="attach-gallery-placeholder" style="flex-direction:column;gap:6px;"><svg viewBox="0 0 24 24" width="32" height="32"><path fill="#5a5a6a" d="M12 3v9.28A4 4 0 1 0 14 16V7h4V3h-6z"/></svg><span style="font-size:11px;color:#5a5a6a;font-weight:600;">Выбрать аудио</span></div>';
+            tile.addEventListener('click', () => document.getElementById('audio-file-input').click());
+            attachGallery.appendChild(tile);
+        } else if (type === 'document') {
+            const tile = document.createElement('div');
+            tile.className = 'attach-gallery-item';
+            tile.innerHTML = '<div class="attach-gallery-placeholder" style="flex-direction:column;gap:6px;"><svg viewBox="0 0 24 24" width="32" height="32"><path fill="#5a5a6a" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg><span style="font-size:11px;color:#5a5a6a;font-weight:600;">Выбрать файл</span></div>';
+            tile.addEventListener('click', () => document.getElementById('doc-file-input').click());
+            attachGallery.appendChild(tile);
+        }
+    }
+
+    document.querySelectorAll('.attach-type-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.attach-type-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            attachActiveType = btn.dataset.type;
+            renderAttachGallery(attachActiveType);
+        });
+    });
+
+    attachToggleBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        const wasOpen = attachMenu.classList.contains('open');
+        attachMenu.classList.toggle('open');
+        if (!wasOpen) {
+            // reset to photo tab
+            document.querySelectorAll('.attach-type-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.attach-type-btn[data-type="photo"]').classList.add('active');
+            attachActiveType = 'photo';
+            renderAttachGallery('photo');
+        }
+    });
 
     /* ── NOTIFY PEER (inbox — чтобы переписка появилась у получателя) ── */
     function notifyPeer(){
@@ -1113,20 +1195,35 @@
     sendButton.addEventListener('click',sendOrUpdateMessage);
     msgField.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendOrUpdateMessage();} });
 
-    /* ── MEDIA (фото/аудио) ── */
+    /* ── МЕДИА (фото) ── */
     document.getElementById('media-file-input').addEventListener('change',function(){
         const file=this.files[0]; if(!file) return;
         if(!activeChatId){showToast('Выберите переписку');this.value='';return;}
-        const isImage=file.type.startsWith('image/');
-        const maxSize=isImage?5*1024*1024:100*1024*1024;
-        if(file.size>maxSize){showToast(isImage?'Фото слишком большое (макс. 5MB)':'Аудио слишком большое (макс. 100MB)');this.value='';return;}
+        if(file.size>5*1024*1024){showToast('Фото слишком большое (макс. 5MB)');this.value='';return;}
         showToast('Отправляю...');
         const reader=new FileReader();
         reader.onload=ev=>{
             const base64=ev.target.result, nickname=myCurrentNickname||'User';
             const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-            database.ref('chats/'+activeChatId+'/messages').push({frameId:myFrameId,author:nickname,text:isImage?'[Фото]':'[Аудио]',time:timeStr,edited:false,mediaType:isImage?'image':'audio',mediaData:base64,mediaName:file.name});
-            notifyPeer(); showToast(isImage?'📷 Фото отправлено!':'🎵 Аудио отправлено!');
+            database.ref('chats/'+activeChatId+'/messages').push({frameId:myFrameId,author:nickname,text:'[Фото]',time:timeStr,edited:false,mediaType:'image',mediaData:base64,mediaName:file.name});
+            notifyPeer(); showToast('📷 Фото отправлено!');
+        };
+        reader.onerror=()=>showToast('Ошибка чтения файла');
+        reader.readAsDataURL(file); this.value=''; attachMenu.classList.remove('open');
+    });
+
+    /* ── АУДИО ── */
+    document.getElementById('audio-file-input').addEventListener('change',function(){
+        const file=this.files[0]; if(!file) return;
+        if(!activeChatId){showToast('Выберите переписку');this.value='';return;}
+        if(file.size>100*1024*1024){showToast('Аудио слишком большое (макс. 100MB)');this.value='';return;}
+        showToast('Отправляю...');
+        const reader=new FileReader();
+        reader.onload=ev=>{
+            const base64=ev.target.result, nickname=myCurrentNickname||'User';
+            const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+            database.ref('chats/'+activeChatId+'/messages').push({frameId:myFrameId,author:nickname,text:'[Аудио]',time:timeStr,edited:false,mediaType:'audio',mediaData:base64,mediaName:file.name});
+            notifyPeer(); showToast('🎵 Аудио отправлено!');
         };
         reader.onerror=()=>showToast('Ошибка чтения файла');
         reader.readAsDataURL(file); this.value=''; attachMenu.classList.remove('open');
@@ -1169,7 +1266,6 @@
 
     /* ── GIF PICKER ── */
     let gifSearchTimer=null;
-    document.getElementById('gif-open-btn').addEventListener('click',()=>{ attachMenu.classList.remove('open'); gifPicker.classList.add('open'); loadGifs('trending','trending'); gifSearchInput.value=''; gifSearchInput.focus(); });
     document.getElementById('gif-close-btn').addEventListener('click',()=>gifPicker.classList.remove('open'));
     gifSearchInput.addEventListener('input',()=>{
         clearTimeout(gifSearchTimer);
