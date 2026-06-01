@@ -8,7 +8,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
         :root {
             --bg: #f0f2f5; --header: #ffffff; --bubble-in: #ffffff; --bubble-out: #dcf8c6;
-            --input-bg: #ffffff; --input-field: #f0f2f5; --blue: #1a8cee; --green: #4fae4e;
+            --input-bg: #ffffff; --input-field: #f0f2f5; --blue: #4a7fcb; --green: #4fae4e;
             --red: #e74c3c; --dim: #8a9aaa; --border: #e0e0e0;
         }
         body, html { height: 100%; background: var(--bg); color: #1a1a1a; overflow: hidden; }
@@ -86,7 +86,7 @@
         /* MESSAGES */
         .message-row { display: flex; position: relative; width: 100%; user-select: none; margin-bottom: 6px; }
         .message-row.my-row { justify-content: flex-end; }
-        .message-bubble { max-width: 72%; background: var(--bubble-in); padding: 10px 14px 24px 14px; border-radius: 16px 16px 16px 4px; position: relative; word-wrap: break-word; display: inline-flex; flex-direction: column; transition: transform 0.1s ease-out; cursor: pointer; touch-action: pan-y; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+        .message-bubble { max-width: 72%; background: var(--bubble-in); padding: 10px 14px 22px 14px; border-radius: 16px 16px 16px 4px; position: relative; word-wrap: break-word; display: inline-flex; flex-direction: column; transition: transform 0.1s ease-out; cursor: pointer; touch-action: pan-y; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
         .message-row.my-row .message-bubble { background: var(--bubble-out); border-radius: 16px 16px 4px 16px; }
         .author-name { font-size: 12px; font-weight: 600; color: var(--blue); margin-bottom: 4px; }
         .message-row.my-row .author-name { display: none; }
@@ -115,8 +115,10 @@
         .doc-size { font-size: 11px; color: var(--dim); margin-top: 2px; }
 
         /* REACTION BADGE */
-        .msg-reaction { position: absolute; bottom: -10px; right: 8px; background: #fff; border-radius: 12px; padding: 1px 5px; font-size: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); cursor: pointer; line-height: 1.4; }
+        .msg-reaction { position: absolute; bottom: -13px; right: 8px; background: #fff; border-radius: 12px; padding: 2px 7px; font-size: 13px; box-shadow: 0 1px 4px rgba(0,0,0,0.18); cursor: pointer; line-height: 1.5; z-index: 2; white-space: nowrap; }
         .message-row.my-row .msg-reaction { right: auto; left: 8px; }
+        /* Когда есть реакция — даём строке больше отступа снизу */
+        .message-row.has-reaction { margin-bottom: 20px; }
 
         /* ACTION BAR */
         .action-bar { display: none; background: var(--input-bg); border-top: 1px solid #e0e0e0; padding: 6px 14px; align-items: center; justify-content: space-between; font-size: 13px; flex-shrink: 0; }
@@ -180,21 +182,28 @@
         .empty-chat-title { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.3); }
         .empty-chat-sub { font-size: 13px; color: var(--dim); line-height: 1.5; }
 
-        /* CALL */
-        .call-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 600; display: none; align-items: center; justify-content: center; padding: 20px; color: white; }
-        .call-card { background: #1c2434; padding: 30px; border-radius: 24px; width: 100%; max-width: 320px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.4); display: flex; flex-direction: column; align-items: center; gap: 20px; }
-        .call-avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--blue); font-size: 32px; font-weight: bold; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; box-shadow: 0 0 0 8px rgba(26,140,238,0.2); }
-        .call-name { font-size: 20px; font-weight: 700; }
-        .call-status { font-size: 14px; color: var(--dim); animation: pulse 1.5s infinite ease-in-out; }
-        .call-actions { display: flex; gap: 20px; margin-top: 10px; width: 100%; justify-content: center; }
-        .call-btn-action { width: 54px; height: 54px; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.1s; }
-        .call-btn-action:active { transform: scale(0.9); }
-        .call-btn-action.accept { background: var(--green); }
-        .call-btn-action.decline { background: var(--red); }
-        .call-btn-action.mute { background: rgba(255,255,255,0.15); }
-        .call-btn-action.mute.active { background: rgba(231,57,57,0.4); }
-        .call-btn-action svg { width: 24px; height: 24px; fill: white; }
-        @keyframes pulse { 0%,100%{opacity:.6} 50%{opacity:1} }
+        /* CALL — full-screen light theme */
+        .call-screen { position: fixed; inset: 0; z-index: 600; display: none; flex-direction: column; justify-content: space-between; align-items: center; padding-bottom: max(40px, env(safe-area-inset-bottom)); padding-top: max(60px, env(safe-area-inset-top)); background: #f4f6fb; }
+        .call-screen-bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 30%, rgba(74,127,203,0.18) 0%, transparent 70%); pointer-events: none; }
+        .call-screen-body { display: flex; flex-direction: column; align-items: center; gap: 16px; position: relative; z-index: 1; }
+        .call-screen-avatar { width: 110px; height: 110px; border-radius: 50%; font-size: 44px; font-weight: 700; color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 24px rgba(74,127,203,0.35), 0 0 0 10px rgba(74,127,203,0.1); }
+        .call-screen-name { font-size: 26px; font-weight: 700; color: #1a1a1a; letter-spacing: -0.3px; }
+        .call-screen-status { font-size: 15px; color: #6b7a8d; animation: pulse 1.8s infinite ease-in-out; }
+        .call-screen-actions { display: flex; gap: 32px; align-items: flex-end; justify-content: center; position: relative; z-index: 1; width: 100%; padding: 0 24px; }
+        .call-action-col { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .call-action-btn { width: 68px; height: 68px; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.12s, box-shadow 0.12s; box-shadow: 0 2px 12px rgba(0,0,0,0.12); }
+        .call-action-btn:active { transform: scale(0.88); }
+        .call-action-btn svg { width: 28px; height: 28px; }
+        .accept-btn { background: #4caf50; }
+        .accept-btn svg { fill: #fff; }
+        .decline-btn { background: #e74c3c; }
+        .decline-btn svg { fill: #fff; }
+        .mute-btn { background: #e8edf4; }
+        .mute-btn svg { fill: #4a7fcb; }
+        .mute-btn.muted { background: #fdecea; }
+        .mute-btn.muted svg { fill: #e74c3c; }
+        .call-action-label { font-size: 12px; color: #6b7a8d; font-weight: 500; }
+        @keyframes pulse { 0%,100%{opacity:.65} 50%{opacity:1} }
 
         /* PHOTO VIEWER */
         .photo-viewer { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 700; display: none; flex-direction: column; }
@@ -258,16 +267,17 @@
         .profile-empty { text-align: center; color: var(--dim); font-size: 13px; padding: 20px 0; }
 
         /* GIF PICKER */
-        .gif-picker { position: fixed; bottom: 0; left: 0; right: 0; height: 320px; background: #fff; z-index: 100; border-top: 1px solid var(--border); display: none; flex-direction: column; }
+        .gif-picker { position: fixed; bottom: 0; left: 0; right: 0; height: 400px; background: #fff; z-index: 100; border-top: 1px solid var(--border); border-radius: 16px 16px 0 0; box-shadow: 0 -4px 20px rgba(0,0,0,0.1); display: none; flex-direction: column; }
         .gif-picker.open { display: flex; }
-        .gif-search-bar { padding: 10px 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
-        .gif-search-input { flex: 1; padding: 8px 14px; background: var(--input-field); border: 1px solid var(--border); border-radius: 20px; outline: none; font-size: 14px; }
-        .gif-close-btn { width: 32px; height: 32px; background: #f0f2f5; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .gif-search-bar { padding: 12px 14px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+        .gif-search-input { flex: 1; padding: 9px 16px; background: var(--input-field); border: 1px solid var(--border); border-radius: 20px; outline: none; font-size: 15px; }
+        .gif-close-btn { width: 34px; height: 34px; background: #f0f2f5; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .gif-close-btn svg { fill: var(--dim); width: 16px; height: 16px; }
-        .gif-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 8px; }
-        .gif-grid-item { border-radius: 8px; overflow: hidden; cursor: pointer; background: #f0f2f5; aspect-ratio: 1; }
-        .gif-grid-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .gif-loading { grid-column: 1/-1; text-align: center; color: var(--dim); font-size: 13px; padding: 20px; }
+        .gif-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 110px; gap: 6px; padding: 10px; align-content: start; }
+        .gif-grid-item { border-radius: 10px; overflow: hidden; cursor: pointer; background: #e8edf2; height: 110px; }
+        .gif-grid-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.15s; }
+        .gif-grid-item:hover img { transform: scale(1.04); }
+        .gif-loading { grid-column: 1/-1; text-align: center; color: var(--dim); font-size: 13px; padding: 30px; }
 
         /* REACTIONS PICKER */
         .reactions-picker { position: fixed; background: #fff; border-radius: 24px; box-shadow: 0 4px 24px rgba(0,0,0,0.18); z-index: 450; display: none; padding: 10px 12px; flex-wrap: wrap; gap: 6px; max-width: 280px; }
@@ -385,22 +395,32 @@
     </div>
 </div>
 
-<!-- CALL OVERLAY -->
-<div class="call-overlay" id="call-overlay">
-    <div class="call-card">
-        <div class="call-avatar" id="call-avatar-el">?</div>
-        <div class="call-name" id="call-name-el">Собеседник</div>
-        <div class="call-status" id="call-status-el">Вызов...</div>
-        <div class="call-actions">
-            <button class="call-btn-action mute" id="call-mute-btn">
+<!-- CALL SCREEN (full-screen light theme) -->
+<div class="call-screen" id="call-overlay">
+    <div class="call-screen-bg" id="call-screen-bg"></div>
+    <div class="call-screen-body">
+        <div class="call-screen-avatar" id="call-avatar-el">?</div>
+        <div class="call-screen-name" id="call-name-el">Собеседник</div>
+        <div class="call-screen-status" id="call-status-el">Вызов...</div>
+    </div>
+    <div class="call-screen-actions">
+        <div class="call-action-col">
+            <button class="call-action-btn mute-btn" id="call-mute-btn">
                 <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1 9h2c0 .55-.45 1-1 1s-1-.45-1-1zm6-12c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
             </button>
-            <button class="call-btn-action accept" id="call-accept-btn" style="display:none;">
-                <svg viewBox="0 0 24 24"><path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2c-2.83-1.44-5.15-3.75-6.59-6.59l2.2-2.2c.28-.27.36-.66.25-1.02C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/></svg>
+            <span class="call-action-label">Микрофон</span>
+        </div>
+        <div class="call-action-col" id="call-accept-col" style="display:none;">
+            <button class="call-action-btn accept-btn" id="call-accept-btn">
+                <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
             </button>
-            <button class="call-btn-action decline" id="call-decline-btn">
+            <span class="call-action-label">Принять</span>
+        </div>
+        <div class="call-action-col">
+            <button class="call-action-btn decline-btn" id="call-decline-btn">
                 <svg viewBox="0 0 24 24"><path d="M12 9c-2.2 0-4.3.3-6.2.9-.2.1-.4.3-.4.5v3.2c0 .3.2.6.5.6 1.3-.4 2.6-.6 4-.6V21c0 .6.4 1 1 1h4c.6 0 1-.4 1-1v-7.4c1.4 0 2.7.2 4 .6.3.1.5-.1.5-.4v-3.2c0-.2-.2-.4-.4-.5C16.3 9.3 14.2 9 12 9z"/></svg>
             </button>
+            <span class="call-action-label">Завершить</span>
         </div>
     </div>
 </div>
@@ -999,6 +1019,7 @@
         if(data.reaction){
             const badge=document.createElement('div'); badge.className='msg-reaction'; badge.textContent=data.reaction;
             row.querySelector('.message-bubble').appendChild(badge);
+            row.classList.add('has-reaction');
         }
         // photo click
         const photoEl=row.querySelector('.msg-photo');
@@ -1031,10 +1052,11 @@
             document.body.appendChild(h); setTimeout(()=>h.remove(),700);
         }
         bubble.addEventListener('dblclick',e=>handleDoubleTap(e));
-        bubble.addEventListener('mousedown',e=>{ if(e.button!==0) return; isLongPress=false; startX=e.clientX; isSwiping=true; pressTimer=setTimeout(()=>{handleLongPress(e);isSwiping=false;},600); });
+        bubble.addEventListener('mousedown',e=>{ if(e.button!==0) return; if(e.target.closest('.msg-photo,.msg-video-wrap,.msg-gif')) return; isLongPress=false; startX=e.clientX; isSwiping=true; pressTimer=setTimeout(()=>{handleLongPress(e);isSwiping=false;},600); });
         window.addEventListener('mousemove',e=>{ if(!isSwiping) return; currentX=e.clientX; const d=startX-currentX; if(Math.abs(d)>10) clearTimeout(pressTimer); if(d>0&&d<80){bubble.style.transform='translateX(-'+d+'px)';indicator.style.opacity=d/60;} });
         window.addEventListener('mouseup',()=>{ clearTimeout(pressTimer); if(!isSwiping) return; if(startX-currentX>=50&&!isLongPress) triggerReplyMode(row.dataset.id,data.author,data.text||'[медиа]'); bubble.style.transform='translateX(0)';indicator.style.opacity=0;isSwiping=false; });
         bubble.addEventListener('touchstart',e=>{
+            if(e.target.closest('.msg-photo,.msg-video-wrap,.msg-gif')) return;
             isLongPress=false; startX=e.touches[0].clientX; isSwiping=true;
             pressTimer=setTimeout(()=>{handleLongPress(e);isSwiping=false;},600);
             const now=Date.now(); if(now-lastTap<350){handleDoubleTap(e);clearTimeout(pressTimer);} lastTap=now;
@@ -1095,11 +1117,13 @@
     document.getElementById('media-file-input').addEventListener('change',function(){
         const file=this.files[0]; if(!file) return;
         if(!activeChatId){showToast('Выберите переписку');this.value='';return;}
-        if(file.size>5*1024*1024){showToast('Файл слишком большой (макс. 5MB)');this.value='';return;}
+        const isImage=file.type.startsWith('image/');
+        const maxSize=isImage?5*1024*1024:100*1024*1024;
+        if(file.size>maxSize){showToast(isImage?'Фото слишком большое (макс. 5MB)':'Аудио слишком большое (макс. 100MB)');this.value='';return;}
         showToast('Отправляю...');
         const reader=new FileReader();
-        reader.onload=e=>{
-            const base64=e.target.result, isImage=file.type.startsWith('image/'), nickname=myCurrentNickname||'User';
+        reader.onload=ev=>{
+            const base64=ev.target.result, nickname=myCurrentNickname||'User';
             const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
             database.ref('chats/'+activeChatId+'/messages').push({frameId:myFrameId,author:nickname,text:isImage?'[Фото]':'[Аудио]',time:timeStr,edited:false,mediaType:isImage?'image':'audio',mediaData:base64,mediaName:file.name});
             notifyPeer(); showToast(isImage?'📷 Фото отправлено!':'🎵 Аудио отправлено!');
@@ -1230,7 +1254,8 @@
                 if(data.reaction){
                     if(!badge){badge=document.createElement('div');badge.className='msg-reaction';row.querySelector('.message-bubble').appendChild(badge);}
                     badge.textContent=data.reaction;
-                } else if(badge) badge.remove();
+                    row.classList.add('has-reaction');
+                } else if(badge){badge.remove();row.classList.remove('has-reaction');}
             }
         };
         const removedHandler=snapshot=>{const row=document.getElementById('msg-'+snapshot.key);if(row) row.remove();};
@@ -1254,6 +1279,8 @@
             saveChatsList();
             // Начинаем считать непрочитанные для нового чата
             incrementUnread(data.chatId);
+            // Подключаем слушатель входящих звонков для нового чата
+            watchChatForIncomingCall(data.chatId, chatName);
             renderChatsList(); showToast('💬 Новая переписка: '+chatName);
         });
     }
@@ -1286,70 +1313,138 @@
     });
 
     /* ── WEBRTC CALLS ── */
-    function setupCallListener(chatId){
-        if(callRef) callRef.off();
-        callRef=database.ref('chats/'+chatId+'/call');
-        callRef.on('value',async snap=>{
-            const call=snap.val();
-            if(!call){closeCallInterface();return;}
-            const activeChat=chatsList.find(c=>c.id===chatId);
-            const chatName=activeChat?activeChat.name:'Собеседник';
-            if(call.status==='dialing'&&call.callerId!==myFrameId){showCallInterface(chatName,'Входящий звонок...');callAcceptBtn.style.display='flex';}
-            if(call.status==='answered'&&call.callerId===myFrameId&&peerConnection&&!peerConnection.currentRemoteDescription){
-                callStatusEl.textContent='Разговор...';
-                try{await peerConnection.setRemoteDescription(new RTCSessionDescription(call.answerSDP));}catch(e){console.error(e);}
+
+    // Глобальный слушатель входящих звонков — работает независимо от активного чата
+    let globalCallListener = null;
+    let incomingCallChatId = null;
+
+    function startGlobalCallListener(){
+        // Слушаем все чаты пользователя на предмет входящего звонка
+        chatsList.forEach(chat=>{
+            watchChatForIncomingCall(chat.id, chat.name);
+        });
+    }
+
+    function watchChatForIncomingCall(chatId, chatName){
+        const cRef = database.ref('chats/'+chatId+'/call');
+        cRef.on('value', async snap=>{
+            const call = snap.val();
+            if(!call){ 
+                // Если это был входящий звонок и нет активного RTCPeer — просто закрываем UI
+                if(incomingCallChatId===chatId && !peerConnection) closeCallInterface();
+                return; 
             }
+            // Входящий — не я звоню, нет активного вызова
+            if(call.status==='dialing' && call.callerId!==myFrameId && !callOverlay.style.display.includes('flex')){
+                incomingCallChatId = chatId;
+                const name = chatName || call.callerName || 'Собеседник';
+                showCallInterface(name,'Входящий звонок...',true);
+            }
+            // Принятый — я звонил, собеседник ответил
+            if(call.status==='answered' && call.callerId===myFrameId && peerConnection && !peerConnection.currentRemoteDescription){
+                callStatusEl.textContent='Разговор...';
+                try{ await peerConnection.setRemoteDescription(new RTCSessionDescription(call.answerSDP)); }catch(e){console.error(e);}
+            }
+            // ICE candidates
             if(call.candidates){
                 Object.keys(call.candidates).forEach(key=>{
                     const cand=call.candidates[key];
-                    if(cand.senderId!==myFrameId&&peerConnection&&peerConnection.remoteDescription){peerConnection.addIceCandidate(new RTCIceCandidate(cand.candidate)).catch(()=>{});}
+                    if(cand.senderId!==myFrameId&&peerConnection&&peerConnection.remoteDescription){
+                        peerConnection.addIceCandidate(new RTCIceCandidate(cand.candidate)).catch(()=>{});
+                    }
                 });
             }
         });
     }
+
+    function setupCallListener(chatId){
+        // Дополнительно — если мы вошли в чат, убеждаемся что он тоже слушается
+        const already = activeListeners.some(l=>l._isCallRef && l._chatId===chatId);
+        if(!already){
+            const chat = chatsList.find(c=>c.id===chatId);
+            watchChatForIncomingCall(chatId, chat?chat.name:'Собеседник');
+        }
+    }
+
     async function initWebRTC(chatId){
         try{localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});}
         catch(e){showToast('Нет доступа к микрофону!');endCall();return false;}
         peerConnection=new RTCPeerConnection(rtcConfig);
         localStream.getTracks().forEach(track=>peerConnection.addTrack(track,localStream));
         peerConnection.ontrack=event=>{if(event.streams&&event.streams[0])remoteAudio.srcObject=event.streams[0];};
-        peerConnection.onicecandidate=event=>{if(event.candidate&&activeChatId)database.ref('chats/'+activeChatId+'/call/candidates').push({senderId:myFrameId,candidate:event.candidate.toJSON()});};
+        peerConnection.onicecandidate=event=>{
+            if(event.candidate && chatId)
+                database.ref('chats/'+chatId+'/call/candidates').push({senderId:myFrameId,candidate:event.candidate.toJSON()});
+        };
         return true;
     }
+
     headerCallBtn.addEventListener('click',async()=>{
         if(!activeChatId) return;
-        const activeChat=chatsList.find(c=>c.id===activeChatId);
-        const chatName=activeChat?activeChat.name:'Собеседник';
-        showCallInterface(chatName,'Вызов...'); callAcceptBtn.style.display='none';
+        const chat=chatsList.find(c=>c.id===activeChatId);
+        const chatName=chat?chat.name:'Собеседник';
+        showCallInterface(chatName,'Вызов...',false);
         const ok=await initWebRTC(activeChatId); if(!ok) return;
         const offer=await peerConnection.createOffer(); await peerConnection.setLocalDescription(offer);
-        database.ref('chats/'+activeChatId+'/call').set({status:'dialing',callerId:myFrameId,offerSDP:offer.toJSON()});
+        database.ref('chats/'+activeChatId+'/call').set({
+            status:'dialing', callerId:myFrameId,
+            callerName:myCurrentNickname||'User',
+            offerSDP:offer.toJSON()
+        });
         notifyPeer();
     });
-    callAcceptBtn.addEventListener('click',async()=>{
-        if(!activeChatId) return;
-        callStatusEl.textContent='Соединение...'; callAcceptBtn.style.display='none';
-        const ok=await initWebRTC(activeChatId); if(!ok) return;
-        database.ref('chats/'+activeChatId+'/call').on('value',async snap=>{
+
+    document.getElementById('call-accept-btn').addEventListener('click',async()=>{
+        const chatId = incomingCallChatId || activeChatId;
+        if(!chatId) return;
+        callStatusEl.textContent='Соединение...';
+        document.getElementById('call-accept-col').style.display='none';
+        const ok=await initWebRTC(chatId); if(!ok) return;
+        // Читаем offer и отвечаем
+        database.ref('chats/'+chatId+'/call').on('value',async snap=>{
             const call=snap.val();
-            if(call&&call.status==='dialing'&&call.offerSDP&&!peerConnection.currentRemoteDescription){
+            if(call&&call.status==='dialing'&&call.offerSDP&&peerConnection&&!peerConnection.currentRemoteDescription){
                 await peerConnection.setRemoteDescription(new RTCSessionDescription(call.offerSDP));
                 const answer=await peerConnection.createAnswer(); await peerConnection.setLocalDescription(answer);
-                database.ref('chats/'+activeChatId+'/call').update({status:'answered',answerSDP:answer.toJSON()});
+                database.ref('chats/'+chatId+'/call').update({status:'answered',answerSDP:answer.toJSON()});
                 callStatusEl.textContent='Разговор...';
             }
         });
     });
-    callDeclineBtn.addEventListener('click',()=>endCall());
-    function endCall(){ if(activeChatId) database.ref('chats/'+activeChatId+'/call').remove(); closeCallInterface(); }
-    callMuteBtn.addEventListener('click',()=>{
-        if(localStream){const t=localStream.getAudioTracks()[0];if(t){t.enabled=!t.enabled;callMuteBtn.classList.toggle('active',!t.enabled);showToast(t.enabled?'Микрофон включен':'Микрофон выключен');}}
-    });
-    function showCallInterface(name,status){
-        callNameEl.textContent=name; callAvatarEl.textContent=getInitial(name);
-        callAvatarEl.style.background='hsl('+strToHue(name)+',30%,60%)';
-        callStatusEl.textContent=status; callMuteBtn.classList.remove('active'); callOverlay.style.display='flex';
+
+    document.getElementById('call-decline-btn').addEventListener('click',()=>endCall());
+
+    function endCall(){
+        const chatId = incomingCallChatId || activeChatId;
+        if(chatId) database.ref('chats/'+chatId+'/call').remove();
+        incomingCallChatId=null;
+        closeCallInterface();
     }
+
+    document.getElementById('call-mute-btn').addEventListener('click',()=>{
+        if(localStream){
+            const t=localStream.getAudioTracks()[0];
+            if(t){
+                t.enabled=!t.enabled;
+                const btn=document.getElementById('call-mute-btn');
+                btn.classList.toggle('muted',!t.enabled);
+                showToast(t.enabled?'Микрофон включён':'Микрофон выключен');
+            }
+        }
+    });
+
+    function showCallInterface(name,status,isIncoming){
+        callNameEl.textContent=name;
+        callAvatarEl.textContent=getInitial(name);
+        callAvatarEl.style.background='hsl('+strToHue(name)+',35%,55%)';
+        callAvatarEl.style.boxShadow='0 4px 24px hsl('+strToHue(name)+',35%,55%,0.35), 0 0 0 12px hsl('+strToHue(name)+',35%,55%,0.12)';
+        callStatusEl.textContent=status;
+        const acceptCol=document.getElementById('call-accept-col');
+        acceptCol.style.display=isIncoming?'flex':'none';
+        document.getElementById('call-mute-btn').classList.remove('muted');
+        callOverlay.style.display='flex';
+    }
+
     function closeCallInterface(){
         callOverlay.style.display='none';
         if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null;}
@@ -1381,6 +1476,8 @@
     renderChatsList();
     // Запускаем слежение за непрочитанными для всех чатов
     chatsList.forEach(c=>watchUnreadForChat(c.id));
+    // Запускаем глобальный слушатель входящих звонков
+    startGlobalCallListener();
     if(chatsList.length>0) openChat(chatsList[0].id);
 </script>
 </body>
