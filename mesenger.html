@@ -516,9 +516,14 @@
             <div class="photo-viewer-sender" id="photo-viewer-sender"></div>
             <div class="photo-viewer-time" id="photo-viewer-time"></div>
         </div>
-        <button class="photo-viewer-close" id="photo-viewer-close">
-            <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-        </button>
+        <div style="display:flex;gap:8px;align-items:center;">
+            <a id="photo-viewer-download" href="" download style="width:36px;height:36px;background:rgba(255,255,255,0.12);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#fff" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            </a>
+            <button class="photo-viewer-close" id="photo-viewer-close">
+                <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </button>
+        </div>
     </div>
     <div class="photo-viewer-body"><img id="photo-viewer-img" src="" alt=""></div>
 </div>
@@ -530,9 +535,14 @@
             <div class="video-player-sender" id="video-player-sender"></div>
             <div class="video-player-time-label" id="video-player-time"></div>
         </div>
-        <button class="video-player-close" id="video-player-close">
-            <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-        </button>
+        <div style="display:flex;gap:8px;align-items:center;">
+            <a id="video-player-download" href="" download style="width:36px;height:36px;background:rgba(255,255,255,0.12);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#fff" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            </a>
+            <button class="video-player-close" id="video-player-close">
+                <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </button>
+        </div>
     </div>
     <div class="video-player-body"><video id="video-player-el" controls playsinline></video></div>
 </div>
@@ -906,6 +916,7 @@
     /* ── PHOTO VIEWER ── */
     function openPhotoViewer(src,sender,time){
         photoViewerImg.src=src; photoViewerSender.textContent=sender; photoViewerTime.textContent=time;
+        const dl=document.getElementById('photo-viewer-download'); dl.href=src; dl.download='photo';
         photoViewer.classList.add('open');
     }
     photoViewerClose.addEventListener('click',()=>{ photoViewer.classList.remove('open'); photoViewerImg.src=''; });
@@ -913,6 +924,7 @@
     /* ── VIDEO PLAYER ── */
     function openVideoPlayer(src,sender,time){
         videoPlayerEl.src=src; videoPlayerSender.textContent=sender; videoPlayerTime.textContent=time;
+        const dl=document.getElementById('video-player-download'); dl.href=src; dl.download='video';
         videoPlayerOverlay.classList.add('open'); videoPlayerEl.play().catch(()=>{});
     }
     videoPlayerClose.addEventListener('click',()=>{ videoPlayerOverlay.classList.remove('open'); videoPlayerEl.pause(); videoPlayerEl.src=''; });
