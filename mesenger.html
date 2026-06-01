@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -423,13 +422,27 @@
             <textarea id="msg-field" class="main-input" placeholder="Сообщение..." rows="1"></textarea>
             <div class="rec-indicator" id="rec-indicator"><div class="rec-dot"></div><span id="rec-timer">0:00</span></div>
         </div>
-        <button class="send-btn" id="send-button" title="Голосовое / Отправить">
+        <button class="send-btn" id="send-button" title="Голосовое / Видео / Отправить">
             <!-- mic icon by default -->
             <svg id="btn-mic-icon" viewBox="0 0 24 24" fill="#fff"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1 9h2c0 .55-.45 1-1 1s-1-.45-1-1zm6-12c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+            <!-- camera icon, hidden by default -->
+            <svg id="btn-cam-icon" viewBox="0 0 24 24" fill="#fff" style="display:none"><path d="M17 10.5V7a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h12a1 1 0 001-1v-3.5l4 4v-11l-4 4z"/></svg>
             <!-- send plane icon, hidden by default -->
             <svg id="btn-send-icon" viewBox="0 0 24 24" fill="#fff" style="display:none"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
         </button>
     </div>
+</div>
+
+<!-- VIDEO CIRCLE PREVIEW -->
+<div id="video-circle-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:450;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+    <div style="position:relative;width:220px;height:220px;">
+        <video id="video-circle-preview" autoplay muted playsinline style="width:220px;height:220px;border-radius:50%;object-fit:cover;display:block;border:4px solid #e74c3c;box-shadow:0 0 0 4px rgba(231,76,60,0.3);"></video>
+        <div style="position:absolute;bottom:8px;right:8px;background:#e74c3c;color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:12px;display:flex;align-items:center;gap:5px;">
+            <div style="width:7px;height:7px;border-radius:50%;background:#fff;animation:recDot 1s infinite;"></div>
+            <span id="vcircle-timer">0:00</span>
+        </div>
+    </div>
+    <div style="color:#fff;font-size:13px;opacity:0.8;">Нажмите на кнопку чтобы остановить и отправить</div>
 </div>
  
 <!-- CALL SCREEN (full-screen light theme) -->
@@ -1266,7 +1279,7 @@
     /* ── REPLY/EDIT ── */
     function triggerReplyMode(id,author,text){ cancelActions(); replyMessageId=id; actionTitle.textContent='Ответ: '+author; actionDesc.textContent=text; actionPanel.style.display='flex'; msgField.focus(); }
     function triggerEditMode(id,text){ cancelActions(); editMessageId=id; actionTitle.textContent='Редактирование'; actionDesc.textContent=text; actionPanel.style.display='flex'; msgField.value=text; msgField.style.height='auto'; msgField.style.height=Math.min(msgField.scrollHeight,120)+'px'; msgField.focus(); }
-    function cancelActions(){ replyMessageId=null; editMessageId=null; actionPanel.style.display='none'; msgField.value=''; msgField.style.height='auto'; }
+    function cancelActions(){ replyMessageId=null; editMessageId=null; actionPanel.style.display='none'; msgField.value=''; msgField.style.height='auto'; updateSendBtnIcon(); }
     actionCancel.addEventListener('click',cancelActions);
  
     /* ── CONTEXT MENU ── */
