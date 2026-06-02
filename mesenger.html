@@ -1273,6 +1273,8 @@
             document.getElementById('menu-edit').style.display=isMe&&!data.mediaType?'block':'none';
             document.getElementById('menu-delete').style.display=isMe?'block':'none';
             document.getElementById('menu-react').style.display=isMe?'none':'block';
+            // Запретить ответ на кружки
+            document.getElementById('menu-reply').style.display=data.mediaType==='videoCircle'?'none':'block';
         }
         function handleDoubleTap(e){ e.preventDefault(); addReaction(row.dataset.id,'❤'); showHeartAnim(bubble); }
         function showHeartAnim(b){
@@ -1285,7 +1287,7 @@
         bubble.addEventListener('dblclick',e=>handleDoubleTap(e));
         bubble.addEventListener('mousedown',e=>{ if(e.button!==0) return; if(e.target.closest('.msg-photo,.msg-video-wrap,.msg-gif')) return; isLongPress=false; startX=e.clientX; isSwiping=true; pressTimer=setTimeout(()=>{handleLongPress(e);isSwiping=false;},600); });
         window.addEventListener('mousemove',e=>{ if(!isSwiping) return; currentX=e.clientX; const d=startX-currentX; if(Math.abs(d)>10) clearTimeout(pressTimer); if(d>0&&d<80){bubble.style.transform='translateX(-'+d+'px)';indicator.style.opacity=d/60;} });
-        window.addEventListener('mouseup',()=>{ clearTimeout(pressTimer); if(!isSwiping) return; if(startX-currentX>=50&&!isLongPress) triggerReplyMode(row.dataset.id,data.author,data.text||'[медиа]'); bubble.style.transform='translateX(0)';indicator.style.opacity=0;isSwiping=false; });
+        window.addEventListener('mouseup',()=>{ clearTimeout(pressTimer); if(!isSwiping) return; if(startX-currentX>=50&&!isLongPress&&data.mediaType!=='videoCircle') triggerReplyMode(row.dataset.id,data.author,data.text||'[медиа]'); bubble.style.transform='translateX(0)';indicator.style.opacity=0;isSwiping=false; });
         bubble.addEventListener('touchstart',e=>{
             if(e.target.closest('.msg-photo,.msg-video-wrap,.msg-gif')) return;
             isLongPress=false; startX=e.touches[0].clientX; isSwiping=true;
@@ -1293,7 +1295,7 @@
             const now=Date.now(); if(now-lastTap<350){handleDoubleTap(e);clearTimeout(pressTimer);} lastTap=now;
         },{passive:false});
         bubble.addEventListener('touchmove',e=>{ if(!isSwiping) return; currentX=e.touches[0].clientX; const d=startX-currentX; if(Math.abs(d)>10) clearTimeout(pressTimer); if(d>0&&d<80){bubble.style.transform='translateX(-'+d+'px)';indicator.style.opacity=d/60;} },{passive:true});
-        bubble.addEventListener('touchend',()=>{ clearTimeout(pressTimer); if(!isSwiping) return; if(startX-currentX>=50&&!isLongPress) triggerReplyMode(row.dataset.id,data.author,data.text||'[медиа]'); bubble.style.transform='translateX(0)';indicator.style.opacity=0;isSwiping=false; });
+        bubble.addEventListener('touchend',()=>{ clearTimeout(pressTimer); if(!isSwiping) return; if(startX-currentX>=50&&!isLongPress&&data.mediaType!=='videoCircle') triggerReplyMode(row.dataset.id,data.author,data.text||'[медиа]'); bubble.style.transform='translateX(0)';indicator.style.opacity=0;isSwiping=false; });
     }
  
     /* ── REPLY/EDIT ── */
@@ -1784,7 +1786,7 @@
     if(chatsList.length>0) openChat(chatsList[0].id);
 
 
-// ==== VIDEO CIRCLE PATCH ====
+// ==== VIDEO CIRCLE PATCH v2 (mobile-fixed) ====
 // recordMode: 'mic' = voice message, 'camera' = video circle
 let recordMode = 'mic';
 const camIcon  = document.getElementById('btn-cam-icon');
@@ -1805,7 +1807,6 @@ updateSendBtnIcon = function(){
         camIcon.style.display   = recordMode === 'camera' ? 'block' : 'none';
     }
 };
-// Rerun once to fix initial icon
 msgField.removeEventListener('input', _origUpdateSendBtn);
 msgField.addEventListener('input', updateSendBtnIcon);
 updateSendBtnIcon();
@@ -1831,7 +1832,8 @@ async function startVideoCircle(){
     vRecorder.start(100);
     vInterval = setInterval(()=>{
         vSec++;
-        vTimerEl.textContent = '0:' + String(vSec).padStart(2,'0');
+        const mins = Math.floor(vSec/60), secs = vSec%60;
+        vTimerEl.textContent = mins+':'+String(secs).padStart(2,'0');
         if(vSec >= 60) stopVideoCircle();
     }, 1000);
     sendButton.classList.add('recording');
@@ -1843,10 +1845,11 @@ function stopVideoCircle(){
     vOverlay.style.display = 'none';
     sendButton.classList.remove('recording');
     const rec = vRecorder; vRecorder = null;
+    const savedSec = vSec;
     rec.onstop = () => {
         const blob = new Blob(vChunks, {type: 'video/webm'});
         if(vStream) { vStream.getTracks().forEach(t => t.stop()); vStream = null; }
-        if(vSec < 1){ showToast('Запись отменена'); return; }
+        if(savedSec < 1){ showToast('Запись отменена'); return; }
         const reader = new FileReader();
         reader.onload = ev => {
             const timeStr = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
@@ -1865,11 +1868,13 @@ function stopVideoCircle(){
 /* ── Unified hold-to-record logic ── */
 let _holdTimer = null;
 let _holdFired = false;
-let _holdActive = false;   // true while button is physically held
-let _isRecording = false;  // true once recording started
+let _holdActive = false;
+let _isRecording = false;
+// Флаг: сработал ли touchstart (чтобы подавить дублирующийся mousedown на мобиле)
+let _touchHandled = false;
 
 function _onHoldStart(e){
-    if(msgField.value.trim()) return;   // has text — will send on click
+    if(msgField.value.trim()) return;  // есть текст — отправим по клику
     _holdActive = true;
     _holdFired = false;
     clearTimeout(_holdTimer);
@@ -1885,9 +1890,24 @@ function _onHoldEnd(e){
     clearTimeout(_holdTimer);
     if(_holdFired && _isRecording){
         _isRecording = false;
+        _holdFired = false;
         if(recordMode === 'mic') stopVoiceRecord(false);
         else stopVideoCircle();
+        return;
     }
+    // Короткое нажатие — не было записи
+    if(!_holdFired){
+        const hasText = msgField.value.trim().length > 0;
+        if(hasText){
+            sendOrUpdateMessage();
+        } else {
+            // Переключаем режим
+            recordMode = recordMode === 'mic' ? 'camera' : 'mic';
+            updateSendBtnIcon();
+            showToast(recordMode === 'mic' ? '🎤 Режим: голосовые' : '🎥 Режим: видео-кружки');
+        }
+    }
+    _holdFired = false;
     _holdActive = false;
 }
 
@@ -1895,35 +1915,62 @@ function _onHoldLeave(e){
     clearTimeout(_holdTimer);
     if(_holdFired && _isRecording){
         _isRecording = false;
-        if(recordMode === 'mic') stopVoiceRecord(true);   // cancel on leave
+        _holdFired = false;
+        if(recordMode === 'mic') stopVoiceRecord(true);
         else stopVideoCircle();
     }
     _holdFired = false;
     _holdActive = false;
 }
 
-sendButton.addEventListener('mousedown',  _onHoldStart, {capture:true});
-sendButton.addEventListener('mouseup',    _onHoldEnd,   {capture:true});
-sendButton.addEventListener('mouseleave', _onHoldLeave, {capture:true});
-sendButton.addEventListener('touchstart', e=>{ e.preventDefault(); _onHoldStart(e); }, {capture:true, passive:false});
-sendButton.addEventListener('touchend',   e=>{ _onHoldEnd(e); },   {capture:true});
+// Touch events — основные для мобильного
+sendButton.addEventListener('touchstart', e=>{
+    e.preventDefault();  // блокирует синтетический click/mousedown
+    _touchHandled = true;
+    _onHoldStart(e);
+}, {capture:true, passive:false});
 
-/* ── Click: send text OR toggle mic/camera mode ── */
-sendButton.addEventListener('click', e=>{
-    // If recording was triggered, block everything
-    if(_holdFired){ _holdFired=false; return; }
-    const hasText = msgField.value.trim().length > 0;
-    if(hasText){
-        sendOrUpdateMessage();
-        return;
+sendButton.addEventListener('touchend', e=>{
+    e.preventDefault();
+    _onHoldEnd(e);
+    // Сбрасываем флаг через небольшую задержку
+    setTimeout(()=>{ _touchHandled = false; }, 500);
+}, {capture:true, passive:false});
+
+sendButton.addEventListener('touchcancel', e=>{
+    clearTimeout(_holdTimer);
+    if(_holdFired && _isRecording){
+        _isRecording = false;
+        if(recordMode === 'mic') stopVoiceRecord(true);
+        else stopVideoCircle();
     }
-    // No text → toggle mic/camera mode
-    recordMode = recordMode === 'mic' ? 'camera' : 'mic';
-    updateSendBtnIcon();
-    showToast(recordMode === 'mic' ? 'Голосовые сообщения' : 'Видео-кружок');
-}, {capture:false});
+    _holdFired = false; _holdActive = false; _isRecording = false;
+    setTimeout(()=>{ _touchHandled = false; }, 500);
+}, {capture:true});
 
-// ==== END VIDEO CIRCLE PATCH ====
+// Mouse events — только для десктопа (пропускаем если был touch)
+sendButton.addEventListener('mousedown', e=>{
+    if(_touchHandled) return;
+    _onHoldStart(e);
+}, {capture:true});
+
+sendButton.addEventListener('mouseup', e=>{
+    if(_touchHandled) return;
+    _onHoldEnd(e);
+}, {capture:true});
+
+sendButton.addEventListener('mouseleave', e=>{
+    if(_touchHandled) return;
+    _onHoldLeave(e);
+}, {capture:true});
+
+// Блокируем синтетический click — логика уже в touchend/mouseup
+sendButton.addEventListener('click', e=>{
+    e.stopPropagation();
+    // Всё обработано в _onHoldEnd — ничего не делаем здесь
+}, {capture:true});
+
+// ==== END VIDEO CIRCLE PATCH v2 ====
 
 
 </script>
