@@ -1747,12 +1747,7 @@
             // Новое сообщение
             const data=snap.val(); if(!data) return;
             if(data.frameId===myFrameId) return; // наше — не считаем
-            
-            // ── НАШ СИГНАЛ В CONSTRUCT 3 ──
-            // Отправляем уведомление наружу, так как сообщение от чужого пользователя
-            window.parent.postMessage({ type: 'new_chat_message' }, '*');
-            
-            if(activeChatId===chatId) return; // открытый чат — не считаем в интерфейсе самого чата
+            if(activeChatId===chatId) return; // открытый чат — не считаем
             incrementUnread(chatId);
         });
     }
@@ -1767,6 +1762,108 @@
     // Запускаем глобальный слушатель входящих звонков
     startGlobalCallListener();
     if(chatsList.length>0) openChat(chatsList[0].id);
+
+
+// ==== VIDEO CIRCLE PATCH ====
+let recordMode='mic';
+const camIcon=document.getElementById('btn-cam-icon');
+const micIcon=document.getElementById('btn-mic-icon');
+const sendIcon=document.getElementById('btn-send-icon');
+const vOverlay=document.getElementById('video-circle-overlay');
+const vPreview=document.getElementById('video-circle-preview');
+const vTimer=document.getElementById('vcircle-timer');
+let pressStarted=false,longPressFired=false;
+let vStream=null,vRecorder=null,vChunks=[],vInterval=null,vSec=0;
+
+const originalUpdateSendBtnIcon=updateSendBtnIcon;
+updateSendBtnIcon=function(){
+  const hasText=msgField.value.trim().length>0;
+  if(hasText){
+    micIcon.style.display='none';camIcon.style.display='none';sendIcon.style.display='block';
+  }else{
+    sendIcon.style.display='none';
+    micIcon.style.display=recordMode==='mic'?'block':'none';
+    camIcon.style.display=recordMode==='camera'?'block':'none';
+  }
+}
+msgField.addEventListener('input',updateSendBtnIcon);
+updateSendBtnIcon();
+
+sendButton.addEventListener('click',function(e){
+ if(msgField.value.trim()) return;
+ if(longPressFired){ longPressFired=false; return; }
+ recordMode=recordMode==='mic'?'camera':'mic';
+ updateSendBtnIcon();
+ e.stopImmediatePropagation();
+},true);
+
+async function startVideoCircle(){
+ if(!activeChatId) return;
+ vStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:true});
+ vPreview.srcObject=vStream;
+ vOverlay.style.display='flex';
+ vChunks=[]; vSec=0; vTimer.textContent='0:00';
+ vRecorder=new MediaRecorder(vStream);
+ vRecorder.ondataavailable=e=>vChunks.push(e.data);
+ vRecorder.start();
+ vInterval=setInterval(()=>{
+   vSec++;
+   vTimer.textContent='0:'+String(vSec).padStart(2,'0');
+   if(vSec>=35) stopVideoCircle();
+ },1000);
+}
+function stopVideoCircle(){
+ if(!vRecorder) return;
+ clearInterval(vInterval);
+ vOverlay.style.display='none';
+ const rec=vRecorder; vRecorder=null;
+ rec.onstop=()=>{
+   const blob=new Blob(vChunks,{type:'video/webm'});
+   const r=new FileReader();
+   r.onload=e=>{
+      const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+      database.ref('chats/'+activeChatId+'/messages').push({
+       frameId:myFrameId,author:myCurrentNickname||'User',text:'[Видео-кружок]',time:timeStr,
+       mediaType:'videoCircle',mediaData:e.target.result
+      });
+   };
+   r.readAsDataURL(blob);
+   if(vStream) vStream.getTracks().forEach(t=>t.stop());
+ };
+ rec.stop();
+}
+function startHoldAction(){
+ longPressFired=true;
+ if(recordMode==='mic') startVoiceRecord();
+ else startVideoCircle();
+}
+['mousedown','touchstart'].forEach(ev=>{
+ sendButton.addEventListener(ev,()=>{
+  if(msgField.value.trim()) return;
+  pressStarted=true; longPressFired=false;
+  clearTimeout(window.__holdPatch);
+  window.__holdPatch=setTimeout(startHoldAction,350);
+ },true);
+});
+['mouseup','mouseleave','touchend'].forEach(ev=>{
+ sendButton.addEventListener(ev,()=>{
+  clearTimeout(window.__holdPatch);
+  if(!longPressFired) return;
+  if(recordMode==='mic') stopVoiceRecord(false);
+  else stopVideoCircle();
+ },true);
+});
+// render video circle
+const oldRender=window.renderMessage;
+if(oldRender){
+ window.renderMessage=function(m,...a){
+   const el=oldRender.call(this,m,...a);
+   return el;
+ }
+}
+// ==== END PATCH ====
+
 </script>
 </body>
 </html>
+
