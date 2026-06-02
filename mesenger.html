@@ -305,6 +305,27 @@
         .reaction-btn:hover { transform: scale(1.25); background: rgba(0,0,0,0.05); }
  
         @keyframes heartPop { 0%{transform:scale(0);opacity:1} 50%{transform:scale(1.4);opacity:1} 100%{transform:scale(1) translateY(-30px);opacity:0} }
+
+        /* VIDEO CIRCLE IN CHAT */
+        .msg-vcircle-wrap {
+            width: 180px; height: 180px; border-radius: 50%; overflow: hidden;
+            position: relative; cursor: pointer; flex-shrink: 0; margin-bottom: 2px;
+            transition: width 0.3s cubic-bezier(0.4,0,0.2,1), height 0.3s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.22);
+        }
+        .msg-vcircle-wrap.playing {
+            width: 260px; height: 260px;
+        }
+        .msg-vcircle-wrap video {
+            width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%;
+        }
+        .msg-vcircle-play {
+            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.22); border-radius: 50%; pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        .msg-vcircle-wrap.playing .msg-vcircle-play { opacity: 0; }
+        .msg-vcircle-play svg { fill: #fff; width: 44px; height: 44px; filter: drop-shadow(0 1px 4px rgba(0,0,0,0.4)); }
     </style>
 </head>
 <body>
@@ -840,31 +861,8 @@
         mr.stop();
     }
  
-    // Long press on send button = voice record
-    let voicePressTimer = null, voiceRecording = false;
-    sendButton.addEventListener('mousedown', e=>{
-        if(msgField.value.trim()) return; // has text — normal send on mouseup handled by click
-        voiceRecording = false;
-        voicePressTimer = setTimeout(()=>{ voiceRecording=true; startVoiceRecord(); }, 350);
-    });
-    sendButton.addEventListener('mouseup', e=>{
-        clearTimeout(voicePressTimer);
-        if(voiceRecording){ voiceRecording=false; stopVoiceRecord(false); }
-    });
-    sendButton.addEventListener('mouseleave', e=>{
-        clearTimeout(voicePressTimer);
-        if(voiceRecording){ voiceRecording=false; stopVoiceRecord(true); }
-    });
-    sendButton.addEventListener('touchstart', e=>{
-        if(msgField.value.trim()) return;
-        e.preventDefault();
-        voiceRecording = false;
-        voicePressTimer = setTimeout(()=>{ voiceRecording=true; startVoiceRecord(); }, 350);
-    }, {passive:false});
-    sendButton.addEventListener('touchend', e=>{
-        clearTimeout(voicePressTimer);
-        if(voiceRecording){ voiceRecording=false; stopVoiceRecord(false); e.preventDefault(); }
-    });
+    // Long press on send button — handled by VIDEO CIRCLE PATCH below
+    // (voice / video-circle recording is unified there)
  
     /* ── AVATAR CHANGE ── */
     // Store avatars per chat: { chatId: dataURL }
@@ -1219,13 +1217,18 @@
             mediaHTML='<div class="message-media"><audio controls src="'+data.mediaData+'"></audio></div>';
         } else if(data.mediaType==='video'&&data.mediaData){
             mediaHTML='<div class="message-media"><div class="msg-video-wrap" data-src="'+data.mediaData+'" data-author="'+escapeHtml(data.author+(isMe?' (Вы)':''))+'" data-time="'+escapeHtml(data.time)+'"><video src="'+data.mediaData+'" preload="metadata" style="max-width:100%;max-height:200px;border-radius:10px;display:block;pointer-events:none"></video><div class="msg-video-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div></div>';
+        } else if(data.mediaType==='videoCircle'&&data.mediaData){
+            mediaHTML='<div class="message-media"><div class="msg-vcircle-wrap" data-src="'+data.mediaData+'"><video src="'+data.mediaData+'" preload="metadata" playsinline></video><div class="msg-vcircle-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div></div>';
         } else if(data.mediaType==='document'&&data.mediaData){
             mediaHTML='<div class="message-media"><a class="doc-bubble" href="'+data.mediaData+'" download="'+escapeHtml(data.mediaName||'file')+'" target="_blank"><div class="doc-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></div><div class="doc-info"><div class="doc-name">'+escapeHtml(data.mediaName||'Файл')+'</div><div class="doc-size">'+escapeHtml(data.fileSize||'')+'</div></div></a></div>';
         }
         const textPart=data.mediaType?'':(data.text?'<div class="message-text">'+escapeHtml(data.text)+'</div>':'');
+        // For videoCircle, special minimal bubble
+        const isVideoCircle = data.mediaType === 'videoCircle';
         // галочка прочитано/отправлено — только для своих
         const tickHTML='';
-        row.innerHTML='<div class="message-bubble">'+replyHTML+'<div class="author-name">'+escapeHtml(data.author)+'</div>'+mediaHTML+textPart+'<div class="message-meta-info"><span>'+data.time+editedLabel+'</span></div></div><div class="swipe-indicator"><svg viewBox="0 0 24 24"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg></div>';
+        const bubbleStyle = isVideoCircle ? ' style="background:transparent;box-shadow:none;padding:0 0 0 0;"' : '';
+        row.innerHTML='<div class="message-bubble"'+bubbleStyle+'>'+replyHTML+(isVideoCircle?'':('<div class="author-name">'+escapeHtml(data.author)+'</div>'))+mediaHTML+textPart+(isVideoCircle?'':'<div class="message-meta-info"><span>'+data.time+editedLabel+'</span></div>')+'</div><div class="swipe-indicator"><svg viewBox="0 0 24 24"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg></div>';
         // reaction badge
         if(data.reaction){
             const badge=document.createElement('div'); badge.className='msg-reaction'; badge.textContent=data.reaction;
@@ -1238,6 +1241,23 @@
         // video click
         const vidWrap=row.querySelector('.msg-video-wrap');
         if(vidWrap) vidWrap.addEventListener('click',e=>{ e.stopPropagation(); openVideoPlayer(vidWrap.dataset.src,vidWrap.dataset.author,vidWrap.dataset.time); });
+        // video circle click — play inline, expand then shrink
+        const vcWrap=row.querySelector('.msg-vcircle-wrap');
+        if(vcWrap){
+            const vcVideo=vcWrap.querySelector('video');
+            vcWrap.addEventListener('click',e=>{
+                e.stopPropagation();
+                if(vcVideo.paused){
+                    vcWrap.classList.add('playing');
+                    vcVideo.play();
+                    vcVideo.onended=()=>{ vcWrap.classList.remove('playing'); vcVideo.currentTime=0; };
+                } else {
+                    vcVideo.pause();
+                    vcWrap.classList.remove('playing');
+                    vcVideo.currentTime=0;
+                }
+            });
+        }
  
         setupInteraction(row,isMe,data);
         return row;
@@ -1379,7 +1399,7 @@
         database.ref('chats/'+activeChatId+'/messages').push(payload);
         notifyPeer(); setMyTyping(false); clearTimeout(myTypingTimer); cancelActions();
     }
-    sendButton.addEventListener('click',sendOrUpdateMessage);
+    // sendButton click — handled in VIDEO CIRCLE PATCH
     msgField.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendOrUpdateMessage();} });
  
     /* ── МЕДИА (фото) ── */
@@ -1765,105 +1785,147 @@
 
 
 // ==== VIDEO CIRCLE PATCH ====
-let recordMode='mic';
-const camIcon=document.getElementById('btn-cam-icon');
-const micIcon=document.getElementById('btn-mic-icon');
-const sendIcon=document.getElementById('btn-send-icon');
-const vOverlay=document.getElementById('video-circle-overlay');
-const vPreview=document.getElementById('video-circle-preview');
-const vTimer=document.getElementById('vcircle-timer');
-let pressStarted=false,longPressFired=false;
-let vStream=null,vRecorder=null,vChunks=[],vInterval=null,vSec=0;
+// recordMode: 'mic' = voice message, 'camera' = video circle
+let recordMode = 'mic';
+const camIcon  = document.getElementById('btn-cam-icon');
+const micIcon2 = document.getElementById('btn-mic-icon');
+const sendIcon2= document.getElementById('btn-send-icon');
 
-const originalUpdateSendBtnIcon=updateSendBtnIcon;
-updateSendBtnIcon=function(){
-  const hasText=msgField.value.trim().length>0;
-  if(hasText){
-    micIcon.style.display='none';camIcon.style.display='none';sendIcon.style.display='block';
-  }else{
-    sendIcon.style.display='none';
-    micIcon.style.display=recordMode==='mic'?'block':'none';
-    camIcon.style.display=recordMode==='camera'?'block':'none';
-  }
-}
-msgField.addEventListener('input',updateSendBtnIcon);
+// Override updateSendBtnIcon to also show camera icon
+const _origUpdateSendBtn = updateSendBtnIcon;
+updateSendBtnIcon = function(){
+    const hasText = msgField.value.trim().length > 0;
+    if(hasText){
+        micIcon2.style.display  = 'none';
+        camIcon.style.display   = 'none';
+        sendIcon2.style.display = 'block';
+    } else {
+        sendIcon2.style.display = 'none';
+        micIcon2.style.display  = recordMode === 'mic'    ? 'block' : 'none';
+        camIcon.style.display   = recordMode === 'camera' ? 'block' : 'none';
+    }
+};
+// Rerun once to fix initial icon
+msgField.removeEventListener('input', _origUpdateSendBtn);
+msgField.addEventListener('input', updateSendBtnIcon);
 updateSendBtnIcon();
 
-sendButton.addEventListener('click',function(e){
- if(msgField.value.trim()) return;
- if(longPressFired){ longPressFired=false; return; }
- recordMode=recordMode==='mic'?'camera':'mic';
- updateSendBtnIcon();
- e.stopImmediatePropagation();
-},true);
+/* ── Video circle state ── */
+const vOverlay  = document.getElementById('video-circle-overlay');
+const vPreview  = document.getElementById('video-circle-preview');
+const vTimerEl  = document.getElementById('vcircle-timer');
+let vStream = null, vRecorder = null, vChunks = [], vInterval = null, vSec = 0;
 
 async function startVideoCircle(){
- if(!activeChatId) return;
- vStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:true});
- vPreview.srcObject=vStream;
- vOverlay.style.display='flex';
- vChunks=[]; vSec=0; vTimer.textContent='0:00';
- vRecorder=new MediaRecorder(vStream);
- vRecorder.ondataavailable=e=>vChunks.push(e.data);
- vRecorder.start();
- vInterval=setInterval(()=>{
-   vSec++;
-   vTimer.textContent='0:'+String(vSec).padStart(2,'0');
-   if(vSec>=35) stopVideoCircle();
- },1000);
+    if(!activeChatId){ showToast('Выберите переписку'); return; }
+    try {
+        vStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}, audio:true});
+    } catch(e){
+        showToast('Нет доступа к камере'); return;
+    }
+    vPreview.srcObject = vStream;
+    vOverlay.style.display = 'flex';
+    vChunks = []; vSec = 0; vTimerEl.textContent = '0:00';
+    vRecorder = new MediaRecorder(vStream, {mimeType: MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus') ? 'video/webm;codecs=vp9,opus' : 'video/webm'});
+    vRecorder.ondataavailable = e => { if(e.data.size > 0) vChunks.push(e.data); };
+    vRecorder.start(100);
+    vInterval = setInterval(()=>{
+        vSec++;
+        vTimerEl.textContent = '0:' + String(vSec).padStart(2,'0');
+        if(vSec >= 60) stopVideoCircle();
+    }, 1000);
+    sendButton.classList.add('recording');
 }
+
 function stopVideoCircle(){
- if(!vRecorder) return;
- clearInterval(vInterval);
- vOverlay.style.display='none';
- const rec=vRecorder; vRecorder=null;
- rec.onstop=()=>{
-   const blob=new Blob(vChunks,{type:'video/webm'});
-   const r=new FileReader();
-   r.onload=e=>{
-      const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-      database.ref('chats/'+activeChatId+'/messages').push({
-       frameId:myFrameId,author:myCurrentNickname||'User',text:'[Видео-кружок]',time:timeStr,
-       mediaType:'videoCircle',mediaData:e.target.result
-      });
-   };
-   r.readAsDataURL(blob);
-   if(vStream) vStream.getTracks().forEach(t=>t.stop());
- };
- rec.stop();
+    if(!vRecorder) return;
+    clearInterval(vInterval);
+    vOverlay.style.display = 'none';
+    sendButton.classList.remove('recording');
+    const rec = vRecorder; vRecorder = null;
+    rec.onstop = () => {
+        const blob = new Blob(vChunks, {type: 'video/webm'});
+        if(vStream) { vStream.getTracks().forEach(t => t.stop()); vStream = null; }
+        if(vSec < 1){ showToast('Запись отменена'); return; }
+        const reader = new FileReader();
+        reader.onload = ev => {
+            const timeStr = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+            database.ref('chats/'+activeChatId+'/messages').push({
+                frameId: myFrameId, author: myCurrentNickname||'User',
+                text: '[Видео-кружок]', time: timeStr, edited: false,
+                mediaType: 'videoCircle', mediaData: ev.target.result
+            });
+            notifyPeer(); playSendSound(); showToast('🎥 Видео-кружок отправлен!');
+        };
+        reader.readAsDataURL(blob);
+    };
+    rec.stop();
 }
-function startHoldAction(){
- longPressFired=true;
- if(recordMode==='mic') startVoiceRecord();
- else startVideoCircle();
+
+/* ── Unified hold-to-record logic ── */
+let _holdTimer = null;
+let _holdFired = false;
+let _holdActive = false;   // true while button is physically held
+let _isRecording = false;  // true once recording started
+
+function _onHoldStart(e){
+    if(msgField.value.trim()) return;   // has text — will send on click
+    _holdActive = true;
+    _holdFired = false;
+    clearTimeout(_holdTimer);
+    _holdTimer = setTimeout(()=>{
+        _holdFired = true;
+        _isRecording = true;
+        if(recordMode === 'mic') startVoiceRecord();
+        else startVideoCircle();
+    }, 350);
 }
-['mousedown','touchstart'].forEach(ev=>{
- sendButton.addEventListener(ev,()=>{
-  if(msgField.value.trim()) return;
-  pressStarted=true; longPressFired=false;
-  clearTimeout(window.__holdPatch);
-  window.__holdPatch=setTimeout(startHoldAction,350);
- },true);
-});
-['mouseup','mouseleave','touchend'].forEach(ev=>{
- sendButton.addEventListener(ev,()=>{
-  clearTimeout(window.__holdPatch);
-  if(!longPressFired) return;
-  if(recordMode==='mic') stopVoiceRecord(false);
-  else stopVideoCircle();
- },true);
-});
-// render video circle
-const oldRender=window.renderMessage;
-if(oldRender){
- window.renderMessage=function(m,...a){
-   const el=oldRender.call(this,m,...a);
-   return el;
- }
+
+function _onHoldEnd(e){
+    clearTimeout(_holdTimer);
+    if(_holdFired && _isRecording){
+        _isRecording = false;
+        if(recordMode === 'mic') stopVoiceRecord(false);
+        else stopVideoCircle();
+    }
+    _holdActive = false;
 }
-// ==== END PATCH ====
+
+function _onHoldLeave(e){
+    clearTimeout(_holdTimer);
+    if(_holdFired && _isRecording){
+        _isRecording = false;
+        if(recordMode === 'mic') stopVoiceRecord(true);   // cancel on leave
+        else stopVideoCircle();
+    }
+    _holdFired = false;
+    _holdActive = false;
+}
+
+sendButton.addEventListener('mousedown',  _onHoldStart, {capture:true});
+sendButton.addEventListener('mouseup',    _onHoldEnd,   {capture:true});
+sendButton.addEventListener('mouseleave', _onHoldLeave, {capture:true});
+sendButton.addEventListener('touchstart', e=>{ e.preventDefault(); _onHoldStart(e); }, {capture:true, passive:false});
+sendButton.addEventListener('touchend',   e=>{ _onHoldEnd(e); },   {capture:true});
+
+/* ── Click: send text OR toggle mic/camera mode ── */
+sendButton.addEventListener('click', e=>{
+    // If recording was triggered, block everything
+    if(_holdFired){ _holdFired=false; return; }
+    const hasText = msgField.value.trim().length > 0;
+    if(hasText){
+        sendOrUpdateMessage();
+        return;
+    }
+    // No text → toggle mic/camera mode
+    recordMode = recordMode === 'mic' ? 'camera' : 'mic';
+    updateSendBtnIcon();
+    showToast(recordMode === 'mic' ? 'Голосовые сообщения' : 'Видео-кружок');
+}, {capture:false});
+
+// ==== END VIDEO CIRCLE PATCH ====
+
 
 </script>
 </body>
 </html>
-
