@@ -1747,7 +1747,12 @@
             // Новое сообщение
             const data=snap.val(); if(!data) return;
             if(data.frameId===myFrameId) return; // наше — не считаем
-            if(activeChatId===chatId) return; // открытый чат — не считаем
+            
+            // ── НАШ СИГНАЛ В CONSTRUCT 3 ──
+            // Отправляем уведомление наружу, так как сообщение от чужого пользователя
+            window.parent.postMessage({ type: 'new_chat_message' }, '*');
+            
+            if(activeChatId===chatId) return; // открытый чат — не считаем в интерфейсе самого чата
             incrementUnread(chatId);
         });
     }
