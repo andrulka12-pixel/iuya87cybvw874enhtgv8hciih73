@@ -23,7 +23,7 @@
         .chats-panel-title { font-size: 18px; font-weight: 700; color: #1a1a1a; }
         .chats-add-btn { width: 32px; height: 32px; background: var(--blue); border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .chats-add-btn svg { fill: #fff; width: 18px; height: 18px; }
-        .chats-list { flex: 1; overflow-y: auto; }
+        .chats-list { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
         .chat-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; cursor: pointer; transition: background 0.12s; position: relative; border-bottom: 1px solid #e8e8e8; }
         .chat-item:hover, .chat-item.active { background: #d0e6ff; }
         .chat-item-avatar { width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: #fff; position: relative; }
@@ -81,7 +81,7 @@
         @keyframes tb { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-4px)} }
  
         /* CHAT BOX */
-        .chat-container { flex: 1; overflow-y: auto; padding: 12px 12px 8px; display: flex; flex-direction: column; gap: 2px; background: #dcf8c6; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cg fill='none' stroke='%23b8d8a0' stroke-width='1.2' opacity='0.45'%3E%3Ccircle cx='20' cy='20' r='7'/%3E%3Ccircle cx='60' cy='60' r='7'/%3E%3Cpath d='M10 40 Q20 30 30 40 Q40 50 50 40 Q60 30 70 40'/%3E%3Cpath d='M10 55 Q20 45 30 55 Q40 65 50 55 Q60 45 70 55'/%3E%3Crect x='54' y='10' width='12' height='16' rx='3'/%3E%3Crect x='14' y='50' width='12' height='16' rx='3'/%3E%3C/g%3E%3C/svg%3E"); overscroll-behavior: contain; }
+        .chat-container { flex: 1; overflow-y: auto; scroll-behavior: smooth; padding: 12px 12px 8px; display: flex; flex-direction: column; gap: 2px; background: linear-gradient(140deg, #d4ffd9 0%, #ecfff2 36%, #ccffce 68%, #f3fff8 100%); background-image: linear-gradient(140deg, rgba(212,255,217,0.98) 0%, rgba(236,255,242,0.98) 36%, rgba(204,255,206,0.98) 68%, rgba(243,255,248,0.98) 100%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%2390bb95' stroke-width='1.4' opacity='0.18'%3E%3Cpath d='M18 20c6-6 16-6 22 0s6 16 0 22-16 6-22 0-6-16 0-22z'/%3E%3Cpath d='M70 10c5.5 3 11 9 8 16-3 7-11 8-16 5-5-3-7-10-4-15 3-5 9-7 12-6z'/%3E%3Cpath d='M15 80c8-1 12 1 16 6s6 12 2 18c-4 6-11 8-17 6-6-2-10-8-7-14 3-6 6-10 6-16z'/%3E%3Ccircle cx='55' cy='60' r='5'/%3E%3Ccircle cx='105' cy='95' r='4'/%3E%3Cpath d='M90 40l16 4M88 48l14 5M94 34l10 7'/%3E%3Cpath d='M40 100l10-12M45 92l8-10M55 90l9-8'/%3E%3C/g%3E%3C/svg%3E"); overscroll-behavior: contain; }
  
         /* MESSAGES */
         .message-row { display: flex; position: relative; width: 100%; user-select: none; margin-bottom: 6px; }
@@ -250,7 +250,7 @@
         .profile-card-overlay.open { display: flex; }
         .profile-card { background: #fff; width: 100%; max-width: 420px; border-radius: 24px 24px 0 0; padding-bottom: max(20px, env(safe-area-inset-bottom)); overflow: hidden; animation: slideUp 0.28s ease; }
         @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
-        .profile-card-cover { height: 120px; display: flex; align-items: flex-end; padding: 0 20px 0; position: relative; }
+        .profile-card-cover { height: 120px; display: flex; align-items: flex-end; padding: 0 20px 0; position: relative; background: radial-gradient(circle at top left, rgba(255,224,180,0.95) 0%, rgba(255,243,220,0.98) 100%); }
         .profile-card-avatar-wrap { position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%); }
         .profile-card-avatar { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; color: #fff; border: 4px solid #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.15); overflow: hidden; }
         .profile-card-avatar:hover #avatar-change-hint { opacity: 1 !important; }
@@ -354,7 +354,7 @@
             <button class="menu-btn" id="menu-toggle-btn"><span></span><span></span><span></span></button>
             <div style="display:flex;align-items:center;gap:10px;">
                 <div class="avatar-container" id="peer-avatar-container">
-                    <div class="avatar" id="chat-avatar" style="background:#b0bec5">
+                    <div class="avatar" id="chat-avatar" style="background:radial-gradient(circle at 30% 30%, #ffb06f 0%, #ff8d4c 72%)">
                         <svg viewBox="0 0 24 24" width="20" height="20"><path fill="rgba(255,255,255,0.4)" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"/></svg>
                     </div>
                     <div class="status-dot" id="peer-status-dot"></div>
@@ -600,7 +600,7 @@
     <div class="profile-card" id="profile-card">
         <div class="profile-card-cover" id="profile-card-cover">
             <div class="profile-card-avatar-wrap">
-                <div class="profile-card-avatar" id="profile-card-avatar" style="position:relative;cursor:pointer;" title="Нажмите чтобы сменить аватар">
+                <div class="profile-card-avatar" id="profile-card-avatar" style="position:relative;cursor:pointer;background:radial-gradient(circle at 30% 30%, #ffb06f 0%, #ff8d4c 72%);" title="Нажмите чтобы сменить аватар">
                     <!-- avatar content here -->
                     <div id="avatar-change-hint" style="position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,0.38);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.18s;">
                         <svg viewBox="0 0 24 24" width="28" height="28"><path fill="#fff" d="M12 15.2A3.2 3.2 0 1 0 12 8.8a3.2 3.2 0 0 0 0 6.4zm0 1.8a5 5 0 1 1 0-10 5 5 0 0 1 0 10zM9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9z"/></svg>
@@ -702,9 +702,58 @@
     let peerStatusRef=null, myPresenceRef=null, deleteChatTarget=null;
     let chatsList=JSON.parse(localStorage.getItem('chatsList')||'[]');
     let localStream=null, peerConnection=null, callRef=null, isPeerOnline=false;
+    let ringtoneCtx=null, ringtoneGain=null, ringtoneOsc=null, ringtoneTimer=null;
     // unread counters: { chatId: count }
     let unreadCounts = JSON.parse(localStorage.getItem('unreadCounts')||'{}');
     const rtcConfig = { iceServers:[{urls:'stun:stun.l.google.com:19302'}] };
+
+    function hsl(h,s,l){ return 'hsl('+((h+360)%360)+','+s+'%,'+l+'%)'; }
+    function hsla(h,s,l,a){ return 'hsla('+((h+360)%360)+','+s+'%,'+l+'%,'+a+')'; }
+    const AVATAR_PALETTE_COUNT = 500;
+    const avatarPalettes = Array.from({length:AVATAR_PALETTE_COUNT},(_,i)=>{
+        const hue = Math.round((i * 137.50776405003785) % 360);
+        const accentHue = (hue + 24 + ((i % 12) * 3)) % 360;
+        return {
+            main: hsl(hue, 54, 68),
+            accent: hsl(accentHue, 60, 56),
+            cover: hsl(hue, 24, 93),
+            shadow: hsla(hue, 56, 38, 0.24),
+            shadowLight: hsla(hue, 60, 80, 0.14)
+        };
+    });
+    function getAvatarPalette(source){
+        if(source && typeof source === 'object' && typeof source.gradientIndex==='number'){
+            return avatarPalettes[source.gradientIndex % AVATAR_PALETTE_COUNT];
+        }
+        if(typeof source === 'number'){
+            return avatarPalettes[source % AVATAR_PALETTE_COUNT];
+        }
+        return avatarPalettes[Math.abs(strToHue(String(source||''))) % AVATAR_PALETTE_COUNT];
+    }
+    function getAvatarBackground(source){ const p = getAvatarPalette(source); return 'radial-gradient(circle at 30% 30%, '+p.main+' 0%, '+p.accent+' 74%)'; }
+    function getAvatarCoverBackground(source){ const p = getAvatarPalette(source); return 'radial-gradient(circle at top left, '+p.cover+' 0%, rgba(255,255,255,0.95) 56%), radial-gradient(circle at 70% 20%, '+p.accent+' 0%, transparent 45%)'; }
+    function getAvatarShadow(source){ const p = getAvatarPalette(source); return '0 4px 24px '+p.shadow+', 0 0 0 12px '+p.shadowLight; }
+    function getNextUniqueGradientIndex(){
+        const used = new Set(chatsList.filter(c=>typeof c.gradientIndex==='number').map(c=>c.gradientIndex));
+        const available=[];
+        for(let i=0;i<AVATAR_PALETTE_COUNT;i++){ if(!used.has(i)) available.push(i); }
+        if(!available.length) return Math.abs(strToHue(String(Math.random()))) % AVATAR_PALETTE_COUNT;
+        return available[Math.floor(Math.random()*available.length)];
+    }
+    function normalizeChatGradients(){
+        let changed=false;
+        const used = new Set();
+        chatsList.forEach(chat=>{ if(typeof chat.gradientIndex==='number') used.add(chat.gradientIndex); });
+        chatsList.forEach(chat=>{
+            if(typeof chat.gradientIndex!=='number'){
+                chat.gradientIndex = getNextUniqueGradientIndex();
+                used.add(chat.gradientIndex);
+                changed=true;
+            }
+        });
+        if(changed) saveChatsList();
+    }
+    normalizeChatGradients();
  
     /* ── DOM ── */
     const chatBox=document.getElementById('chat-box');
@@ -877,7 +926,7 @@
             headerAvatar.innerHTML = '<img src="'+chatAvatars[chatId]+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
         } else {
             headerAvatar.innerHTML = '<span style="font-size:16px;font-weight:700;color:#fff">'+getInitial(chat.name)+'</span>';
-            headerAvatar.style.background = 'hsl('+strToHue(chat.name)+',30%,60%)';
+            headerAvatar.style.background = getAvatarBackground(chat);
         }
     }
  
@@ -930,11 +979,22 @@
     /* ── PRESENCE (реальный онлайн) ── */
     function setupMyPresence(){
         myPresenceRef=database.ref('presence/'+myFrameId);
+        const updatePresence = (online)=>{
+            if(!myPresenceRef) return;
+            myPresenceRef.set({online, lastSeen:STS(), name:myCurrentNickname});
+        };
         database.ref('.info/connected').on('value',snap=>{
-            if(!snap.val()) return;
+            if(!snap.val()){
+                updatePresence(false);
+                return;
+            }
             myPresenceRef.onDisconnect().set({online:false,lastSeen:STS()});
-            myPresenceRef.set({online:true,lastSeen:STS(),name:myCurrentNickname});
+            updatePresence(true);
         });
+        window.addEventListener('beforeunload',()=>{ updatePresence(false); });
+        window.addEventListener('pagehide',()=>{ updatePresence(false); });
+        window.addEventListener('online',()=>{ updatePresence(true); });
+        window.addEventListener('offline',()=>{ updatePresence(false); });
     }
  
     /* ── PEER STATUS ── */
@@ -1037,7 +1097,7 @@
             item.className='chat-item'+(chat.id===activeChatId?' active':'');
             item.dataset.id=chat.id;
             item.innerHTML=
-                '<div class="chat-item-avatar" style="background:hsl('+strToHue(chat.name)+',30%,60%)">'+getInitial(chat.name)+'<div class="chat-item-online-dot"></div></div>'+
+                '<div class="chat-item-avatar" style="background:'+getAvatarBackground(chat)+'">'+getInitial(chat.name)+'<div class="chat-item-online-dot"></div></div>'+ 
                 '<div class="chat-item-info"><div class="chat-item-name">'+escapeHtml(chat.name)+'</div><div class="chat-item-preview">'+escapeHtml(chat.lastMsg||'Нет сообщений')+'</div></div>'+
                 '<div class="chat-item-right">'+
                     '<span class="chat-item-time">'+(chat.lastTime||'')+'</span>'+
@@ -1106,10 +1166,9 @@
     peerAvatarContainer.addEventListener('click',()=>{
         if(!activeChatId) return;
         const chat=chatsList.find(c=>c.id===activeChatId); if(!chat) return;
-        const hue=strToHue(chat.name);
         document.getElementById('profile-card-avatar').textContent=getInitial(chat.name);
-        document.getElementById('profile-card-avatar').style.background='hsl('+hue+',30%,60%)';
-        document.getElementById('profile-card-cover').style.background='hsl('+hue+',30%,80%)';
+        document.getElementById('profile-card-avatar').style.background=getAvatarBackground(chat);
+        document.getElementById('profile-card-cover').style.background=getAvatarCoverBackground(chat);
         document.getElementById('profile-card-name').textContent=chat.name;
         document.getElementById('profile-card-id').textContent='ID: '+(chat.peerId||'—');
         const st=document.getElementById('profile-card-status');
@@ -1529,7 +1588,7 @@
         peerTypingActive=false;
         const avatar=document.getElementById('chat-avatar');
         avatar.innerHTML='<span style="font-size:16px;font-weight:700;color:#fff">'+getInitial(chat.name)+'</span>';
-        avatar.style.background='hsl('+strToHue(chat.name)+',30%,60%)';
+        avatar.style.background=getAvatarBackground(chat);
         chatBox.innerHTML=''; emptyState.style.display='none';
  
         const msgsRef=database.ref('chats/'+chatId+'/messages');
@@ -1580,7 +1639,7 @@
             if(chatsList.find(c=>c.id===data.chatId)) return;
             // Используем senderName если есть
             const chatName=data.senderName||('Чат '+data.peerId.substr(0,8));
-            chatsList.unshift({id:data.chatId,name:chatName,peerId:data.peerId,lastMsg:'',lastTime:''});
+            chatsList.unshift({id:data.chatId,name:chatName,peerId:data.peerId,lastMsg:'',lastTime:'',gradientIndex:getNextUniqueGradientIndex()});
             saveChatsList();
             // Начинаем считать непрочитанные для нового чата
             incrementUnread(data.chatId);
@@ -1598,7 +1657,10 @@
         if(!peerId){showToast('Введите ID собеседника');return;}
         if(peerId===myFrameId){showToast('Нельзя подключиться к самому себе');return;}
         const chatId=[myFrameId,peerId].sort().join('__');
-        if(!chatsList.find(c=>c.id===chatId)){chatsList.unshift({id:chatId,name:'ID: '+peerId.substr(0,12)+'...',peerId,lastMsg:'',lastTime:''});saveChatsList();renderChatsList();}
+        if(!chatsList.find(c=>c.id===chatId)){
+            chatsList.unshift({id:chatId,name:'ID: '+peerId.substr(0,12)+'...',peerId,lastMsg:'',lastTime:'',gradientIndex:getNextUniqueGradientIndex()});
+            saveChatsList();renderChatsList();
+        }
         connectIdModal.style.display='none'; openChat(chatId); showToast('Чат открыт!');
     });
  
@@ -1613,7 +1675,8 @@
         if(peerId===myFrameId){showToast('Нельзя создать чат с самим собой');return;}
         const chatId=[myFrameId,peerId].sort().join('__');
         if(chatsList.find(c=>c.id===chatId)){newChatModal.style.display='none';openChat(chatId);closeChatsPanel();showToast('Чат уже существует');return;}
-        chatsList.unshift({id:chatId,name,peerId,lastMsg:'',lastTime:''});saveChatsList();renderChatsList();
+        chatsList.unshift({id:chatId,name,peerId,lastMsg:'',lastTime:'',gradientIndex:getNextUniqueGradientIndex()});
+        saveChatsList();renderChatsList();
         newChatModal.style.display='none';openChat(chatId);closeChatsPanel();showToast('Переписка «'+name+'» создана!');
     });
  
@@ -1630,36 +1693,74 @@
         });
     }
  
+    function playCallTone(){
+        if(ringtoneTimer) return;
+        try{
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if(!AudioCtx) return;
+            ringtoneCtx = new AudioCtx();
+            ringtoneGain = ringtoneCtx.createGain();
+            ringtoneGain.gain.value = 0.0;
+            ringtoneGain.connect(ringtoneCtx.destination);
+            ringtoneCtx.resume().catch(()=>{});
+            const playTone = ()=>{
+                if(ringtoneOsc){ ringtoneOsc.stop(); ringtoneOsc.disconnect(); ringtoneOsc=null; }
+                ringtoneOsc = ringtoneCtx.createOscillator();
+                ringtoneOsc.type = 'sine';
+                ringtoneOsc.frequency.value = 440;
+                ringtoneOsc.connect(ringtoneGain);
+                ringtoneOsc.start();
+                ringtoneGain.gain.setTargetAtTime(0.16, ringtoneCtx.currentTime, 0.01);
+                setTimeout(()=>{
+                    if(ringtoneOsc){ ringtoneOsc.stop(); ringtoneOsc.disconnect(); ringtoneOsc=null; }
+                }, 220);
+            };
+            playTone();
+            ringtoneTimer = setInterval(playTone, 900);
+        }catch(e){ console.warn('Ringtone failed',e); }
+    }
+ 
+    function stopCallTone(){
+        if(ringtoneTimer){ clearInterval(ringtoneTimer); ringtoneTimer=null; }
+        if(ringtoneOsc){ try{ ringtoneOsc.stop(); }catch(e){} ringtoneOsc.disconnect(); ringtoneOsc=null; }
+        if(ringtoneGain){ ringtoneGain.disconnect(); ringtoneGain=null; }
+        if(ringtoneCtx){ ringtoneCtx.close().catch(()=>{}); ringtoneCtx=null; }
+    }
+ 
     function watchChatForIncomingCall(chatId, chatName){
         const cRef = database.ref('chats/'+chatId+'/call');
-        cRef.on('value', async snap=>{
+        const handler = async snap=>{
             const call = snap.val();
-            if(!call){ 
-                // Если это был входящий звонок и нет активного RTCPeer — просто закрываем UI
-                if(incomingCallChatId===chatId && !peerConnection) closeCallInterface();
-                return; 
+            if(!call){
+                stopCallTone();
+                if(incomingCallChatId===chatId || peerConnection){
+                    incomingCallChatId=null; closeCallInterface();
+                }
+                return;
             }
-            // Входящий — не я звоню, нет активного вызова
             if(call.status==='dialing' && call.callerId!==myFrameId && !callOverlay.style.display.includes('flex')){
                 incomingCallChatId = chatId;
                 const name = chatName || call.callerName || 'Собеседник';
                 showCallInterface(name,'Входящий звонок...',true);
+                playCallTone();
             }
-            // Принятый — я звонил, собеседник ответил
             if(call.status==='answered' && call.callerId===myFrameId && peerConnection && !peerConnection.currentRemoteDescription){
+                stopCallTone();
                 callStatusEl.textContent='Разговор...';
                 try{ await peerConnection.setRemoteDescription(new RTCSessionDescription(call.answerSDP)); }catch(e){console.error(e);}
             }
-            // ICE candidates
             if(call.candidates){
                 Object.keys(call.candidates).forEach(key=>{
                     const cand=call.candidates[key];
-                    if(cand.senderId!==myFrameId&&peerConnection&&peerConnection.remoteDescription){
+                    if(cand.senderId!==myFrameId && peerConnection && peerConnection.remoteDescription){
                         peerConnection.addIceCandidate(new RTCIceCandidate(cand.candidate)).catch(()=>{});
                     }
                 });
             }
-        });
+        };
+        cRef.on('value', handler);
+        cRef._isCallRef = true; cRef._chatId = chatId;
+        activeListeners.push({ref:cRef,event:'value',handler,_isCallRef:true,_chatId:chatId});
     }
  
     function setupCallListener(chatId){
@@ -1696,33 +1797,43 @@
             callerName:myCurrentNickname||'User',
             offerSDP:offer.toJSON()
         });
+        playCallTone();
         notifyPeer();
     });
  
     document.getElementById('call-accept-btn').addEventListener('click',async()=>{
         const chatId = incomingCallChatId || activeChatId;
         if(!chatId) return;
+        stopCallTone();
         callStatusEl.textContent='Соединение...';
         document.getElementById('call-accept-col').style.display='none';
         const ok=await initWebRTC(chatId); if(!ok) return;
-        // Читаем offer и отвечаем
-        database.ref('chats/'+chatId+'/call').on('value',async snap=>{
-            const call=snap.val();
-            if(call&&call.status==='dialing'&&call.offerSDP&&peerConnection&&!peerConnection.currentRemoteDescription){
+        const sessionRef = database.ref('chats/'+chatId+'/call');
+        const answerHandler = async snap=>{
+            const call = snap.val();
+            if(call && call.status==='dialing' && call.offerSDP && peerConnection && !peerConnection.currentRemoteDescription){
                 await peerConnection.setRemoteDescription(new RTCSessionDescription(call.offerSDP));
-                const answer=await peerConnection.createAnswer(); await peerConnection.setLocalDescription(answer);
-                database.ref('chats/'+chatId+'/call').update({status:'answered',answerSDP:answer.toJSON()});
+                const answer = await peerConnection.createAnswer(); await peerConnection.setLocalDescription(answer);
+                sessionRef.update({status:'answered',answerSDP:answer.toJSON()});
                 callStatusEl.textContent='Разговор...';
+                sessionRef.off('value', answerHandler);
             }
-        });
+            if(!call){
+                sessionRef.off('value', answerHandler);
+                closeCallInterface();
+            }
+        };
+        sessionRef.on('value', answerHandler);
     });
  
     document.getElementById('call-decline-btn').addEventListener('click',()=>endCall());
  
     function endCall(){
         const chatId = incomingCallChatId || activeChatId;
+        stopCallTone();
         if(chatId) database.ref('chats/'+chatId+'/call').remove();
         incomingCallChatId=null;
+        if(callRef){ callRef.off('value'); callRef=null; }
         closeCallInterface();
     }
  
@@ -1741,8 +1852,8 @@
     function showCallInterface(name,status,isIncoming){
         callNameEl.textContent=name;
         callAvatarEl.textContent=getInitial(name);
-        callAvatarEl.style.background='hsl('+strToHue(name)+',35%,55%)';
-        callAvatarEl.style.boxShadow='0 4px 24px hsl('+strToHue(name)+',35%,55%,0.35), 0 0 0 12px hsl('+strToHue(name)+',35%,55%,0.12)';
+        callAvatarEl.style.background=getAvatarBackground(name);
+        callAvatarEl.style.boxShadow=getAvatarShadow(name);
         callStatusEl.textContent=status;
         const acceptCol=document.getElementById('call-accept-col');
         acceptCol.style.display=isIncoming?'flex':'none';
@@ -1751,10 +1862,12 @@
     }
  
     function closeCallInterface(){
+        stopCallTone();
         callOverlay.style.display='none';
         if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null;}
         if(peerConnection){peerConnection.close();peerConnection=null;}
         remoteAudio.srcObject=null;
+        incomingCallChatId=null;
     }
  
     /* ── СЧЁТЧИК НЕПРОЧИТАННЫХ — слушаем новые сообщения для всех чатов ── */
