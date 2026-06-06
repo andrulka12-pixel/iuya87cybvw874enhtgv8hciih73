@@ -41,7 +41,8 @@
         .chat-item-del svg { width: 14px; height: 14px; fill: #e74c3c; }
         .chat-item:hover .chat-item-del { display: flex; }
         .chat-item:hover .unread-badge { display: none !important; }
-        .chats-panel-footer { padding: 12px 16px; border-top: 1px solid rgba(0,0,0,0.05); background: var(--header); }
+        .note-badge { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; margin-left: 6px; background: #4a7fcb; border-radius: 999px; }
+        .note-badge svg { width: 12px; height: 12px; }        .chats-panel-footer { padding: 12px 16px; border-top: 1px solid rgba(0,0,0,0.05); background: var(--header); }
         .my-id-label { font-size: 11px; color: var(--dim); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
         .my-id-value { font-size: 12px; font-weight: 600; color: var(--blue); background: rgba(42,171,238,0.1); padding: 7px 10px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
         .my-id-copy { font-size: 11px; color: var(--dim); }
@@ -75,20 +76,53 @@
         .wallpaper-picker-card { width: min(100%, 520px); background: #fff; border-radius: 24px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.18); animation: slideUp 0.28s ease; }
         .wallpaper-picker-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; border-bottom: 1px solid #f0f0f0; }
         .wallpaper-picker-header h3 { font-size: 16px; font-weight: 700; color: #1a1a1a; }
+        .wallpaper-header-actions { display: flex; align-items: center; gap: 10px; }
+        .theme-toggle-btn { padding: 10px 14px; border: none; border-radius: 12px; background: rgba(74,127,203,0.12); color: var(--blue); font-size: 13px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+        .theme-toggle-btn:hover { background: rgba(74,127,203,0.18); }
         .wallpaper-picker-close { width: 32px; height: 32px; border: none; background: #f0f2f5; border-radius: 12px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 16px; color: #4a7fcb; }
         .wallpaper-preview { padding: 16px; background: #f7f9ff; }
+        body.dark-theme { background: #111214; color: #e8eef7; }
+        body.dark-theme .chats-panel { background: #121518; }
+        body.dark-theme .chats-panel-header,
+        body.dark-theme .chats-panel-footer,
+        body.dark-theme .header,
+        body.dark-theme .wallpaper-picker-card,
+        body.dark-theme .wallpaper-preview { background: #181c22; }
+        body.dark-theme .wallpaper-picker-header { border-color: rgba(255,255,255,0.08); }
+        body.dark-theme .wallpaper-picker-close,
+        body.dark-theme .carousel-nav,
+        body.dark-theme .theme-toggle-btn,
+        body.dark-theme .picker-emoji { background: #1f252e; color: #e8eef7; }
+        body.dark-theme .picker-emoji.selected { background: rgba(74,127,203,0.2); }
+        body.dark-theme .apply-wallpaper-btn { background: #2f4ea0; }
+        body.dark-theme .wallpaper-btn,
+        body.dark-theme .connect-id-btn { background: #161b21; border-color: #2f3642; }
+        body.dark-theme .chat-item { border-color: #22272f; }
+        body.dark-theme .chat-item:hover,
+        body.dark-theme .chat-item.active { background: rgba(255,255,255,0.05); }
+        body.dark-theme .chat-item-name,
+        body.dark-theme .chat-item-preview,
+        body.dark-theme .chat-item-time,
+        body.dark-theme .header-title,
+        body.dark-theme .header-sub,
+        body.dark-theme .my-id-label,
+        body.dark-theme .my-id-copy,
+        body.dark-theme .nickname-input { color: #e8eef7; }
+        body.dark-theme .header-sub.offline-status { color: #9aa4b2; }
+        body.dark-theme .nickname-input { background: #1d222a; border-color: #2f3642; }
+        body.dark-theme .my-id-value { background: rgba(74,127,203,0.12); }
         .wallpaper-preview-inner { min-height: 140px; border-radius: 18px; overflow: hidden; padding: 14px; display: flex; flex-direction: column; gap: 8px; background: var(--bg); transition: background 0.3s ease; }
         .preview-sample { display: flex; flex-direction: column; gap: 8px; }
-        .preview-sample .message-bubble { max-width: 70%; padding: 8px 10px 14px 10px; border-radius: 14px; background: rgba(255,255,255,0.9); font-size: 13px; line-height: 1.4; color: #1a1a1a; }
+        .preview-sample .message-bubble { max-width: 70%; padding: 8px 10px 14px 10px; border-radius: 14px; background: rgba(255,255,255,0.9); font-size: 13px; line-height: 1.4; color: rgba(0,0,0,0.88); }
         .preview-sample .message-bubble.my-row { align-self: flex-end; background: rgba(255,255,255,0.9); }
         .preview-sample .message-bubble.incoming { align-self: flex-start; }
-        .preview-sample .preview-meta { display: flex; justify-content: flex-end; gap: 6px; font-size: 11px; color: var(--dim); }
+        .preview-sample .preview-meta { display: flex; justify-content: flex-end; gap: 6px; font-size: 11px; color: rgba(0,0,0,0.65); }
         .wallpaper-picker-carousel { position: relative; padding: 16px 18px 0; }
         .carousel-wrapper { overflow: hidden; }
         .carousel-track { display: flex; transition: transform 0.28s ease; }
         .carousel-item { width: 100%; flex-shrink: 0; border-radius: 18px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; min-height: 150px; color: #fff; box-sizing: border-box; }
-        .carousel-item h4 { font-size: 14px; margin-bottom: 10px; line-height: 1.2; }
-        .carousel-item p { font-size: 12px; opacity: 0.9; }
+        .carousel-item h4 { font-size: 14px; margin-bottom: 10px; line-height: 1.2; color: rgba(0,0,0,0.88); }
+        .carousel-item p { font-size: 12px; opacity: 0.82; color: rgba(0,0,0,0.72); }
         .carousel-controls { display: flex; justify-content: space-between; gap: 10px; margin-top: 16px; }
         .carousel-nav { width: 36px; height: 36px; border: none; border-radius: 12px; background: #f0f2f5; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
         .carousel-nav svg { width: 18px; height: 18px; fill: var(--blue); }
@@ -220,6 +254,14 @@
         .context-item { padding: 11px 16px; font-size: 14px; cursor: pointer; transition: background 0.1s; color: #1a1a1a; }
         .context-item:hover { background: rgba(0,0,0,0.05); }
         .context-item.delete { color: #e74c3c; }
+        .pinned-message-banner { width: calc(100% - 28px); margin: 5px auto 8px; background: transparent; border-radius: 18px; border: 1px solid rgba(74,127,203,0.18); box-shadow: none; cursor: pointer; overflow: hidden; }
+        .pinned-message-inner { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 12px; }
+        .pinned-message-left { display: flex; align-items: center; gap: 8px; min-width: 0; overflow: hidden; }
+        .pinned-message-author { font-size: 13px; font-weight: 700; color: #1a1a1a; white-space: nowrap; }
+        .pinned-message-status { font-size: 12px; color: var(--blue); font-weight: 600; white-space: nowrap; }
+        .pinned-message-text { font-size: 14px; color: rgba(0,0,0,0.75); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .pinned-message-time { font-size: 12px; color: rgba(0,0,0,0.55); white-space: nowrap; flex-shrink: 0; }
+        .pinned-message-banner.active { outline: 2px solid rgba(74,127,203,0.16); }
  
         /* TOAST */
         .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(14px); background: rgba(0,0,0,0.75); color: #fff; padding: 8px 18px; border-radius: 20px; font-size: 13px; z-index: 500; opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none; white-space: nowrap; }
@@ -413,6 +455,17 @@
         </div>
     </div>
  
+    <div class="pinned-message-banner" id="pinned-message-banner" style="display:none;">
+        <div class="pinned-message-inner" id="pinned-message-inner">
+            <div class="pinned-message-left">
+                <span class="pinned-message-author" id="pinned-message-author"></span>
+                <span class="pinned-message-status">Закреплено</span>
+                <span class="pinned-message-text" id="pinned-message-text"></span>
+            </div>
+            <span class="pinned-message-time" id="pinned-message-time"></span>
+        </div>
+    </div>
+ 
     <div class="typing-bar" id="typing-bar">
         <span id="typing-text">Печатает</span>
         <div class="typing-dots"><span></span><span></span><span></span></div>
@@ -582,6 +635,15 @@
     </div>
 </div>
 
+<div class="modal-overlay" id="delete-pinned-modal">
+    <div class="modal-card">
+        <h3>Удалить закреплённое сообщение?</h3>
+        <p style="font-size:14px;color:#8a9aaa;">Закреплённое сообщение будет убрано из шапки, но останется в переписке.</p>
+        <button id="delete-pinned-confirm-btn" class="modal-btn-danger">Удалить</button>
+        <button class="modal-btn-cancel" id="delete-pinned-cancel-btn">Отмена</button>
+    </div>
+</div>
+
 <!-- RENAME CHAT MODAL -->
 <div class="modal-overlay" id="rename-chat-modal">
     <div class="modal-card">
@@ -597,6 +659,7 @@
 <!-- CONTEXT MENU -->
 <div class="context-menu" id="ctx-menu">
     <div class="context-item" id="menu-reply">Ответить</div>
+    <div class="context-item" id="menu-pin">Закрепить</div>
     <div class="context-item" id="menu-edit">Редактировать</div>
     <div class="context-item" id="menu-react">Реакции</div>
     <div class="context-item delete" id="menu-delete">Удалить</div>
@@ -698,13 +761,16 @@
     <div class="wallpaper-picker-card">
         <div class="wallpaper-picker-header">
             <h3>Выберите фон чата</h3>
-            <button class="wallpaper-picker-close" id="wallpaper-picker-close">✕</button>
+            <div class="wallpaper-header-actions">
+                <button class="theme-toggle-btn" id="theme-toggle-btn">Тёмная тема</button>
+                <button class="wallpaper-picker-close" id="wallpaper-picker-close">✕</button>
+            </div>
         </div>
         <div class="wallpaper-preview">
             <div class="wallpaper-preview-inner" id="wallpaper-preview-inner">
                 <div class="preview-sample">
-                    <div class="message-bubble incoming">Привет! Как дела?</div>
-                    <div class="message-bubble my-row">Всё отлично, смотри новый фон.</div>
+                    <div class="message-bubble incoming">Привет! Как тебе этот фон? 😎</div>
+                    <div class="message-bubble my-row">Очень круто! 🤩 Это обновление Chatter! 17.0.4</div>
                 </div>
                 <div class="preview-meta"><span>13:41</span><span>✓✓</span></div>
             </div>
@@ -780,7 +846,7 @@
     if(!myFrameId){ myFrameId="id_"+Math.random().toString(36).substr(2,9); localStorage.setItem('myFrameId',myFrameId); }
  
     let myCurrentNickname="", replyMessageId=null, editMessageId=null, selectedMsgData=null;
-    let activeChatId=null, activeListeners=[], myTypingTimer=null;
+    let activeChatId=null, activeListeners=[], myTypingTimer=null, activePinnedData=null;
     let peerStatusRef=null, myPresenceRef=null, deleteChatTarget=null;
     let chatsList=JSON.parse(localStorage.getItem('chatsList')||'[]');
     let localStream=null, peerConnection=null, callRef=null, isPeerOnline=false;
@@ -788,9 +854,33 @@
     // unread counters: { chatId: count }
     let unreadCounts = JSON.parse(localStorage.getItem('unreadCounts')||'{}');
     const rtcConfig = { iceServers:[{urls:'stun:stun.l.google.com:19302'}] };
+    const NOTES_CHAT_ID = 'id_notes';
+    let notesChatName = localStorage.getItem('notesChatName') || 'Заметки';
+    let notesLastMsg = localStorage.getItem('notesLastMsg') || 'Нет заметок';
+    let notesLastTime = localStorage.getItem('notesLastTime') || '';
+    let notesMessages = loadNotesMessages();
 
     function hsl(h,s,l){ return 'hsl('+((h+360)%360)+','+s+'%,'+l+'%)'; }
     function hsla(h,s,l,a){ return 'hsla('+((h+360)%360)+','+s+'%,'+l+'%,'+a+')'; }
+    function getChatById(chatId){
+        if(chatId===NOTES_CHAT_ID) return {id:NOTES_CHAT_ID,name:notesChatName,peerId:null,isNotes:true,lastMsg:notesLastMsg,lastTime:notesLastTime};
+        return chatsList.find(c=>c.id===chatId);
+    }
+    function loadNotesMessages(){
+        try{ const data=localStorage.getItem('notesMessages'); return data?JSON.parse(data):[]; }catch(e){ return []; }
+    }
+    function saveNotesMessages(){ localStorage.setItem('notesMessages', JSON.stringify(notesMessages)); }
+    function updateNotesMeta(){ localStorage.setItem('notesChatName', notesChatName); localStorage.setItem('notesLastMsg', notesLastMsg); localStorage.setItem('notesLastTime', notesLastTime); }
+    function addNotesMessage(payload){ payload.id = payload.id || ('note_'+Date.now()+'_'+Math.random().toString(36).substr(2,5)); notesMessages.push(payload); saveNotesMessages(); return payload.id; }
+    function updateNotesMessage(id,data){ const idx=notesMessages.findIndex(m=>m.id===id); if(idx<0) return null; notesMessages[idx]=Object.assign({}, notesMessages[idx], data); saveNotesMessages(); return notesMessages[idx]; }
+    function removeNotesMessage(id){ notesMessages = notesMessages.filter(m=>m.id!==id); saveNotesMessages(); }
+    function getNotesMessage(id){ return notesMessages.find(m=>m.id===id) || null; }
+    function isNotesChat(){ return activeChatId===NOTES_CHAT_ID; }
+    function getLocalMessageLabel(msg){ if(!msg) return ''; if(msg.mediaType){ return msg.mediaType==='image'?'📷 Фото':msg.mediaType==='gif'?'🎞 GIF':msg.mediaType==='video'?'🎬 Видео':msg.mediaType==='document'?'📎 '+(msg.mediaName||'Документ'):'🎵 Аудио'; } return msg.text; }
+    function renderNotesChat(){ if(!chatBox) return; notesMessages = loadNotesMessages(); chatBox.innerHTML=''; if(!notesMessages.length){ emptyState.style.display='flex'; } else { emptyState.style.display='none'; notesMessages.forEach(msg=>{ chatBox.appendChild(createMessageElement(msg.id,msg)); }); chatBox.scrollTop=chatBox.scrollHeight; } }
+    function sendChatMessage(payload){ if(isNotesChat()){ addNotesMessage(payload); notesLastMsg = getLocalMessageLabel(payload); notesLastTime = payload.time; updateNotesMeta(); renderNotesChat(); renderChatsList(); return; } database.ref('chats/'+activeChatId+'/messages').push(payload); notifyPeer(); }
+    function updateChatMessage(id,data){ if(isNotesChat()){ updateNotesMessage(id,data); const msg = getNotesMessage(id); if(msg){ notesLastMsg = getLocalMessageLabel(msg); notesLastTime = msg.time; updateNotesMeta(); } renderNotesChat(); renderChatsList(); return; } database.ref('chats/'+activeChatId+'/messages/'+id).update(data); }
+    function deleteChatMessage(id){ if(isNotesChat()){ removeNotesMessage(id); notesMessages = loadNotesMessages(); notesLastMsg = notesMessages.length? getLocalMessageLabel(notesMessages[notesMessages.length-1]):''; notesLastTime = notesMessages.length? notesMessages[notesMessages.length-1].time:''; updateNotesMeta(); renderNotesChat(); renderChatsList(); return; } database.ref('chats/'+activeChatId+'/messages/'+id).remove(); }
     const AVATAR_PALETTE_COUNT = 500;
     const avatarPalettes = Array.from({length:AVATAR_PALETTE_COUNT},(_,i)=>{
         const hue = Math.round((i * 137.50776405003785) % 360);
@@ -919,6 +1009,14 @@
     const wallpaperCloseBtn=document.getElementById('wallpaper-picker-close');
     const wallpaperApplyBtn=document.getElementById('apply-wallpaper-btn');
     const wallpaperEmojiRow=document.getElementById('wallpaper-emoji-row');
+    const themeToggleBtn=document.getElementById('theme-toggle-btn');
+    const pinnedBanner=document.getElementById('pinned-message-banner');
+    const pinnedAuthor=document.getElementById('pinned-message-author');
+    const pinnedText=document.getElementById('pinned-message-text');
+    const pinnedTime=document.getElementById('pinned-message-time');
+    const deletePinnedModal=document.getElementById('delete-pinned-modal');
+    const deletePinnedConfirmBtn=document.getElementById('delete-pinned-confirm-btn');
+    const deletePinnedCancelBtn=document.getElementById('delete-pinned-cancel-btn');
     const wallpaperGradients=[
         {name:'Зелёный луг', css:'linear-gradient(140deg,#d4ffd9 0%,#ecfff2 100%)', emoji:'🌿'},
         {name:'Лазурное море', css:'linear-gradient(140deg,#daf0ff 0%,#b8dbff 100%)', emoji:'🌊'},
@@ -948,7 +1046,9 @@
         if(!carouselTrack) return;
         carouselTrack.style.transform='translateX(-'+(wallpaperSelectedIndex*100)+'%)';
         const selected=wallpaperGradients[wallpaperSelectedIndex];
-        if(wallpaperPreviewInner) wallpaperPreviewInner.style.background=selected.css;
+        if(wallpaperPreviewInner){
+            wallpaperPreviewInner.style.background = selected.css;
+        }
         if(wallpaperEmojiRow){
             wallpaperEmojiRow.querySelectorAll('.picker-emoji').forEach((el,i)=>{
                 el.classList.toggle('selected', i===wallpaperSelectedIndex);
@@ -959,10 +1059,34 @@
         if(wallpaperOverlay){ wallpaperOverlay.classList.add('open'); updateWallpaperPicker(); }
     }
     function closeWallpaperPicker(){ if(wallpaperOverlay) wallpaperOverlay.classList.remove('open'); }
+    let themeMode = localStorage.getItem('chatTheme') || 'light';
+    let lastLightWallpaperCss = localStorage.getItem('lastLightWallpaper') || localStorage.getItem('chatWallpaper') || '';
+    const darkWallpaperCss = 'linear-gradient(140deg, #0d1014 0%, #1a1f24 45%, #13161a 100%)';
+
+    function setThemeMode(mode){
+        themeMode = mode==='dark' ? 'dark' : 'light';
+        document.body.classList.toggle('dark-theme', themeMode==='dark');
+        if(themeToggleBtn){ themeToggleBtn.textContent = themeMode==='dark' ? 'Светлая тема' : 'Тёмная тема'; }
+        localStorage.setItem('chatTheme', themeMode);
+        if(themeMode==='dark'){
+            if(chatBox) chatBox.style.background = darkWallpaperCss;
+        } else {
+            const wallpaper = lastLightWallpaperCss || localStorage.getItem('chatWallpaper') || '';
+            if(chatBox) chatBox.style.background = wallpaper;
+        }
+    }
+    function toggleThemeMode(){
+        if(themeMode==='dark') setThemeMode('light');
+        else setThemeMode('dark');
+    }
     function applySelectedWallpaper(){
         const selected=wallpaperGradients[wallpaperSelectedIndex];
-        if(chatBox) chatBox.style.background=selected.css;
+        lastLightWallpaperCss = selected.css;
         localStorage.setItem('chatWallpaper',selected.css);
+        localStorage.setItem('lastLightWallpaper',selected.css);
+        if(themeMode==='light' && chatBox){
+            chatBox.style.background=selected.css;
+        }
         closeWallpaperPicker();
     }
     function initWallpaperPicker(){
@@ -987,6 +1111,7 @@
         if(wallpaperPrevBtn) wallpaperPrevBtn.addEventListener('click',()=>selectWallpaperIndex(wallpaperSelectedIndex-1));
         if(wallpaperNextBtn) wallpaperNextBtn.addEventListener('click',()=>selectWallpaperIndex(wallpaperSelectedIndex+1));
         if(wallpaperApplyBtn) wallpaperApplyBtn.addEventListener('click',applySelectedWallpaper);
+        if(themeToggleBtn) themeToggleBtn.addEventListener('click',toggleThemeMode);
         const carouselArea = carouselTrack.parentElement;
         if(carouselArea){
             let startX=0, currentX=0, dragging=false;
@@ -1001,7 +1126,22 @@
             });
         }
     }
-    function loadSavedWallpaper(){ const saved = localStorage.getItem('chatWallpaper'); if(saved && chatBox){ chatBox.style.background=saved; } }
+    function setPinnedMessage(chatId,pin){ if(!chatId) return; database.ref('chats/'+chatId+'/pinned').set(pin); }
+    function getPinnedMessage(chatId){ return chatId===activeChatId ? activePinnedData : null; }
+    function removePinnedMessage(chatId){ if(!chatId) return; database.ref('chats/'+chatId+'/pinned').set(null); }
+    function renderPinnedMessage(chatId){ if(!pinnedBanner) return; const pin = getPinnedMessage(chatId); if(!pin){ pinnedBanner.style.display='none'; return; } pinnedAuthor.textContent = pin.pinnerId===myFrameId ? 'Вы:' : pin.author; pinnedText.textContent = pin.text || '[медиа]'; pinnedTime.textContent = 'Закреплено: '+pin.pinnedAt; pinnedBanner.style.display='block'; }
+    function viewPinnedMessage(){ if(!activeChatId) return; const pin = getPinnedMessage(activeChatId); if(!pin) return; const row=document.getElementById('msg-'+pin.id); if(row){ row.scrollIntoView({behavior:'smooth', block:'center'}); row.classList.add('pinned-highlight'); setTimeout(()=>row.classList.remove('pinned-highlight'),1400); } }
+    function pinMessage(id,author,text,time){ if(!activeChatId) return; const pinObj = {id, author, text:text||'[медиа]', time, pinnerId: myFrameId, pinnedAt:new Date().toLocaleString('ru-RU',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}; setPinnedMessage(activeChatId,pinObj); showToast('Сообщение закреплено'); }
+    function openDeletePinnedModal(){ if(deletePinnedModal){ deletePinnedModal.style.display='flex'; } }
+    function closeDeletePinnedModal(){ if(deletePinnedModal){ deletePinnedModal.style.display='none'; } }
+    function loadSavedWallpaper(){
+        const saved = localStorage.getItem('chatWallpaper');
+        if(themeMode==='dark'){
+            if(chatBox) chatBox.style.background=darkWallpaperCss;
+        } else if(saved && chatBox){
+            chatBox.style.background=saved;
+        }
+    }
  
     /* ── UTILS ── */
     function showToast(msg,d=2200){ toastEl.textContent=msg; toastEl.classList.add('show'); setTimeout(()=>toastEl.classList.remove('show'),d); }
@@ -1265,17 +1405,41 @@
     /* ── RENDER CHATS ── */
     function renderChatsList(){
         chatsList_el.innerHTML='';
-        if(!chatsList.length){chatsList_el.innerHTML='<div style="padding:24px 16px;font-size:13px;color:#8a9aaa;text-align:center;">Нет переписок.<br>Нажмите «+» чтобы создать.</div>';return;}
+        const notesItem=document.createElement('div');
+        notesItem.className='chat-item'+(activeChatId===NOTES_CHAT_ID?' active':'');
+        notesItem.dataset.id=NOTES_CHAT_ID;
+        notesItem.innerHTML=
+            '<div class="chat-item-avatar" style="background:#4a7fcb;">'+
+                '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+
+                    '<path d="M6 4h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />'+
+                    '<path d="M8 2v4" />'+
+                    '<path d="M16 2v4" />'+
+                    '<path d="M8 12h8" />'+
+                    '<path d="M8 16h5" />'+
+                '</svg>'+ 
+            '</div>'+ 
+            '<div class="chat-item-info"><div class="chat-item-name">'+escapeHtml(notesChatName)+'<span class="note-badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div><div class="chat-item-preview">'+escapeHtml(notesLastMsg||'Нет заметок')+'</div></div>'+ 
+            '<div class="chat-item-right">'+
+                '<span class="chat-item-time">'+(notesLastTime||'')+'</span>'+ 
+            '</div>';
+        notesItem.addEventListener('click',()=>{ openChat(NOTES_CHAT_ID); closeChatsPanel(); });
+        chatsList_el.appendChild(notesItem);
+        if(!chatsList.length){
+            const placeholder=document.createElement('div');
+            placeholder.style.cssText='padding:24px 16px;font-size:13px;color:#8a9aaa;text-align:center;';
+            placeholder.innerHTML='Нет переписок.<br>Нажмите «+» чтобы создать.';
+            chatsList_el.appendChild(placeholder);
+            return;
+        }
         chatsList.forEach(chat=>{
+            if(chat.id===NOTES_CHAT_ID) return;
             const cnt=unreadCounts[chat.id]||0;
             const item=document.createElement('div');
             item.className='chat-item'+(chat.id===activeChatId?' active':'');
             item.dataset.id=chat.id;
             item.innerHTML=
                 '<div class="chat-item-avatar" style="background:'+getAvatarBackground(chat)+'">'+getInitial(chat.name)+'<div class="chat-item-online-dot"></div></div>'+ 
-                '<div class="chat-item-info"><div class="chat-item-name">'+escapeHtml(chat.name)+'</div><div class="chat-item-preview">'+escapeHtml(chat.lastMsg||'Нет сообщений')+'</div></div>'+
-                '<div class="chat-item-right">'+
-                    '<span class="chat-item-time">'+(chat.lastTime||'')+'</span>'+
+                '<div class="chat-item-info"><div class="chat-item-name">'+escapeHtml(chat.name)+'</div><div class="chat-item-preview">'+escapeHtml(chat.lastMsg||'Нет сообщений')+'</div></div>'+ 
                     '<span class="unread-badge'+(cnt>0?' visible':'')+'">'+(cnt>0?cnt:'')+'</span>'+
                 '</div>'+
                 '<button class="chat-item-del" title="Удалить"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>';
@@ -1454,7 +1618,7 @@
         });
         reactionsPicker.appendChild(btn);
     });
-    function addReaction(msgId,emoji){ if(!activeChatId||!msgId) return; database.ref('chats/'+activeChatId+'/messages/'+msgId+'/reaction').set(emoji); }
+    function addReaction(msgId,emoji){ if(!activeChatId||!msgId) return; if(isNotesChat()){ updateNotesMessage(msgId,{reaction:emoji}); renderNotesChat(); return; } database.ref('chats/'+activeChatId+'/messages/'+msgId+'/reaction').set(emoji); }
  
     /* ── TICK SVG ── */
     const TICK_SVG = '<svg viewBox="0 0 16 16"><path d="M2.5 8.5l3.5 3.5 7.5-8"/></svg>';
@@ -1551,12 +1715,13 @@
         const bubble=row.querySelector('.message-bubble'), indicator=row.querySelector('.swipe-indicator');
         let startX=0,currentX=0,isSwiping=false,pressTimer=null,isLongPress=false,lastTap=0;
         function handleLongPress(e){
-            isLongPress=true; selectedMsgData={id:row.dataset.id,author:data.author,text:data.text||'',isMe};
+            isLongPress=true; selectedMsgData={id:row.dataset.id,author:data.author,text:data.text||'',isMe,time:data.time||''};
             let cx=e.touches?e.touches[0].clientX:e.clientX, cy=e.touches?e.touches[0].clientY:e.clientY;
             ctxMenu.style.top=Math.min(cy,window.innerHeight-180)+'px'; ctxMenu.style.left=Math.min(cx,window.innerWidth-180)+'px'; ctxMenu.style.display='flex';
             document.getElementById('menu-edit').style.display=isMe&&!data.mediaType?'block':'none';
             document.getElementById('menu-delete').style.display=isMe?'block':'none';
             document.getElementById('menu-react').style.display=isMe?'none':'block';
+            document.getElementById('menu-pin').style.display='block';
             // Запретить ответ на кружки
             document.getElementById('menu-reply').style.display=data.mediaType==='videoCircle'?'none':'block';
         }
@@ -1590,13 +1755,32 @@
  
     /* ── CONTEXT MENU ── */
     document.getElementById('menu-reply').addEventListener('click',()=>{ triggerReplyMode(selectedMsgData.id,selectedMsgData.author,selectedMsgData.text); ctxMenu.style.display='none'; });
+    document.getElementById('menu-pin').addEventListener('click',()=>{ if(selectedMsgData){ pinMessage(selectedMsgData.id, selectedMsgData.author, selectedMsgData.text||'[медиа]', selectedMsgData.isMe, selectedMsgData.time); } ctxMenu.style.display='none'; });
     document.getElementById('menu-edit').addEventListener('click',()=>{ triggerEditMode(selectedMsgData.id,selectedMsgData.text); ctxMenu.style.display='none'; });
-    document.getElementById('menu-delete').addEventListener('click',()=>{ if(!activeChatId) return; database.ref('chats/'+activeChatId+'/messages/'+selectedMsgData.id).remove(); ctxMenu.style.display='none'; cancelActions(); });
+    document.getElementById('menu-delete').addEventListener('click',()=>{
+        if(!selectedMsgData) return;
+        const confirmed = confirm('Удалить сообщение? Это действие нельзя отменить.');
+        if(!confirmed) return;
+        deleteChatMessage(selectedMsgData.id);
+        ctxMenu.style.display='none';
+        cancelActions();
+    });
     document.getElementById('menu-react').addEventListener('click',()=>{
         const rect=ctxMenu.getBoundingClientRect();
         reactionsPicker.style.top=(rect.bottom+6)+'px'; reactionsPicker.style.left=rect.left+'px';
         reactionsPicker.classList.add('open'); ctxMenu.style.display='none';
     });
+    if(pinnedBanner){
+        let pinnedPressTimer = null;
+        pinnedBanner.addEventListener('click', ()=>{ viewPinnedMessage(); });
+        pinnedBanner.addEventListener('mousedown', e=>{ if(e.button!==0) return; pinnedPressTimer=setTimeout(()=>{ openDeletePinnedModal(); },600); });
+        pinnedBanner.addEventListener('touchstart', e=>{ pinnedPressTimer=setTimeout(()=>{ openDeletePinnedModal(); },600); },{passive:false});
+        window.addEventListener('mouseup', ()=>{ clearTimeout(pinnedPressTimer); });
+        window.addEventListener('touchend', ()=>{ clearTimeout(pinnedPressTimer); });
+    }
+    if(deletePinnedConfirmBtn){ deletePinnedConfirmBtn.addEventListener('click',()=>{ if(activeChatId){ removePinnedMessage(activeChatId); } closeDeletePinnedModal(); showToast('Закреплённое сообщение удалено'); }); }
+    if(deletePinnedCancelBtn){ deletePinnedCancelBtn.addEventListener('click',closeDeletePinnedModal); }
+    if(deletePinnedModal){ deletePinnedModal.addEventListener('click',e=>{ if(e.target===deletePinnedModal) closeDeletePinnedModal(); }); }
     document.addEventListener('mousedown',e=>{
         if(!ctxMenu.contains(e.target)) ctxMenu.style.display='none';
         if(!reactionsPicker.contains(e.target)) reactionsPicker.classList.remove('open');
@@ -1678,12 +1862,12 @@
         const text=msgField.value.trim(), nickname=myCurrentNickname||'User';
         if(!text) return;
         if(!activeChatId){showToast('Выберите или создайте переписку');return;}
-        if(editMessageId){database.ref('chats/'+activeChatId+'/messages/'+editMessageId).update({text,edited:true});cancelActions();return;}
+        if(editMessageId){ updateChatMessage(editMessageId,{text,edited:true}); cancelActions(); return; }
         const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
         const payload={frameId:myFrameId,author:nickname,text,time:timeStr,edited:false};
         if(replyMessageId){payload.replyToId=replyMessageId;payload.replyToAuthor=actionTitle.textContent.replace('Ответ: ','');payload.replyToText=actionDesc.textContent;}
-        database.ref('chats/'+activeChatId+'/messages').push(payload);
-        notifyPeer(); setMyTyping(false); clearTimeout(myTypingTimer); cancelActions();
+        sendChatMessage(payload);
+        setMyTyping(false); clearTimeout(myTypingTimer); cancelActions();
     }
     // sendButton click — handled in VIDEO CIRCLE PATCH
     msgField.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendOrUpdateMessage();} });
@@ -1698,8 +1882,8 @@
         reader.onload=ev=>{
             const base64=ev.target.result, nickname=myCurrentNickname||'User';
             const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-            database.ref('chats/'+activeChatId+'/messages').push({frameId:myFrameId,author:nickname,text:'[Фото]',time:timeStr,edited:false,mediaType:'image',mediaData:base64,mediaName:file.name});
-            notifyPeer(); showToast('📷 Фото отправлено!');
+            sendChatMessage({frameId:myFrameId,author:nickname,text:'[Фото]',time:timeStr,edited:false,mediaType:'image',mediaData:base64,mediaName:file.name});
+            showToast('📷 Фото отправлено!');
         };
         reader.onerror=()=>showToast('Ошибка чтения файла');
         reader.readAsDataURL(file); this.value=''; attachMenu.classList.remove('open');
@@ -1715,8 +1899,8 @@
         reader.onload=ev=>{
             const base64=ev.target.result, nickname=myCurrentNickname||'User';
             const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-            database.ref('chats/'+activeChatId+'/messages').push({frameId:myFrameId,author:nickname,text:'[Аудио]',time:timeStr,edited:false,mediaType:'audio',mediaData:base64,mediaName:file.name});
-            notifyPeer(); showToast('🎵 Аудио отправлено!');
+            sendChatMessage({frameId:myFrameId,author:nickname,text:'[Аудио]',time:timeStr,edited:false,mediaType:'audio',mediaData:base64,mediaName:file.name});
+            showToast('🎵 Аудио отправлено!');
         };
         reader.onerror=()=>showToast('Ошибка чтения файла');
         reader.readAsDataURL(file); this.value=''; attachMenu.classList.remove('open');
@@ -1733,8 +1917,8 @@
         reader.onload=e=>{
             const base64=e.target.result, nickname=myCurrentNickname||'User';
             const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-            database.ref('chats/'+activeChatId+'/messages').push({frameId:myFrameId,author:nickname,text:'[Видео]',time:timeStr,edited:false,mediaType:'video',mediaData:base64,mediaName:file.name,fileSize:formatFileSize(file.size)});
-            notifyPeer(); showToast('🎬 Видео отправлено!');
+            sendChatMessage({frameId:myFrameId,author:nickname,text:'[Видео]',time:timeStr,edited:false,mediaType:'video',mediaData:base64,mediaName:file.name,fileSize:formatFileSize(file.size)});
+            showToast('🎬 Видео отправлено!');
         };
         reader.onerror=()=>showToast('Ошибка чтения файла');
         reader.readAsDataURL(file); this.value=''; attachMenu.classList.remove('open');
@@ -1750,8 +1934,8 @@
         reader.onload=e=>{
             const base64=e.target.result, nickname=myCurrentNickname||'User';
             const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-            database.ref('chats/'+activeChatId+'/messages').push({frameId:myFrameId,author:nickname,text:'[Документ]',time:timeStr,edited:false,mediaType:'document',mediaData:base64,mediaName:file.name,fileSize:formatFileSize(file.size)});
-            notifyPeer(); showToast('📎 Документ отправлен!');
+            sendChatMessage({frameId:myFrameId,author:nickname,text:'[Документ]',time:timeStr,edited:false,mediaType:'document',mediaData:base64,mediaName:file.name,fileSize:formatFileSize(file.size)});
+            showToast('📎 Документ отправлен!');
         };
         reader.onerror=()=>showToast('Ошибка чтения файла');
         reader.readAsDataURL(file); this.value=''; attachMenu.classList.remove('open');
@@ -1794,17 +1978,31 @@
     function sendGif(url){
         if(!activeChatId){showToast('Выберите переписку');return;}
         const nickname=myCurrentNickname||'User', timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-        database.ref('chats/'+activeChatId+'/messages').push({frameId:myFrameId,author:nickname,text:'[GIF]',time:timeStr,edited:false,mediaType:'gif',gifUrl:url});
-        notifyPeer(); gifPicker.classList.remove('open'); showToast('GIF отправлен!');
+        sendChatMessage({frameId:myFrameId,author:nickname,text:'[GIF]',time:timeStr,edited:false,mediaType:'gif',gifUrl:url});
+        gifPicker.classList.remove('open'); showToast('GIF отправлен!');
     }
  
     /* ── OPEN CHAT ── */
     function openChat(chatId){
         if(activeChatId===chatId) return;
         unsubscribeActiveChat(); activeChatId=chatId;
-        const chat=chatsList.find(c=>c.id===chatId); if(!chat) return;
+        const chat=getChatById(chatId); if(!chat) return;
         // Сбрасываем непрочитанные
         clearUnread(chatId);
+        if(chatId===NOTES_CHAT_ID){
+            chatTitle.textContent=notesChatName;
+            chatSubtitle.textContent=''; chatSubtitle.className='header-sub offline-status'; peerStatusDot.className='status-dot';
+            headerCallBtn.classList.remove('visible');
+            peerTypingActive=false;
+            const avatar=document.getElementById('chat-avatar');
+            avatar.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M8 12h8"/><path d="M8 16h5"/></svg>';
+            avatar.style.background='#4a7fcb';
+            chatBox.innerHTML=''; emptyState.style.display='none';
+            if(pinnedBanner){ pinnedBanner.style.display='none'; }
+            renderNotesChat();
+            renderChatsList();
+            return;
+        }
         // Сигнализируем собеседнику что мы прочитали
         markChatRead(chatId);
  
@@ -1812,6 +2010,22 @@
         headerCallBtn.classList.add('visible');
         peerTypingActive=false;
         const avatar=document.getElementById('chat-avatar');
+        activePinnedData=null;
+        const pinnedRef = database.ref('chats/'+chatId+'/pinned');
+        const pinnedValueHandler = snapshot => {
+            activePinnedData = snapshot.val();
+            if(!pinnedBanner) return;
+            if(activePinnedData){
+                pinnedBanner.style.display='block';
+                pinnedAuthor.textContent = activePinnedData.pinnerId===myFrameId ? 'Вы:' : activePinnedData.author;
+                pinnedText.textContent = activePinnedData.text || '[медиа]';
+                pinnedTime.textContent = 'Закреплено: '+activePinnedData.pinnedAt;
+            } else {
+                pinnedBanner.style.display='none';
+            }
+        };
+        pinnedRef.on('value', pinnedValueHandler);
+        activeListeners.push({ref:pinnedRef,event:'value',handler:pinnedValueHandler});
         avatar.innerHTML='<span style="font-size:16px;font-weight:700;color:#fff">'+getInitial(chat.name)+'</span>';
         avatar.style.background=getAvatarBackground(chat);
         chatBox.innerHTML=''; emptyState.style.display='none';
@@ -1847,7 +2061,12 @@
                 } else if(badge){badge.remove();row.classList.remove('has-reaction');}
             }
         };
-        const removedHandler=snapshot=>{const row=document.getElementById('msg-'+snapshot.key);if(row) row.remove();};
+        const removedHandler=snapshot=>{
+            const row=document.getElementById('msg-'+snapshot.key);
+            if(row) row.remove();
+            const pinned = getPinnedMessage(chatId);
+            if(pinned && pinned.id===snapshot.key){ removePinnedMessage(chatId); }
+        };
         const limitedRef=msgsRef.limitToLast(100);
         limitedRef.on('child_added',addedHandler); msgsRef.on('child_changed',changedHandler); msgsRef.on('child_removed',removedHandler);
         activeListeners.push({ref:limitedRef,event:'child_added',handler:addedHandler},{ref:msgsRef,event:'child_changed',handler:changedHandler},{ref:msgsRef,event:'child_removed',handler:removedHandler});
@@ -2118,6 +2337,7 @@
     listenInbox();
     renderChatsList();
     initWallpaperPicker();
+    setThemeMode(themeMode);
     loadSavedWallpaper();
     // Запускаем слежение за непрочитанными для всех чатов
     chatsList.forEach(c=>watchUnreadForChat(c.id));
