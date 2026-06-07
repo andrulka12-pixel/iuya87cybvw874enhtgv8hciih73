@@ -263,6 +263,19 @@
         .pinned-message-time { font-size: 12px; color: rgba(0,0,0,0.55); white-space: nowrap; flex-shrink: 0; }
         .pinned-message-banner.active { outline: 2px solid rgba(74,127,203,0.16); }
  
+        /* ADMIN TAG */
+        .admin-tag { display: inline-block; background: var(--blue); color: #fff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 6px; margin-left: 6px; vertical-align: middle; letter-spacing: 0.3px; }
+
+        /* MEMBER CONTEXT MENU */
+        .member-ctx-menu { position: fixed; background: #fff; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; flex-direction: column; z-index: 500; overflow: hidden; width: 180px; }
+        .member-ctx-menu.open { display: flex; }
+        .member-ctx-item { padding: 11px 16px; font-size: 14px; cursor: pointer; transition: background 0.1s; color: #1a1a1a; }
+        .member-ctx-item:hover { background: rgba(0,0,0,0.05); }
+        .member-ctx-item.danger { color: #e74c3c; }
+        body.dark-theme .member-ctx-menu { background: #1f252e; }
+        body.dark-theme .member-ctx-item { color: #e8eef7; }
+        body.dark-theme .member-ctx-item.danger { color: #ff6b6b; }
+
         /* TOAST */
         .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(14px); background: rgba(0,0,0,0.75); color: #fff; padding: 8px 18px; border-radius: 20px; font-size: 13px; z-index: 500; opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none; white-space: nowrap; }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -382,7 +395,38 @@
  
         @keyframes heartPop { 0%{transform:scale(0);opacity:1} 50%{transform:scale(1.4);opacity:1} 100%{transform:scale(1) translateY(-30px);opacity:0} }
 
-        /* VIDEO CIRCLE IN CHAT */
+        /* SEARCH BAR */
+        .chats-search-wrap { padding: 8px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+        .chats-search-input { width: 100%; padding: 8px 12px 8px 34px; background: var(--input-field); border: 1.5px solid transparent; border-radius: 20px; font-size: 13px; outline: none; color: #1a1a1a; transition: border-color 0.18s; box-sizing: border-box; }
+        .chats-search-input:focus { border-color: var(--blue); }
+        .chats-search-input::placeholder { color: var(--dim); }
+        .chats-search-wrap-inner { position: relative; }
+        .chats-search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+        .chats-search-icon svg { width: 16px; height: 16px; fill: var(--dim); }
+        .search-result-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; cursor: pointer; border-bottom: 1px solid #e8e8e8; transition: background 0.12s; }
+        .search-result-item:hover { background: #d0e6ff; }
+        .search-result-avatar { width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: #fff; }
+        .search-result-info { flex: 1; min-width: 0; }
+        .search-result-name { font-size: 15px; font-weight: 600; color: #1a1a1a; }
+        .search-result-id { font-size: 12px; color: var(--dim); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .search-empty { padding: 24px 16px; font-size: 13px; color: var(--dim); text-align: center; }
+        body.dark-theme .chats-search-input { background: #1d222a; color: #e8eef7; }
+        body.dark-theme .search-result-name { color: #e8eef7; }
+        body.dark-theme .search-result-item:hover { background: rgba(255,255,255,0.05); }
+
+        /* GROUP DIVIDERS */
+        .chats-section-label { padding: 14px 16px 6px; font-size: 10px; font-weight: 600; color: #b0bec5; text-transform: uppercase; letter-spacing: 1.1px; background: transparent; }
+        body.dark-theme .chats-section-label { color: #4a5568; }
+        /* GROUP MEMBERS TAB */
+        .group-member-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+        .group-member-avatar { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: #fff; }
+        .group-member-info { flex: 1; min-width: 0; }
+        .group-member-name { font-size: 14px; font-weight: 600; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .group-member-id { font-size: 11px; color: var(--dim); }
+        body.dark-theme .group-member-name { color: #e8eef7; }
+        /* NG AVATAR HOVER */
+        #ng-avatar-preview:hover #ng-avatar-hint { opacity: 1 !important; }
+
         .msg-vcircle-wrap {
             width: 180px; height: 180px; border-radius: 50%; overflow: hidden;
             position: relative; cursor: pointer; flex-shrink: 0; margin-bottom: 2px;
@@ -410,9 +454,20 @@
 <div class="chats-panel" id="chats-panel">
     <div class="chats-panel-header">
         <span class="chats-panel-title">Чаты</span>
-        <button class="chats-add-btn" id="new-chat-open-btn" title="Создать переписку">
-            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-        </button>
+        <div style="display:flex;align-items:center;gap:7px;">
+            <button class="chats-add-btn" id="new-group-open-btn" title="Создать группу">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="#fff"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            </button>
+            <button class="chats-add-btn" id="new-chat-open-btn" title="Создать переписку">
+                <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            </button>
+        </div>
+    </div>
+    <div class="chats-search-wrap">
+        <div class="chats-search-wrap-inner">
+            <span class="chats-search-icon"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></span>
+            <input class="chats-search-input" id="chats-search-input" type="text" placeholder="Поиск">
+        </div>
     </div>
     <div class="chats-list" id="chats-list"></div>
     <div class="chats-panel-footer">
@@ -644,6 +699,63 @@
     </div>
 </div>
 
+<!-- NEW GROUP MODAL -->
+<div class="modal-overlay" id="new-group-modal">
+    <div class="modal-card" style="max-width:360px;">
+        <div class="new-chat-step active" id="ng-step1">
+            <h3>Новая группа</h3>
+            <input type="text" id="ng-name-input" placeholder="Название группы...">
+            <button id="ng-step1-next">Далее →</button>
+            <button class="modal-btn-cancel" id="ng-cancel-btn">Отмена</button>
+        </div>
+        <div class="new-chat-step" id="ng-step2">
+            <h3>Аватар группы</h3>
+            <p style="font-size:13px;color:#8a9aaa;">Можно пропустить</p>
+            <div id="ng-avatar-preview" style="width:80px;height:80px;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;color:#fff;cursor:pointer;position:relative;overflow:hidden;background:radial-gradient(circle at 30% 30%,#7ecfff 0%,#4a7fcb 74%);">
+                <span id="ng-avatar-initial">?</span>
+                <img id="ng-avatar-img" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;" src="">
+                <div style="position:absolute;inset:0;background:rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;" id="ng-avatar-hint">
+                    <svg viewBox="0 0 24 24" width="28" height="28"><path fill="#fff" d="M12 15.2A3.2 3.2 0 1 0 12 8.8a3.2 3.2 0 0 0 0 6.4zm0 1.8a5 5 0 1 1 0-10 5 5 0 0 1 0 10zM9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9z"/></svg>
+                </div>
+            </div>
+            <input type="file" id="ng-avatar-input" accept="image/*" style="display:none">
+            <button id="ng-avatar-pick-btn" style="background:rgba(74,127,203,0.12);color:var(--blue);border:none;padding:10px;border-radius:10px;cursor:pointer;font-weight:600;font-size:13px;">Выбрать фото</button>
+            <button id="ng-step2-next">Далее →</button>
+            <button class="modal-btn-cancel" id="ng-step2-back">← Назад</button>
+        </div>
+        <div class="new-chat-step" id="ng-step3">
+            <h3>Добавить участников</h3>
+            <p style="font-size:13px;color:#8a9aaa;">Выберите из существующих переписок:</p>
+            <div id="ng-members-list" style="max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;"></div>
+            <p id="ng-selected-count" style="font-size:12px;color:var(--blue);font-weight:600;margin-top:4px;">Выбрано: 0</p>
+            <button id="ng-confirm-btn">Создать группу</button>
+            <button class="modal-btn-cancel" id="ng-step3-back">← Назад</button>
+        </div>
+    </div>
+</div>
+
+<!-- LEAVE GROUP MODAL -->
+<div class="modal-overlay" id="leave-group-modal">
+    <div class="modal-card">
+        <h3>Покинуть группу?</h3>
+        <p style="font-size:14px;color:#8a9aaa;">Вы покинете группу «<b id="leave-group-name" style="color:#1a1a1a;">—</b>». Группа пропадёт из ваших чатов.</p>
+        <button id="leave-group-confirm-btn" class="modal-btn-danger">Покинуть</button>
+        <button class="modal-btn-cancel" id="leave-group-cancel-btn">Отмена</button>
+    </div>
+</div>
+
+<!-- ADD MEMBERS TO GROUP MODAL -->
+<div class="modal-overlay" id="add-members-modal">
+    <div class="modal-card" style="max-width:360px;">
+        <h3>Добавить участников</h3>
+        <p style="font-size:13px;color:#8a9aaa;">Выберите из существующих переписок:</p>
+        <div id="add-members-list" style="max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin:4px 0;"></div>
+        <p id="add-members-count" style="font-size:12px;color:var(--blue);font-weight:600;margin-top:2px;">Выбрано: 0</p>
+        <button id="add-members-confirm-btn">Добавить</button>
+        <button class="modal-btn-cancel" id="add-members-cancel-btn">Отмена</button>
+    </div>
+</div>
+
 <!-- RENAME CHAT MODAL -->
 <div class="modal-overlay" id="rename-chat-modal">
     <div class="modal-card">
@@ -741,9 +853,17 @@
         </div>
         <div class="profile-card-divider"></div>
         <div class="profile-card-tabs">
+            <button class="profile-tab-btn" data-tab="members" id="profile-members-tab-btn" style="display:none;">Участники</button>
             <button class="profile-tab-btn active" data-tab="photos">Фото</button>
             <button class="profile-tab-btn" data-tab="docs">Документы</button>
             <button class="profile-tab-btn" data-tab="audio">Аудио</button>
+        </div>
+        <div class="profile-tab-content" id="profile-tab-members">
+            <div style="display:flex;gap:8px;padding:10px 0 6px;">
+                <button id="profile-add-members-btn" style="flex:1;padding:9px;background:rgba(74,127,203,0.1);color:var(--blue);border:none;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:5px;"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>Добавить</button>
+                <button id="profile-leave-group-btn" style="flex:1;padding:9px;background:rgba(231,76,60,0.1);color:#e74c3c;border:none;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:5px;"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>Покинуть</button>
+            </div>
+            <div id="profile-members-list" style="display:flex;flex-direction:column;gap:2px;"><div class="profile-empty">Нет участников</div></div>
         </div>
         <div class="profile-tab-content active" id="profile-tab-photos">
             <div class="media-grid" id="profile-photos-grid"><div class="profile-empty">Нет фото</div></div>
@@ -800,6 +920,34 @@
     <div class="gif-grid" id="gif-grid"><div class="gif-loading">Введите запрос для поиска GIF</div></div>
 </div>
  
+<!-- MEMBER CONTEXT MENU -->
+<div class="member-ctx-menu" id="member-ctx-menu">
+    <div class="member-ctx-item" id="member-ctx-chat">💬 Чат</div>
+    <div class="member-ctx-item danger" id="member-ctx-remove" style="display:none;">🚫 Удалить из группы</div>
+    <div class="member-ctx-item" id="member-ctx-make-admin" style="display:none;">👑 Назначить Админом</div>
+</div>
+
+<!-- TRANSFER ADMIN MODAL -->
+<div class="modal-overlay" id="transfer-admin-modal">
+    <div class="modal-card" style="max-width:360px;">
+        <h3>Передать права администратора</h3>
+        <p style="font-size:13px;color:#8a9aaa;">Вы покидаете группу. Выберите нового администратора:</p>
+        <div id="transfer-admin-list" style="max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin:8px 0;"></div>
+        <button id="transfer-admin-confirm-btn">Передать и покинуть</button>
+        <button class="modal-btn-cancel" id="transfer-admin-cancel-btn">Отмена</button>
+    </div>
+</div>
+
+<!-- CONFIRM MAKE ADMIN MODAL -->
+<div class="modal-overlay" id="confirm-make-admin-modal">
+    <div class="modal-card">
+        <h3>Назначить администратором?</h3>
+        <p style="font-size:14px;color:#8a9aaa;">Назначить <b id="confirm-make-admin-name" style="color:#1a1a1a;">—</b> администратором группы? Вы останетесь обычным участником.</p>
+        <button id="confirm-make-admin-yes-btn">Назначить</button>
+        <button class="modal-btn-cancel" id="confirm-make-admin-cancel-btn">Отмена</button>
+    </div>
+</div>
+
 <div class="toast" id="toast-msg"></div>
  
 <script type="module">
@@ -1213,7 +1361,7 @@
             const reader = new FileReader();
             reader.onload = ev=>{
                 const nickname=myCurrentNickname||'User';
-                const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+                const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
                 database.ref('chats/'+activeChatId+'/messages').push({
                     frameId:myFrameId, author:nickname, text:'[Голосовое]', time:timeStr, edited:false,
                     mediaType:'audio', mediaData:ev.target.result, mediaName:'voice.webm', isVoice:true
@@ -1235,10 +1383,14 @@
  
     function applyAvatarToHeader(chatId){
         const headerAvatar = document.getElementById('chat-avatar');
-        const chat = chatsList.find(c=>c.id===chatId);
+        const chat = chatsList.find(c=>c.id===chatId) || (chatId===NOTES_CHAT_ID?{name:'Заметки'}:null);
         if(!chat) return;
         if(chatAvatars[chatId]){
             headerAvatar.innerHTML = '<img src="'+chatAvatars[chatId]+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+            headerAvatar.style.background='transparent';
+        } else if(chat.isGroup){
+            headerAvatar.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="#fff"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>';
+            headerAvatar.style.background = getAvatarBackground(chat);
         } else {
             headerAvatar.innerHTML = '<span style="font-size:16px;font-weight:700;color:#fff">'+getInitial(chat.name)+'</span>';
             headerAvatar.style.background = getAvatarBackground(chat);
@@ -1259,6 +1411,8 @@
     }
  
     document.getElementById('profile-card-avatar').addEventListener('click', ()=>{
+        const cardAvatarEl = document.getElementById('profile-card-avatar');
+        if(cardAvatarEl && cardAvatarEl.dataset.allowAvatarChange === 'no') return;
         document.getElementById('avatar-file-input').click();
     });
     document.getElementById('profile-card-avatar').addEventListener('mouseenter', e=>{
@@ -1276,6 +1430,11 @@
             saveChatAvatars();
             applyAvatarToHeader(activeChatId);
             applyAvatarToProfileCard(activeChatId);
+            // If group — sync avatar to Firebase so other members see it
+            const chat = chatsList.find(c=>c.id===activeChatId);
+            if(chat && chat.isGroup){
+                database.ref('groups/'+activeChatId+'/avatarData').set(ev.target.result);
+            }
             showToast('Аватар обновлён!');
         };
         reader.readAsDataURL(file); this.value='';
@@ -1391,7 +1550,7 @@
  
     /* ── CHATS PANEL ── */
     function openChatsPanel(){ chatsPanel.classList.add('open'); chatsOverlay.style.display='block'; requestAnimationFrame(()=>chatsOverlay.classList.add('visible')); }
-    function closeChatsPanel(){ chatsPanel.classList.remove('open'); chatsOverlay.classList.remove('visible'); setTimeout(()=>{chatsOverlay.style.display='none';},260); }
+    function closeChatsPanel(){ chatsPanel.classList.remove('open'); chatsOverlay.classList.remove('visible'); setTimeout(()=>{chatsOverlay.style.display='none';},260); if(chatsSearchInput){ chatsSearchInput.value=''; renderChatsList(); } }
     menuToggleBtn.addEventListener('click',()=>{ chatsPanel.classList.contains('open')?closeChatsPanel():openChatsPanel(); });
     chatsOverlay.addEventListener('click',closeChatsPanel);
     let swipeStartX=0,swipeStartY=0;
@@ -1424,6 +1583,11 @@
             '</div>';
         notesItem.addEventListener('click',()=>{ openChat(NOTES_CHAT_ID); closeChatsPanel(); });
         chatsList_el.appendChild(notesItem);
+
+        // Separate groups and regular chats
+        const groups = chatsList.filter(c=>c.id!==NOTES_CHAT_ID && c.isGroup);
+        const regularChats = chatsList.filter(c=>c.id!==NOTES_CHAT_ID && !c.isGroup);
+
         if(!chatsList.length){
             const placeholder=document.createElement('div');
             placeholder.style.cssText='padding:24px 16px;font-size:13px;color:#8a9aaa;text-align:center;';
@@ -1431,22 +1595,44 @@
             chatsList_el.appendChild(placeholder);
             return;
         }
-        chatsList.forEach(chat=>{
-            if(chat.id===NOTES_CHAT_ID) return;
-            const cnt=unreadCounts[chat.id]||0;
-            const item=document.createElement('div');
-            item.className='chat-item'+(chat.id===activeChatId?' active':'');
-            item.dataset.id=chat.id;
-            item.innerHTML=
-                '<div class="chat-item-avatar" style="background:'+getAvatarBackground(chat)+'">'+getInitial(chat.name)+'<div class="chat-item-online-dot"></div></div>'+ 
-                '<div class="chat-item-info"><div class="chat-item-name">'+escapeHtml(chat.name)+'</div><div class="chat-item-preview">'+escapeHtml(chat.lastMsg||'Нет сообщений')+'</div></div>'+ 
-                    '<span class="unread-badge'+(cnt>0?' visible':'')+'">'+(cnt>0?cnt:'')+'</span>'+
-                '</div>'+
-                '<button class="chat-item-del" title="Удалить"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>';
-            item.addEventListener('click',e=>{ if(e.target.closest('.chat-item-del')) return; openChat(chat.id); closeChatsPanel(); });
-            item.querySelector('.chat-item-del').addEventListener('click',e=>{ e.stopPropagation(); deleteChatTarget={id:chat.id,name:chat.name}; deleteChatName.textContent=chat.name; deleteChatModal.style.display='flex'; });
-            chatsList_el.appendChild(item);
-        });
+
+        // Render regular chats without divider
+        if(regularChats.length>0){
+            regularChats.forEach(chat=>appendChatItem(chat));
+        }
+
+        // Render groups with divider
+        if(groups.length>0){
+            const div=document.createElement('div');
+            div.className='chats-section-label';
+            div.textContent='Группы';
+            chatsList_el.appendChild(div);
+            groups.forEach(chat=>appendChatItem(chat));
+        }
+    }
+
+    function appendChatItem(chat){
+        const cnt=unreadCounts[chat.id]||0;
+        const item=document.createElement('div');
+        item.className='chat-item'+(chat.id===activeChatId?' active':'');
+        item.dataset.id=chat.id;
+        const avatarBg = chatAvatars[chat.id] ? 'transparent' : getAvatarBackground(chat);
+        const avatarContent = chatAvatars[chat.id]
+            ? '<img src="'+chatAvatars[chat.id]+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'
+            : (chat.isGroup
+                ? '<svg viewBox="0 0 24 24" width="22" height="22" fill="#fff"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>'
+                : getInitial(chat.name));
+        item.innerHTML=
+            '<div class="chat-item-avatar" style="background:'+avatarBg+'">'+avatarContent+(chat.isGroup?'':'<div class="chat-item-online-dot"></div>')+'</div>'+ 
+            '<div class="chat-item-info"><div class="chat-item-name">'+escapeHtml(chat.name)+'</div><div class="chat-item-preview">'+escapeHtml(chat.lastMsg||'Нет сообщений')+'</div></div>'+ 
+            '<div class="chat-item-right">'+
+                '<span class="chat-item-time">'+(chat.lastTime||'')+'</span>'+
+                '<span class="unread-badge'+(cnt>0?' visible':'')+'">'+(cnt>0?cnt:'')+'</span>'+
+            '</div>'+
+            '<button class="chat-item-del" title="Удалить"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>';
+        item.addEventListener('click',e=>{ if(e.target.closest('.chat-item-del')) return; openChat(chat.id); closeChatsPanel(); });
+        item.querySelector('.chat-item-del').addEventListener('click',e=>{ e.stopPropagation(); deleteChatTarget={id:chat.id,name:chat.name}; deleteChatName.textContent=chat.name; deleteChatModal.style.display='flex'; });
+        chatsList_el.appendChild(item);
     }
  
     /* ── UNREAD ── */
@@ -1505,19 +1691,77 @@
     peerAvatarContainer.addEventListener('click',()=>{
         if(!activeChatId) return;
         const chat=chatsList.find(c=>c.id===activeChatId); if(!chat) return;
-        document.getElementById('profile-card-avatar').textContent=getInitial(chat.name);
-        document.getElementById('profile-card-avatar').style.background=getAvatarBackground(chat);
+        const isGroup = !!chat.isGroup;
+
+        // Set avatar
+        if(chatAvatars[activeChatId]){
+            const cardAvatar=document.getElementById('profile-card-avatar');
+            cardAvatar.innerHTML='<div id="avatar-change-hint" style="position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,0.38);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.18s;"><svg viewBox="0 0 24 24" width="28" height="28"><path fill="#fff" d="M12 15.2A3.2 3.2 0 1 0 12 8.8a3.2 3.2 0 0 0 0 6.4zm0 1.8a5 5 0 1 1 0-10 5 5 0 0 1 0 10zM9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9z"/></svg></div>';
+            let img = cardAvatar.querySelector('img.avatar-img');
+            if(!img){ img=document.createElement('img'); img.className='avatar-img'; cardAvatar.insertBefore(img, cardAvatar.firstChild); }
+            img.src=chatAvatars[activeChatId];
+            cardAvatar.style.background='transparent';
+        } else {
+            document.getElementById('profile-card-avatar').textContent=getInitial(chat.name);
+            document.getElementById('profile-card-avatar').style.background=getAvatarBackground(chat);
+            const existImg=document.getElementById('profile-card-avatar').querySelector('img.avatar-img');
+            if(existImg) existImg.remove();
+            let hint=document.getElementById('profile-card-avatar').querySelector('#avatar-change-hint');
+            if(!hint){
+                hint=document.createElement('div'); hint.id='avatar-change-hint';
+                hint.style.cssText='position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,0.38);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.18s;';
+                hint.innerHTML='<svg viewBox="0 0 24 24" width="28" height="28"><path fill="#fff" d="M12 15.2A3.2 3.2 0 1 0 12 8.8a3.2 3.2 0 0 0 0 6.4zm0 1.8a5 5 0 1 1 0-10 5 5 0 0 1 0 10zM9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9z"/></svg>';
+                document.getElementById('profile-card-avatar').appendChild(hint);
+            }
+        }
         document.getElementById('profile-card-cover').style.background=getAvatarCoverBackground(chat);
         document.getElementById('profile-card-name').textContent=chat.name;
-        document.getElementById('profile-card-id').textContent='ID: '+(chat.peerId||'—');
+        // ID: group shows groupId, chat shows peerId
+        document.getElementById('profile-card-id').textContent='ID: '+(chat.groupId||chat.peerId||'—');
         const st=document.getElementById('profile-card-status');
-        if(isPeerOnline){st.textContent='в сети';st.className='profile-card-status';}
-        else{st.textContent='не в сети';st.className='profile-card-status offline';}
+        if(isGroup){
+            const memberCount = chat.members ? Object.keys(chat.members).length : 0;
+            st.textContent='участников: '+memberCount;
+            st.className='profile-card-status offline';
+        } else {
+            if(isPeerOnline){st.textContent='в сети';st.className='profile-card-status';}
+            else{st.textContent='не в сети';st.className='profile-card-status offline';}
+        }
+
+        // Show/hide call button in profile card
+        const profileCallBtn = document.getElementById('profile-call-btn');
+        if(profileCallBtn) profileCallBtn.style.display = isGroup ? 'none' : '';
+
+        // Show/hide rename button — only admin can rename group
+        const amIAdminOfThisGroup = isGroup && (chat.adminId === myFrameId);
+        if(profileRenameBtn) profileRenameBtn.style.display = isGroup && !amIAdminOfThisGroup ? 'none' : '';
+        // Show/hide avatar click — only admin can change group avatar
+        const cardAvatarEl = document.getElementById('profile-card-avatar');
+        if(cardAvatarEl){
+            cardAvatarEl.style.cursor = (isGroup && !amIAdminOfThisGroup) ? 'default' : 'pointer';
+            cardAvatarEl.dataset.allowAvatarChange = (isGroup && !amIAdminOfThisGroup) ? 'no' : 'yes';
+        }
+        const avatarHint = document.getElementById('avatar-change-hint');
+        if(avatarHint) avatarHint.style.display = (isGroup && !amIAdminOfThisGroup) ? 'none' : '';
+
+        // Show/hide members tab
+        const membersTabBtn = document.getElementById('profile-members-tab-btn');
+        if(membersTabBtn) membersTabBtn.style.display = isGroup ? '' : 'none';
+
+        // Reset tabs
         document.querySelectorAll('.profile-tab-btn').forEach(b=>b.classList.remove('active'));
         document.querySelectorAll('.profile-tab-content').forEach(c=>c.classList.remove('active'));
-        document.querySelector('.profile-tab-btn[data-tab="photos"]').classList.add('active');
-        document.getElementById('profile-tab-photos').classList.add('active');
-        loadProfileMedia(activeChatId);
+
+        if(isGroup){
+            // Activate members tab first for groups
+            if(membersTabBtn) membersTabBtn.classList.add('active');
+            document.getElementById('profile-tab-members').classList.add('active');
+            renderGroupMembers(chat);
+        } else {
+            document.querySelector('.profile-tab-btn[data-tab="photos"]').classList.add('active');
+            document.getElementById('profile-tab-photos').classList.add('active');
+            loadProfileMedia(activeChatId);
+        }
         profileCardOverlay.classList.add('open');
     });
     profileCardOverlay.addEventListener('click',e=>{ if(e.target===profileCardOverlay) profileCardOverlay.classList.remove('open'); });
@@ -1526,7 +1770,12 @@
             document.querySelectorAll('.profile-tab-btn').forEach(b=>b.classList.remove('active'));
             document.querySelectorAll('.profile-tab-content').forEach(c=>c.classList.remove('active'));
             btn.classList.add('active');
-            document.getElementById('profile-tab-'+btn.dataset.tab).classList.add('active');
+            const tabEl = document.getElementById('profile-tab-'+btn.dataset.tab);
+            if(tabEl) tabEl.classList.add('active');
+            if(btn.dataset.tab==='photos'||btn.dataset.tab==='docs'||btn.dataset.tab==='audio'){
+                const chat=chatsList.find(c=>c.id===activeChatId);
+                if(chat && !chat.isGroup) loadProfileMedia(activeChatId);
+            }
         });
     });
     document.getElementById('profile-call-btn').addEventListener('click',()=>{ profileCardOverlay.classList.remove('open'); headerCallBtn.click(); });
@@ -1564,8 +1813,12 @@
         saveChatsList();
         renderChatsList();
         updateCurrentChatName(chat);
+        // If group — push new name to Firebase
+        if(chat.isGroup){
+            database.ref('groups/'+chat.id+'/name').set(trimmed);
+        }
         renameChatModal.style.display = 'none';
-        showToast('Переписка переименована');
+        showToast('Переименовано');
     }
     function updateCurrentChatName(chat){
         if(!chat) return;
@@ -1852,8 +2105,12 @@
     function notifyPeer(){
         const c=chatsList.find(x=>x.id===activeChatId);
         if(c&&c.peerId){
-            // Записываем в inbox получателя информацию о чате + наш никнейм
-            database.ref('inbox/'+c.peerId+'/'+activeChatId).set({chatId:activeChatId,peerId:myFrameId,senderName:myCurrentNickname||'User'});
+            // Записываем в inbox получателя: chatId, наш frameId как peerId, наш никнейм
+            database.ref('inbox/'+c.peerId+'/'+activeChatId).set({
+                chatId: activeChatId,
+                peerId: myFrameId,
+                senderName: myCurrentNickname||'User'
+            });
         }
     }
  
@@ -1863,7 +2120,7 @@
         if(!text) return;
         if(!activeChatId){showToast('Выберите или создайте переписку');return;}
         if(editMessageId){ updateChatMessage(editMessageId,{text,edited:true}); cancelActions(); return; }
-        const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+        const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
         const payload={frameId:myFrameId,author:nickname,text,time:timeStr,edited:false};
         if(replyMessageId){payload.replyToId=replyMessageId;payload.replyToAuthor=actionTitle.textContent.replace('Ответ: ','');payload.replyToText=actionDesc.textContent;}
         sendChatMessage(payload);
@@ -1881,7 +2138,7 @@
         const reader=new FileReader();
         reader.onload=ev=>{
             const base64=ev.target.result, nickname=myCurrentNickname||'User';
-            const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+            const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
             sendChatMessage({frameId:myFrameId,author:nickname,text:'[Фото]',time:timeStr,edited:false,mediaType:'image',mediaData:base64,mediaName:file.name});
             showToast('📷 Фото отправлено!');
         };
@@ -1898,7 +2155,7 @@
         const reader=new FileReader();
         reader.onload=ev=>{
             const base64=ev.target.result, nickname=myCurrentNickname||'User';
-            const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+            const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
             sendChatMessage({frameId:myFrameId,author:nickname,text:'[Аудио]',time:timeStr,edited:false,mediaType:'audio',mediaData:base64,mediaName:file.name});
             showToast('🎵 Аудио отправлено!');
         };
@@ -1916,7 +2173,7 @@
         const reader=new FileReader();
         reader.onload=e=>{
             const base64=e.target.result, nickname=myCurrentNickname||'User';
-            const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+            const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
             sendChatMessage({frameId:myFrameId,author:nickname,text:'[Видео]',time:timeStr,edited:false,mediaType:'video',mediaData:base64,mediaName:file.name,fileSize:formatFileSize(file.size)});
             showToast('🎬 Видео отправлено!');
         };
@@ -1933,7 +2190,7 @@
         const reader=new FileReader();
         reader.onload=e=>{
             const base64=e.target.result, nickname=myCurrentNickname||'User';
-            const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+            const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
             sendChatMessage({frameId:myFrameId,author:nickname,text:'[Документ]',time:timeStr,edited:false,mediaType:'document',mediaData:base64,mediaName:file.name,fileSize:formatFileSize(file.size)});
             showToast('📎 Документ отправлен!');
         };
@@ -1977,7 +2234,7 @@
     }
     function sendGif(url){
         if(!activeChatId){showToast('Выберите переписку');return;}
-        const nickname=myCurrentNickname||'User', timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+        const nickname=myCurrentNickname||'User', timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
         sendChatMessage({frameId:myFrameId,author:nickname,text:'[GIF]',time:timeStr,edited:false,mediaType:'gif',gifUrl:url});
         gifPicker.classList.remove('open'); showToast('GIF отправлен!');
     }
@@ -2007,7 +2264,16 @@
         markChatRead(chatId);
  
         chatTitle.textContent=chat.name; chatSubtitle.textContent=''; chatSubtitle.className='header-sub offline-status'; peerStatusDot.className='status-dot';
-        headerCallBtn.classList.add('visible');
+        // For groups: hide call btn, show member count; for regular chats: show call btn
+        if(chat.isGroup){
+            headerCallBtn.classList.remove('visible');
+            const memberCount = chat.members ? Object.keys(chat.members).length : 0;
+            chatSubtitle.textContent='участников: '+memberCount;
+            chatSubtitle.className='header-sub offline-status';
+            peerStatusDot.className='status-dot';
+        } else {
+            headerCallBtn.classList.add('visible');
+        }
         peerTypingActive=false;
         const avatar=document.getElementById('chat-avatar');
         activePinnedData=null;
@@ -2026,8 +2292,7 @@
         };
         pinnedRef.on('value', pinnedValueHandler);
         activeListeners.push({ref:pinnedRef,event:'value',handler:pinnedValueHandler});
-        avatar.innerHTML='<span style="font-size:16px;font-weight:700;color:#fff">'+getInitial(chat.name)+'</span>';
-        avatar.style.background=getAvatarBackground(chat);
+        applyAvatarToHeader(chatId);
         chatBox.innerHTML=''; emptyState.style.display='none';
  
         const msgsRef=database.ref('chats/'+chatId+'/messages');
@@ -2071,26 +2336,203 @@
         limitedRef.on('child_added',addedHandler); msgsRef.on('child_changed',changedHandler); msgsRef.on('child_removed',removedHandler);
         activeListeners.push({ref:limitedRef,event:'child_added',handler:addedHandler},{ref:msgsRef,event:'child_changed',handler:changedHandler},{ref:msgsRef,event:'child_removed',handler:removedHandler});
  
-        watchPeerStatus(chat.peerId); watchTyping(chatId); watchReadReceipts(chatId); renderChatsList();
-        setupCallListener(chatId);
+        watchPeerStatus(chat.isGroup ? null : chat.peerId);
+        watchTyping(chatId);
+        if(!chat.isGroup) watchReadReceipts(chatId);
+        renderChatsList();
+        if(!chat.isGroup) setupCallListener(chatId);
     }
  
+    /* ── LISTEN GROUP UPDATES (name, avatar, admin) ── */
+    function listenGroupUpdates(){
+        chatsList.filter(c=>c.isGroup).forEach(chat=>{
+            listenSingleGroupUpdates(chat.id);
+        });
+    }
+    function listenSingleGroupUpdates(chatId){
+        // name
+        database.ref('groups/'+chatId+'/name').on('value', snap=>{
+            const newName = snap.val();
+            if(!newName) return;
+            const chat = chatsList.find(c=>c.id===chatId);
+            if(chat && chat.name !== newName){
+                chat.name = newName;
+                saveChatsList(); renderChatsList();
+                if(activeChatId===chatId){ chatTitle.textContent=newName; }
+            }
+        });
+        // avatarData
+        database.ref('groups/'+chatId+'/avatarData').on('value', snap=>{
+            const data = snap.val();
+            if(!data) return;
+            if(chatAvatars[chatId] !== data){
+                chatAvatars[chatId] = data;
+                saveChatAvatars();
+                if(activeChatId===chatId) applyAvatarToHeader(chatId);
+            }
+        });
+        // adminId
+        database.ref('groups/'+chatId+'/adminId').on('value', snap=>{
+            const adminId = snap.val();
+            if(!adminId) return;
+            const chat = chatsList.find(c=>c.id===chatId);
+            if(chat && chat.adminId !== adminId){
+                chat.adminId = adminId;
+                saveChatsList();
+            }
+        });
+    }
+
     /* ── INBOX (автодобавление переписки у получателя) ── */
     function listenInbox(){
-        database.ref('inbox/'+myFrameId).on('child_added',snap=>{
+        // child_added срабатывает и для уже существующих записей при загрузке,
+        // и для новых — надёжнее чем child_changed
+        database.ref('inbox/'+myFrameId).on('child_added', snap=>{
             const data=snap.val();
             if(!data||!data.chatId||!data.peerId) return;
-            if(chatsList.find(c=>c.id===data.chatId)) return;
-            // Используем senderName если есть
-            const chatName=data.senderName||('Чат '+data.peerId.substr(0,8));
-            chatsList.unshift({id:data.chatId,name:chatName,peerId:data.peerId,lastMsg:'',lastTime:'',gradientIndex:getNextUniqueGradientIndex()});
+            // Если чат уже есть — просто обновляем имя если оно было дефолтным
+            const existing = chatsList.find(c=>c.id===data.chatId);
+            if(existing){
+                if(data.senderName && (existing.name.startsWith('User_') || existing.name.startsWith('Чат '))){
+                    existing.name = data.senderName;
+                    saveChatsList(); renderChatsList();
+                }
+                return;
+            }
+            const chatName = data.senderName || ('User_'+data.peerId.substr(-4));
+            const newChat = {id:data.chatId, name:chatName, peerId:data.peerId, lastMsg:'', lastTime:'', gradientIndex:getNextUniqueGradientIndex()};
+            chatsList.unshift(newChat);
             saveChatsList();
-            // Начинаем считать непрочитанные для нового чата
             incrementUnread(data.chatId);
-            // Подключаем слушатель входящих звонков для нового чата
             watchChatForIncomingCall(data.chatId, chatName);
-            renderChatsList(); showToast('💬 Новая переписка: '+chatName);
+            renderChatsList();
+            showToast('💬 Новая переписка: '+chatName);
         });
+        // child_changed — на случай обновления имени
+        database.ref('inbox/'+myFrameId).on('child_changed', snap=>{
+            const data=snap.val();
+            if(!data||!data.chatId||!data.peerId) return;
+            const existing = chatsList.find(c=>c.id===data.chatId);
+            if(existing && data.senderName && (existing.name.startsWith('User_') || existing.name.startsWith('Чат '))){
+                existing.name = data.senderName;
+                saveChatsList(); renderChatsList();
+            }
+        });
+    }
+
+    /* ── ПОИСК ПО ID ── */
+    const chatsSearchInput = document.getElementById('chats-search-input');
+    let searchDebounce = null;
+
+    chatsSearchInput.addEventListener('input', ()=>{
+        clearTimeout(searchDebounce);
+        const q = chatsSearchInput.value.trim();
+        if(!q){ renderChatsList(); return; }
+        searchDebounce = setTimeout(()=>doSearch(q), 300);
+    });
+
+    chatsSearchInput.addEventListener('keydown', e=>{
+        if(e.key==='Escape'){ chatsSearchInput.value=''; renderChatsList(); }
+    });
+
+    function doSearch(q){
+        const chatsList_el = document.getElementById('chats-list');
+        chatsList_el.innerHTML = '';
+
+        // Ищем совпадения среди локальных чатов (по id, peerId, groupId, имени)
+        const lq = q.toLowerCase();
+        const localMatches = chatsList.filter(c=>{
+            if(c.id===NOTES_CHAT_ID) return false;
+            return (c.id||'').toLowerCase().includes(lq)
+                || (c.peerId||'').toLowerCase().includes(lq)
+                || (c.groupId||'').toLowerCase().includes(lq)
+                || (c.name||'').toLowerCase().includes(lq);
+        });
+
+        // Если это похоже на ID пользователя — ищем в Firebase presence
+        const looksLikeId = q.startsWith('id_') && q.length > 4;
+
+        if(!localMatches.length && !looksLikeId){
+            chatsList_el.innerHTML = '<div class="search-empty">Ничего не найдено</div>';
+            return;
+        }
+
+        // Рендерим локальные совпадения
+        localMatches.forEach(chat=>{
+            const item = buildSearchResultItem(chat.name, chat.peerId||chat.id, chat, false);
+            chatsList_el.appendChild(item);
+        });
+
+        // Если похоже на ID — ищем в Firebase
+        if(looksLikeId){
+            const alreadyLocal = localMatches.some(c=>c.peerId===q || c.id===q);
+            if(!alreadyLocal){
+                // Показываем статус загрузки
+                const loader = document.createElement('div');
+                loader.className = 'search-empty';
+                loader.id = 'search-loader';
+                loader.textContent = 'Ищем пользователя...';
+                chatsList_el.appendChild(loader);
+
+                // Проверяем presence в Firebase
+                database.ref('presence/'+q).on('value', snap=>{
+                    database.ref('presence/'+q).off('value');
+                    const loaderEl = document.getElementById('search-loader');
+                    if(loaderEl) loaderEl.remove();
+
+                    const data = snap.val();
+                    // presence может не быть — пользователь оффлайн, но существует
+                    // Показываем результат в любом случае если q выглядит как валидный ID
+                    const name = (data&&data.name) ? data.name : ('User_'+q.substr(-4));
+                    const fakeChat = {id:[myFrameId,q].sort().join('__'), peerId:q, name, isNew:true};
+                    const item = buildSearchResultItem(name, q, fakeChat, true);
+                    // Проверяем что поле поиска не очистили пока грузили
+                    if(chatsSearchInput.value.trim()===q){
+                        chatsList_el.appendChild(item);
+                    }
+                });
+            }
+        }
+
+        if(!localMatches.length && !looksLikeId){
+            chatsList_el.innerHTML = '<div class="search-empty">Введите ID в формате id_...</div>';
+        }
+    }
+
+    function buildSearchResultItem(name, peerId, chat, isNew){
+        const item = document.createElement('div');
+        item.className = 'search-result-item';
+        const bg = getAvatarBackground(chat);
+        const initial = getInitial(name);
+        item.innerHTML =
+            '<div class="search-result-avatar" style="background:'+bg+'">'+escapeHtml(initial)+'</div>'+
+            '<div class="search-result-info">'+
+                '<div class="search-result-name">'+escapeHtml(name)+(isNew?'<span style="font-size:10px;color:var(--blue);font-weight:600;margin-left:6px;background:rgba(74,127,203,0.12);padding:2px 6px;border-radius:8px;">+ Добавить</span>':'')+'</div>'+
+                '<div class="search-result-id">'+escapeHtml(peerId||'')+'</div>'+
+            '</div>';
+
+        item.addEventListener('click', ()=>{
+            if(isNew){
+                // Добавляем новый чат
+                const chatId = [myFrameId, peerId].sort().join('__');
+                const defaultName = 'User_'+String(Math.floor(1000+Math.random()*9000));
+                if(!chatsList.find(c=>c.id===chatId)){
+                    chatsList.unshift({id:chatId, name:defaultName, peerId, lastMsg:'', lastTime:'', gradientIndex:getNextUniqueGradientIndex()});
+                    saveChatsList();
+                }
+                chatsSearchInput.value = '';
+                renderChatsList();
+                openChat(chatId);
+                closeChatsPanel();
+                showToast('💬 Чат добавлен!');
+            } else {
+                chatsSearchInput.value = '';
+                renderChatsList();
+                openChat(chat.id);
+                closeChatsPanel();
+            }
+        });
+        return item;
     }
  
     /* ── CONNECT ID MODAL ── */
@@ -2122,6 +2564,631 @@
         chatsList.unshift({id:chatId,name,peerId,lastMsg:'',lastTime:'',gradientIndex:getNextUniqueGradientIndex()});
         saveChatsList();renderChatsList();
         newChatModal.style.display='none';openChat(chatId);closeChatsPanel();showToast('Переписка «'+name+'» создана!');
+    });
+
+    /* ── GROUP CHAT LOGIC ── */
+    let ngAvatarDataUrl = null;
+    let ngSelectedMembers = {}; // { peerId: { name, id } }
+
+    // Generate unique group ID
+    function generateGroupId(){
+        const existingGroupIds = new Set(chatsList.filter(c=>c.groupId).map(c=>c.groupId));
+        let gid;
+        do { gid = 'group_' + Math.floor(1000+Math.random()*9000); } while(existingGroupIds.has(gid));
+        return gid;
+    }
+
+    /* ── MEMBER CONTEXT MENU ── */
+    let memberCtxTargetPid = null;
+    let memberCtxTargetInfo = null;
+    let memberCtxTargetChat = null;
+    const memberCtxMenu = document.getElementById('member-ctx-menu');
+    const memberCtxChat = document.getElementById('member-ctx-chat');
+    const memberCtxRemove = document.getElementById('member-ctx-remove');
+    const memberCtxMakeAdmin = document.getElementById('member-ctx-make-admin');
+
+    function showMemberContextMenu(e, chat, pid, info, amIAdmin){
+        memberCtxTargetPid = pid;
+        memberCtxTargetInfo = info;
+        memberCtxTargetChat = chat;
+        // Show/hide admin-only items
+        memberCtxRemove.style.display = (amIAdmin && pid !== myFrameId) ? '' : 'none';
+        memberCtxMakeAdmin.style.display = (amIAdmin && pid !== myFrameId) ? '' : 'none';
+        memberCtxMenu.style.display = 'flex';
+        // Position
+        const touch = e.touches ? e.touches[0] : e;
+        const x = touch ? touch.clientX : (e.clientX||100);
+        const y = touch ? touch.clientY : (e.clientY||100);
+        const mw = 180, mh = 130;
+        const left = Math.min(x, window.innerWidth - mw - 8);
+        const top = Math.min(y, window.innerHeight - mh - 8);
+        memberCtxMenu.style.left = left + 'px';
+        memberCtxMenu.style.top = top + 'px';
+    }
+
+    function closeMemberCtxMenu(){ memberCtxMenu.style.display='none'; memberCtxTargetPid=null; memberCtxTargetInfo=null; memberCtxTargetChat=null; }
+
+    document.addEventListener('click', e=>{ if(memberCtxMenu.style.display==='flex' && !memberCtxMenu.contains(e.target)) closeMemberCtxMenu(); });
+
+    memberCtxChat.addEventListener('click', ()=>{
+        const pid = memberCtxTargetPid;
+        const info = memberCtxTargetInfo;
+        closeMemberCtxMenu();
+        if(!pid) return;
+        // Find existing chat with this peer or create one
+        let peerChat = chatsList.find(c=>!c.isGroup && c.peerId===pid);
+        if(!peerChat){
+            const chatId = [myFrameId, pid].sort().join('__');
+            peerChat = {id:chatId, name:info.name||('ID: '+pid.substr(0,12)), peerId:pid, lastMsg:'', lastTime:'', gradientIndex:getNextUniqueGradientIndex()};
+            chatsList.unshift(peerChat);
+            saveChatsList();
+            renderChatsList();
+        }
+        profileCardOverlay.classList.remove('open');
+        openChat(peerChat.id);
+        openChatsPanel();
+    });
+
+    memberCtxRemove.addEventListener('click', ()=>{
+        const pid = memberCtxTargetPid;
+        const info = memberCtxTargetInfo;
+        const chat = memberCtxTargetChat;
+        closeMemberCtxMenu();
+        if(!pid || !chat) return;
+        // Remove member from group
+        delete chat.members[pid];
+        saveChatsList();
+        database.ref('groups/'+chat.id+'/members/'+pid).remove();
+        // Update Firebase groups members node
+        database.ref('groups/'+chat.id+'/members').set(chat.members);
+        // Notify removed member — use push() so child_added always fires
+        database.ref('groupKick/'+pid).push({
+            chatId: chat.id,
+            groupName: chat.name,
+            removedBy: myCurrentNickname||'Админ',
+            ts: Date.now()
+        });
+        renderGroupMembers(chat);
+        const cnt = Object.keys(chat.members).length;
+        chatSubtitle.textContent='участников: '+cnt;
+        renderChatsList();
+        showToast('Участник удалён из группы');
+    });
+
+    // Listen for being kicked from a group
+    function listenGroupKick(){
+        database.ref('groupKick/'+myFrameId).on('child_added', snap=>{
+            const data = snap.val();
+            if(!data || !data.chatId) return;
+            // Remove entry immediately
+            database.ref('groupKick/'+myFrameId+'/'+snap.key).remove();
+            // Remove group from local list
+            const kicked = chatsList.find(c=>c.id===data.chatId);
+            if(!kicked) return;
+            chatsList = chatsList.filter(c=>c.id!==data.chatId);
+            delete unreadCounts[data.chatId];
+            saveChatsList(); saveUnread();
+            if(activeChatId===data.chatId){
+                activeChatId=null; unsubscribeActiveChat();
+                chatBox.innerHTML=''; chatBox.appendChild(emptyState); emptyState.style.display='flex';
+                chatTitle.textContent='Выберите чат'; chatSubtitle.textContent='';
+                peerStatusDot.className='status-dot'; typingBar.classList.remove('visible');
+                headerCallBtn.classList.remove('visible');
+            }
+            renderChatsList();
+            const gname = data.groupName || 'группу';
+            const admin = data.removedBy || 'Администратор';
+            showToast('Вас удалил из группы «'+gname+'» '+admin, 6000);
+        });
+    }
+
+    // Confirm make admin modal
+    const confirmMakeAdminModal = document.getElementById('confirm-make-admin-modal');
+    const confirmMakeAdminName = document.getElementById('confirm-make-admin-name');
+    const confirmMakeAdminYesBtn = document.getElementById('confirm-make-admin-yes-btn');
+    const confirmMakeAdminCancelBtn = document.getElementById('confirm-make-admin-cancel-btn');
+    let makeAdminTargetPid = null;
+    let makeAdminTargetInfo = null;
+    let makeAdminTargetChat = null;
+
+    memberCtxMakeAdmin.addEventListener('click', ()=>{
+        makeAdminTargetPid = memberCtxTargetPid;
+        makeAdminTargetInfo = memberCtxTargetInfo;
+        makeAdminTargetChat = memberCtxTargetChat;
+        closeMemberCtxMenu();
+        if(!makeAdminTargetPid || !makeAdminTargetChat) return;
+        confirmMakeAdminName.textContent = makeAdminTargetInfo.name||makeAdminTargetPid;
+        confirmMakeAdminModal.style.display = 'flex';
+    });
+    confirmMakeAdminCancelBtn.addEventListener('click', ()=>{ confirmMakeAdminModal.style.display='none'; });
+    confirmMakeAdminModal.addEventListener('click', e=>{ if(e.target===confirmMakeAdminModal) confirmMakeAdminModal.style.display='none'; });
+    confirmMakeAdminYesBtn.addEventListener('click', ()=>{
+        if(!makeAdminTargetPid || !makeAdminTargetChat) return;
+        makeAdminTargetChat.adminId = makeAdminTargetPid;
+        saveChatsList();
+        database.ref('groups/'+makeAdminTargetChat.id+'/adminId').set(makeAdminTargetPid);
+        confirmMakeAdminModal.style.display='none';
+        renderGroupMembers(makeAdminTargetChat);
+        showToast('👑 '+makeAdminTargetInfo.name+' назначен(а) администратором');
+        makeAdminTargetPid=null; makeAdminTargetInfo=null; makeAdminTargetChat=null;
+    });
+
+    // Render group members in profile card
+    function renderGroupMembers(chat){
+        const container = document.getElementById('profile-members-list');
+        if(!container) return;
+        container.innerHTML='';
+        const members = chat.members || {};
+        const adminId = chat.adminId || null;
+        const memberEntries = Object.entries(members);
+        if(!memberEntries.length){ container.innerHTML='<div class="profile-empty">Нет участников</div>'; return; }
+        const amIAdmin = adminId === myFrameId;
+        memberEntries.forEach(([pid, info])=>{
+            const row = document.createElement('div');
+            row.className='group-member-row';
+            row.style.cssText='display:flex;align-items:center;gap:10px;padding:8px 6px;border-radius:8px;cursor:pointer;user-select:none;-webkit-user-select:none;';
+            const bg = getAvatarBackground({id:pid, gradientIndex: Math.abs(strToHue(pid)) % AVATAR_PALETTE_COUNT});
+            const initial = (info.name||'?').charAt(0).toUpperCase();
+            const isAdmin = pid === adminId;
+            const adminTagHTML = isAdmin ? '<span class="admin-tag">Админ</span>' : '';
+            row.innerHTML=
+                '<div class="group-member-avatar" style="background:'+bg+'">'+initial+'</div>'+
+                '<div class="group-member-info" style="flex:1;min-width:0;">'+
+                    '<div class="group-member-name">'+escapeHtml(info.name||'Неизвестно')+adminTagHTML+'</div>'+
+                    '<div class="group-member-id">ID: '+escapeHtml(pid)+'</div>'+
+                '</div>';
+
+            // Long press for context menu (admin only sees remove/make-admin; everyone sees chat)
+            let holdTimer = null;
+            let holdFired = false;
+            const startHold = (e) => {
+                holdFired = false;
+                holdTimer = setTimeout(()=>{
+                    holdFired = true;
+                    showMemberContextMenu(e, chat, pid, info, amIAdmin);
+                }, 500);
+            };
+            const cancelHold = () => { clearTimeout(holdTimer); };
+            row.addEventListener('touchstart', startHold, {passive:true});
+            row.addEventListener('touchend', cancelHold);
+            row.addEventListener('touchcancel', cancelHold);
+            row.addEventListener('mousedown', startHold);
+            row.addEventListener('mouseup', cancelHold);
+            row.addEventListener('mouseleave', cancelHold);
+
+            container.appendChild(row);
+        });
+    }
+
+    // NEW GROUP MODAL
+    const newGroupOpenBtn = document.getElementById('new-group-open-btn');
+    const newGroupModal = document.getElementById('new-group-modal');
+    const ngStep1 = document.getElementById('ng-step1');
+    const ngStep2 = document.getElementById('ng-step2');
+    const ngStep3 = document.getElementById('ng-step3');
+    const ngNameInput = document.getElementById('ng-name-input');
+    const ngStep1Next = document.getElementById('ng-step1-next');
+    const ngCancelBtn = document.getElementById('ng-cancel-btn');
+    const ngStep2Next = document.getElementById('ng-step2-next');
+    const ngStep2Back = document.getElementById('ng-step2-back');
+    const ngStep3Back = document.getElementById('ng-step3-back');
+    const ngConfirmBtn = document.getElementById('ng-confirm-btn');
+    const ngAvatarInput = document.getElementById('ng-avatar-input');
+    const ngAvatarPickBtn = document.getElementById('ng-avatar-pick-btn');
+    const ngAvatarPreview = document.getElementById('ng-avatar-preview');
+    const ngAvatarImg = document.getElementById('ng-avatar-img');
+    const ngAvatarInitial = document.getElementById('ng-avatar-initial');
+    const ngMembersList = document.getElementById('ng-members-list');
+    const ngSelectedCount = document.getElementById('ng-selected-count');
+
+    function openNewGroupModal(){
+        ngAvatarDataUrl = null;
+        ngSelectedMembers = {};
+        ngNameInput.value = '';
+        ngAvatarImg.src=''; ngAvatarImg.style.display='none';
+        ngAvatarInitial.textContent='?';
+        ngAvatarInitial.style.display='';
+        [ngStep1,ngStep2,ngStep3].forEach(s=>s.classList.remove('active'));
+        ngStep1.classList.add('active');
+        newGroupModal.style.display='flex';
+    }
+
+    function closeNewGroupModal(){ newGroupModal.style.display='none'; }
+
+    newGroupOpenBtn.addEventListener('click', openNewGroupModal);
+    ngCancelBtn.addEventListener('click', closeNewGroupModal);
+    newGroupModal.addEventListener('click', e=>{ if(e.target===newGroupModal) closeNewGroupModal(); });
+
+    ngStep1Next.addEventListener('click',()=>{
+        if(!ngNameInput.value.trim()){ showToast('Введите название группы'); return; }
+        ngAvatarInitial.textContent = ngNameInput.value.trim().charAt(0).toUpperCase();
+        ngStep1.classList.remove('active'); ngStep2.classList.add('active');
+    });
+
+    ngStep2Back.addEventListener('click',()=>{ ngStep2.classList.remove('active'); ngStep1.classList.add('active'); });
+
+    ngAvatarPickBtn.addEventListener('click',()=>ngAvatarInput.click());
+    ngAvatarPreview.addEventListener('click',()=>ngAvatarInput.click());
+
+    ngAvatarInput.addEventListener('change',function(){
+        const file=this.files[0]; if(!file) return;
+        const reader=new FileReader();
+        reader.onload=ev=>{
+            ngAvatarDataUrl = ev.target.result;
+            ngAvatarImg.src = ngAvatarDataUrl;
+            ngAvatarImg.style.display='block';
+            ngAvatarInitial.style.display='none';
+        };
+        reader.readAsDataURL(file); this.value='';
+    });
+
+    ngStep2Next.addEventListener('click',()=>{
+        // Build member selection list from existing chats (non-group, non-notes)
+        ngSelectedMembers = {};
+        ngMembersList.innerHTML='';
+        const eligible = chatsList.filter(c=>!c.isGroup && c.id!==NOTES_CHAT_ID && c.peerId);
+        if(!eligible.length){
+            ngMembersList.innerHTML='<div style="font-size:13px;color:#8a9aaa;text-align:center;padding:16px;">Нет доступных контактов.<br>Сначала создайте переписку.</div>';
+        } else {
+            eligible.forEach(chat=>{
+                const row = document.createElement('div');
+                row.style.cssText='display:flex;align-items:center;gap:10px;padding:8px 4px;cursor:pointer;border-radius:8px;transition:background 0.12s;';
+                const bg = getAvatarBackground(chat);
+                const initial = getInitial(chat.name);
+                const checkbox = document.createElement('input');
+                checkbox.type='checkbox'; checkbox.style.cssText='width:18px;height:18px;flex-shrink:0;accent-color:var(--blue);cursor:pointer;';
+                row.innerHTML=
+                    '<div style="width:38px;height:38px;border-radius:50%;background:'+bg+';display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0;">'+initial+'</div>'+
+                    '<div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:600;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+escapeHtml(chat.name)+'</div><div style="font-size:11px;color:var(--dim);">ID: '+escapeHtml(chat.peerId)+'</div></div>';
+                row.insertBefore(checkbox, row.firstChild);
+                checkbox.addEventListener('change',()=>{
+                    if(checkbox.checked){
+                        ngSelectedMembers[chat.peerId]={name:chat.name, id:chat.peerId};
+                    } else {
+                        delete ngSelectedMembers[chat.peerId];
+                    }
+                    ngSelectedCount.textContent='Выбрано: '+Object.keys(ngSelectedMembers).length;
+                });
+                row.addEventListener('click',e=>{ if(e.target!==checkbox){ checkbox.checked=!checkbox.checked; checkbox.dispatchEvent(new Event('change')); } });
+                ngMembersList.appendChild(row);
+            });
+        }
+        ngSelectedCount.textContent='Выбрано: 0';
+        ngStep2.classList.remove('active'); ngStep3.classList.add('active');
+    });
+
+    ngStep3Back.addEventListener('click',()=>{ ngStep3.classList.remove('active'); ngStep2.classList.add('active'); });
+
+    ngConfirmBtn.addEventListener('click',()=>{
+        const name = ngNameInput.value.trim();
+        if(!name){ showToast('Введите название группы'); return; }
+        const groupId = generateGroupId();
+        const chatId = 'grp_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
+        // Build members object: always include self
+        const members = {};
+        members[myFrameId] = { name: myCurrentNickname||'User', id: myFrameId };
+        Object.entries(ngSelectedMembers).forEach(([pid, info])=>{ members[pid]={name:info.name, id:pid}; });
+        const newGroup = {
+            id: chatId,
+            name,
+            isGroup: true,
+            groupId,
+            members,
+            adminId: myFrameId,
+            lastMsg:'',
+            lastTime:'',
+            gradientIndex: getNextUniqueGradientIndex()
+        };
+        chatsList.unshift(newGroup);
+        saveChatsList();
+        // Save avatar if picked
+        if(ngAvatarDataUrl){
+            chatAvatars[chatId]=ngAvatarDataUrl;
+            saveChatAvatars();
+        }
+        // Write group info to Firebase so members can discover it
+        publishGroupToFirebase(chatId, newGroup, myFrameId);
+        renderChatsList();
+        closeNewGroupModal();
+        openChat(chatId);
+        closeChatsPanel();
+        showToast('Группа «'+name+'» создана!');
+    });
+
+    /* ── FIREBASE GROUP SYNC ── */
+    // Publishes group metadata to Firebase so all members can find it
+    function publishGroupToFirebase(chatId, group, addedByFrameId){
+        const payload = {
+            name: group.name,
+            groupId: group.groupId,
+            members: group.members,
+            adminId: group.adminId || addedByFrameId,
+            addedBy: addedByFrameId,
+            createdAt: Date.now()
+        };
+        database.ref('groups/'+chatId).set(payload);
+        // Notify each member (except self) via their inbox
+        // Use push() so child_added always fires even if key existed before
+        const groupPayload = {
+            chatId,
+            name: group.name,
+            groupId: group.groupId,
+            members: group.members,
+            adminId: group.adminId || addedByFrameId,
+            addedBy: addedByFrameId
+        };
+        Object.keys(group.members).forEach(pid=>{
+            if(pid !== myFrameId){
+                // Primary: push to groupInbox
+                database.ref('groupInbox/'+pid).push(groupPayload);
+                // Backup: write to userGroups/pid/chatId (persists across sessions)
+                database.ref('userGroups/'+pid+'/'+chatId).set(groupPayload);
+            }
+        });
+    }
+
+    // Listen for group invitations from Firebase
+    function listenGroupInbox(){
+        const inboxRef = database.ref('groupInbox/'+myFrameId);
+
+        function processGroupInboxEntry(data, snapKey){
+            if(!data || !data.chatId) return;
+            // Remove entry by its auto-key
+            database.ref('groupInbox/'+myFrameId+'/'+snapKey).remove();
+            // Already have this group? — don't add again, but don't block future invites
+            if(chatsList.find(c=>c.id===data.chatId)) return;
+            const group = {
+                id: data.chatId,
+                name: data.name,
+                isGroup: true,
+                groupId: data.groupId,
+                members: data.members || {},
+                adminId: data.adminId || data.addedBy || null,
+                lastMsg:'',
+                lastTime:'',
+                gradientIndex: getNextUniqueGradientIndex()
+            };
+            chatsList.unshift(group);
+            saveChatsList();
+            renderChatsList();
+            listenSingleGroupUpdates(data.chatId);
+            const adderInfo = data.members && data.addedBy ? data.members[data.addedBy] : null;
+            const adderName = adderInfo ? adderInfo.name : 'Неизвестно';
+            showToast('✅ '+adderName+' добавил вас в группу «'+data.name+'»!', 4500);
+        }
+
+        inboxRef.on('child_added', snap=>{ processGroupInboxEntry(snap.val(), snap.key); });
+        inboxRef.on('child_changed', snap=>{ processGroupInboxEntry(snap.val(), snap.key); });
+
+        // BACKUP: listen to userGroups/myFrameId — persists across sessions
+        // This fires for all groups the user has been added to
+        function processUserGroupEntry(data, chatIdKey){
+            if(!data || !data.chatId) return;
+            if(chatsList.find(c=>c.id===data.chatId)){
+                // Already in chatsList — just make sure members are up to date
+                const existing = chatsList.find(c=>c.id===data.chatId);
+                if(existing && data.members){
+                    existing.members = data.members;
+                    saveChatsList();
+                }
+                // Clean up userGroups entry
+                database.ref('userGroups/'+myFrameId+'/'+chatIdKey).remove();
+                return;
+            }
+            const group = {
+                id: data.chatId,
+                name: data.name,
+                isGroup: true,
+                groupId: data.groupId,
+                members: data.members || {},
+                adminId: data.adminId || data.addedBy || null,
+                lastMsg:'',
+                lastTime:'',
+                gradientIndex: getNextUniqueGradientIndex()
+            };
+            chatsList.unshift(group);
+            saveChatsList();
+            renderChatsList();
+            listenSingleGroupUpdates(data.chatId);
+            // Clean up userGroups entry after processing
+            database.ref('userGroups/'+myFrameId+'/'+chatIdKey).remove();
+            const adderInfo = data.members && data.addedBy ? data.members[data.addedBy] : null;
+            const adderName = adderInfo ? adderInfo.name : 'Неизвестно';
+            showToast('✅ '+adderName+' добавил вас в группу «'+data.name+'»!', 4500);
+        }
+
+        const userGroupsRef = database.ref('userGroups/'+myFrameId);
+        userGroupsRef.on('child_added', snap=>{ processUserGroupEntry(snap.val(), snap.key); });
+        userGroupsRef.on('child_changed', snap=>{ processUserGroupEntry(snap.val(), snap.key); });
+    }
+
+    /* ── LEAVE GROUP ── */
+    const leaveGroupModal = document.getElementById('leave-group-modal');
+    const leaveGroupName = document.getElementById('leave-group-name');
+    const leaveGroupConfirmBtn = document.getElementById('leave-group-confirm-btn');
+    const leaveGroupCancelBtn = document.getElementById('leave-group-cancel-btn');
+    let leaveGroupTarget = null;
+
+    function openLeaveGroupModal(chat){
+        leaveGroupTarget = chat;
+        leaveGroupName.textContent = chat.name;
+        leaveGroupModal.style.display='flex';
+    }
+    leaveGroupCancelBtn.addEventListener('click',()=>{ leaveGroupModal.style.display='none'; leaveGroupTarget=null; });
+    leaveGroupModal.addEventListener('click',e=>{ if(e.target===leaveGroupModal){ leaveGroupModal.style.display='none'; leaveGroupTarget=null; } });
+    leaveGroupConfirmBtn.addEventListener('click',()=>{
+        if(!leaveGroupTarget) return;
+        const chatId = leaveGroupTarget.id;
+        const name = leaveGroupTarget.name;
+        const chat = chatsList.find(c=>c.id===chatId);
+        const isAdmin = chat && chat.adminId === myFrameId;
+        // If admin — must transfer or confirm no other members
+        if(isAdmin && chat){
+            const otherMembers = Object.entries(chat.members||{}).filter(([pid])=>pid!==myFrameId);
+            if(otherMembers.length > 0){
+                // Show transfer admin modal
+                leaveGroupModal.style.display='none';
+                openTransferAdminModal(chat);
+                return;
+            }
+        }
+        doLeaveGroup(chatId, name);
+    });
+
+    function doLeaveGroup(chatId, name){
+        database.ref('groups/'+chatId+'/members/'+myFrameId).remove();
+        chatsList = chatsList.filter(c=>c.id!==chatId);
+        delete unreadCounts[chatId];
+        saveChatsList(); saveUnread();
+        if(activeChatId===chatId){
+            activeChatId=null; unsubscribeActiveChat();
+            chatBox.innerHTML=''; chatBox.appendChild(emptyState); emptyState.style.display='flex';
+            chatTitle.textContent='Выберите чат'; chatSubtitle.textContent='';
+            peerStatusDot.className='status-dot'; typingBar.classList.remove('visible');
+            headerCallBtn.classList.remove('visible');
+        }
+        leaveGroupModal.style.display='none'; leaveGroupTarget=null;
+        renderChatsList(); profileCardOverlay.classList.remove('open');
+        showToast('Вы покинули группу «'+name+'»');
+    }
+
+    /* ── TRANSFER ADMIN MODAL ── */
+    const transferAdminModal = document.getElementById('transfer-admin-modal');
+    const transferAdminList = document.getElementById('transfer-admin-list');
+    const transferAdminConfirmBtn = document.getElementById('transfer-admin-confirm-btn');
+    const transferAdminCancelBtn = document.getElementById('transfer-admin-cancel-btn');
+    let transferAdminTarget = null;
+    let transferAdminSelectedPid = null;
+
+    function openTransferAdminModal(chat){
+        transferAdminTarget = chat;
+        transferAdminSelectedPid = null;
+        transferAdminList.innerHTML = '';
+        const otherMembers = Object.entries(chat.members||{}).filter(([pid])=>pid!==myFrameId);
+        otherMembers.forEach(([pid, info])=>{
+            const row = document.createElement('div');
+            row.style.cssText='display:flex;align-items:center;gap:10px;padding:8px 6px;cursor:pointer;border-radius:8px;transition:background 0.12s;';
+            const bg = getAvatarBackground({id:pid, gradientIndex:Math.abs(strToHue(pid))%AVATAR_PALETTE_COUNT});
+            const initial = (info.name||'?').charAt(0).toUpperCase();
+            const radio = document.createElement('input');
+            radio.type='radio'; radio.name='transfer-admin-radio'; radio.value=pid;
+            radio.style.cssText='width:18px;height:18px;flex-shrink:0;accent-color:var(--blue);cursor:pointer;';
+            row.innerHTML=
+                '<div style="width:36px;height:36px;border-radius:50%;background:'+bg+';display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0;">'+initial+'</div>'+
+                '<div style="flex:1;font-size:14px;font-weight:600;color:#1a1a1a;">'+escapeHtml(info.name||pid)+'</div>';
+            row.insertBefore(radio, row.firstChild);
+            radio.addEventListener('change',()=>{ transferAdminSelectedPid=pid; });
+            row.addEventListener('click',e=>{ if(e.target!==radio){ radio.checked=true; transferAdminSelectedPid=pid; } });
+            transferAdminList.appendChild(row);
+        });
+        transferAdminModal.style.display='flex';
+    }
+
+    transferAdminCancelBtn.addEventListener('click',()=>{ transferAdminModal.style.display='none'; transferAdminTarget=null; });
+    transferAdminModal.addEventListener('click',e=>{ if(e.target===transferAdminModal){ transferAdminModal.style.display='none'; transferAdminTarget=null; } });
+    transferAdminConfirmBtn.addEventListener('click',()=>{
+        if(!transferAdminSelectedPid){ showToast('Выберите нового администратора'); return; }
+        if(!transferAdminTarget) return;
+        const chat = transferAdminTarget;
+        // Set new admin in Firebase
+        database.ref('groups/'+chat.id+'/adminId').set(transferAdminSelectedPid);
+        transferAdminModal.style.display='none';
+        doLeaveGroup(chat.id, chat.name);
+    });
+
+    // Hook up leave/add buttons in profile card
+    document.getElementById('profile-leave-group-btn').addEventListener('click',()=>{
+        const chat = chatsList.find(c=>c.id===activeChatId);
+        if(!chat||!chat.isGroup) return;
+        profileCardOverlay.classList.remove('open');
+        setTimeout(()=>openLeaveGroupModal(chat), 180);
+    });
+
+    /* ── ADD MEMBERS TO EXISTING GROUP ── */
+    const addMembersModal = document.getElementById('add-members-modal');
+    const addMembersList = document.getElementById('add-members-list');
+    const addMembersCount = document.getElementById('add-members-count');
+    const addMembersConfirmBtn = document.getElementById('add-members-confirm-btn');
+    const addMembersCancelBtn = document.getElementById('add-members-cancel-btn');
+    let addMembersSelected = {};
+
+    function openAddMembersModal(chat){
+        addMembersSelected = {};
+        addMembersList.innerHTML='';
+        addMembersCount.textContent='Выбрано: 0';
+        const existingMemberIds = new Set(Object.keys(chat.members||{}));
+        const eligible = chatsList.filter(c=>!c.isGroup && c.id!==NOTES_CHAT_ID && c.peerId && !existingMemberIds.has(c.peerId));
+        if(!eligible.length){
+            addMembersList.innerHTML='<div style="font-size:13px;color:#8a9aaa;text-align:center;padding:16px;">Все контакты уже в группе или нет доступных.</div>';
+        } else {
+            eligible.forEach(c=>{
+                const row = document.createElement('div');
+                row.style.cssText='display:flex;align-items:center;gap:10px;padding:8px 4px;cursor:pointer;border-radius:8px;transition:background 0.12s;';
+                const bg = getAvatarBackground(c);
+                const initial = getInitial(c.name);
+                const checkbox = document.createElement('input');
+                checkbox.type='checkbox'; checkbox.style.cssText='width:18px;height:18px;flex-shrink:0;accent-color:var(--blue);cursor:pointer;';
+                row.innerHTML=
+                    '<div style="width:38px;height:38px;border-radius:50%;background:'+bg+';display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0;">'+initial+'</div>'+
+                    '<div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:600;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+escapeHtml(c.name)+'</div><div style="font-size:11px;color:var(--dim);">ID: '+escapeHtml(c.peerId)+'</div></div>';
+                row.insertBefore(checkbox, row.firstChild);
+                checkbox.addEventListener('change',()=>{
+                    if(checkbox.checked){ addMembersSelected[c.peerId]={name:c.name,id:c.peerId}; }
+                    else { delete addMembersSelected[c.peerId]; }
+                    addMembersCount.textContent='Выбрано: '+Object.keys(addMembersSelected).length;
+                });
+                row.addEventListener('click',e=>{ if(e.target!==checkbox){ checkbox.checked=!checkbox.checked; checkbox.dispatchEvent(new Event('change')); } });
+                addMembersList.appendChild(row);
+            });
+        }
+        addMembersModal.style.display='flex';
+    }
+
+    addMembersCancelBtn.addEventListener('click',()=>{ addMembersModal.style.display='none'; });
+    addMembersModal.addEventListener('click',e=>{ if(e.target===addMembersModal) addMembersModal.style.display='none'; });
+
+    addMembersConfirmBtn.addEventListener('click',()=>{
+        const chat = chatsList.find(c=>c.id===activeChatId);
+        if(!chat||!chat.isGroup) return;
+        const newOnes = Object.entries(addMembersSelected);
+        if(!newOnes.length){ showToast('Выберите хотя бы одного участника'); return; }
+        newOnes.forEach(([pid, info])=>{
+            chat.members = chat.members||{};
+            chat.members[pid] = {name:info.name, id:pid};
+        });
+        saveChatsList();
+        // Update Firebase groups node
+        database.ref('groups/'+chat.id+'/members').set(chat.members);
+        // Notify new members via groupInbox AND userGroups (dual mechanism for reliability)
+        const groupPayload = {
+            chatId: chat.id,
+            name: chat.name,
+            groupId: chat.groupId,
+            members: chat.members,
+            adminId: chat.adminId || null,
+            addedBy: myFrameId
+        };
+        newOnes.forEach(([pid])=>{
+            // Primary: push to groupInbox (fires child_added instantly if user is online)
+            database.ref('groupInbox/'+pid).push(groupPayload);
+            // Backup: write to userGroups/pid/chatId (persists, read on next page load)
+            database.ref('userGroups/'+pid+'/'+chat.id).set(groupPayload);
+        });
+        addMembersModal.style.display='none';
+        // Re-render members in profile card
+        renderGroupMembers(chat);
+        // Update subtitle
+        const cnt = Object.keys(chat.members).length;
+        chatSubtitle.textContent='участников: '+cnt;
+        renderChatsList();
+        showToast('Участники добавлены!');
+    });
+
+    document.getElementById('profile-add-members-btn').addEventListener('click',()=>{
+        const chat = chatsList.find(c=>c.id===activeChatId);
+        if(!chat||!chat.isGroup) return;
+        profileCardOverlay.classList.remove('open');
+        setTimeout(()=>openAddMembersModal(chat), 180);
     });
  
     /* ── WEBRTC CALLS ── */
@@ -2335,6 +3402,9 @@
     initNickname();
     setupMyPresence();
     listenInbox();
+    listenGroupInbox();
+    listenGroupKick();
+    listenGroupUpdates();
     renderChatsList();
     initWallpaperPicker();
     setThemeMode(themeMode);
@@ -2412,7 +3482,7 @@ function stopVideoCircle(){
         if(savedSec < 1){ showToast('Запись отменена'); return; }
         const reader = new FileReader();
         reader.onload = ev => {
-            const timeStr = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+            const timeStr = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
             database.ref('chats/'+activeChatId+'/messages').push({
                 frameId: myFrameId, author: myCurrentNickname||'User',
                 text: '[Видео-кружок]', time: timeStr, edited: false,
