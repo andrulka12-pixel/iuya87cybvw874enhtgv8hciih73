@@ -411,6 +411,17 @@
         .reactions-picker.open { display: flex; }
         .reaction-btn { font-size: 22px; cursor: pointer; padding: 4px; border-radius: 8px; transition: transform 0.1s, background 0.1s; border: none; background: none; }
         .reaction-btn:hover { transform: scale(1.25); background: rgba(0,0,0,0.05); }
+        /* POOP ANIMATION */
+        #poop-overlay { position: fixed; inset: 0; z-index: 9999; pointer-events: none; overflow: hidden; display: none; }
+        #poop-overlay.active { display: block; }
+        .poop-particle { position: absolute; font-size: 28px; animation: poopFly var(--dur) ease-in forwards; opacity: 1; }
+        @keyframes poopFly {
+            0%   { transform: translate(0,0) rotate(0deg) scale(1); opacity: 1; }
+            60%  { opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(0.4); opacity: 0; }
+        }
+        .poop-splash { position: absolute; width: 60px; height: 60px; border-radius: 50%; background: radial-gradient(circle, #8B4513 0%, #5C2D0A 60%, transparent 80%); animation: poopSplash 0.6s ease-out forwards; opacity: 0.85; }
+        @keyframes poopSplash { 0% { transform: scale(0); opacity: 0.9; } 70% { transform: scale(1.2); opacity: 0.7; } 100% { transform: scale(1.5); opacity: 0; } }
  
         @keyframes heartPop { 0%{transform:scale(0);opacity:1} 50%{transform:scale(1.4);opacity:1} 100%{transform:scale(1) translateY(-30px);opacity:0} }
 
@@ -861,6 +872,7 @@
 </div>
  
 <!-- REACTIONS PICKER -->
+<div id="poop-overlay"></div>
 <div class="reactions-picker" id="reactions-picker"></div>
  
 <!-- PHOTO VIEWER -->
@@ -2120,16 +2132,78 @@
     }
  
     /* ── REACTIONS PICKER ── */
-    const ALL_REACTIONS=['💗','❤️','😂','😮','😢','😡','👍','👎','🔥','🎉','😍','🤔','👏','🙏','💯'];
+    const ALL_REACTIONS=['💗','❤️','😂','😮','😢','😡','👍','👎','🔥','🎉','😍','🤔','👏','🙏','💯','💩','👌','🤝'];
     ALL_REACTIONS.forEach(emoji=>{
         const btn=document.createElement('button'); btn.className='reaction-btn'; btn.textContent=emoji;
         btn.addEventListener('click',()=>{
             if(selectedMsgData) addReaction(selectedMsgData.id,emoji);
+            if(emoji==='💩') triggerPoopAnimation();
             reactionsPicker.classList.remove('open'); ctxMenu.style.display='none';
         });
         reactionsPicker.appendChild(btn);
     });
     function addReaction(msgId,emoji){ if(!activeChatId||!msgId) return; if(isNotesChat()){ updateNotesMessage(msgId,{reaction:emoji}); renderNotesChat(); return; } database.ref('chats/'+activeChatId+'/messages/'+msgId+'/reaction').set(emoji); }
+
+    /* ── POOP ANIMATION ── */
+    function triggerPoopAnimation(){
+        const now = Date.now();
+        _lastPoopT = now; // prevent self-echo
+        launchPoopParticles();
+        if(activeChatId && typeof database!=='undefined'){
+            database.ref('chats/'+activeChatId+'/poopAnim').set({t: now});
+        }
+    }
+    function launchPoopParticles(){
+        const overlay = document.getElementById('poop-overlay');
+        overlay.innerHTML = '';
+        overlay.classList.add('active');
+        const count = 40;
+        const poops = ['💩'];
+        const W = window.innerWidth, H = window.innerHeight;
+        for(let i=0;i<count;i++){
+            const el = document.createElement('div');
+            el.className='poop-particle';
+            const startX = Math.random()*W;
+            const startY = Math.random()*H;
+            el.style.left = startX+'px';
+            el.style.top = startY+'px';
+            el.textContent = poops[0];
+            const angle = Math.random()*360;
+            const dist = 120+Math.random()*200;
+            const tx = Math.cos(angle*Math.PI/180)*dist;
+            const ty = Math.sin(angle*Math.PI/180)*dist + 100 + Math.random()*150;
+            const dur = (0.6+Math.random()*0.9).toFixed(2)+'s';
+            const rot = (Math.random()*720-360).toFixed(0)+'deg';
+            el.style.setProperty('--tx', tx+'px');
+            el.style.setProperty('--ty', ty+'px');
+            el.style.setProperty('--dur', dur);
+            el.style.setProperty('--rot', rot);
+            el.style.animationDelay = (Math.random()*0.3).toFixed(2)+'s';
+            overlay.appendChild(el);
+            // splash blobs
+            const splash = document.createElement('div');
+            splash.className='poop-splash';
+            splash.style.left=(startX-30)+'px'; splash.style.top=(startY-30)+'px';
+            splash.style.animationDelay = (parseFloat(dur)*0.7).toFixed(2)+'s';
+            overlay.appendChild(splash);
+        }
+        setTimeout(()=>{ overlay.classList.remove('active'); overlay.innerHTML=''; }, 2500);
+    }
+    // Listen for partner poop trigger
+    let _poopChatRef = null, _lastPoopT = 0;
+    function subscribePoopListener(chatId){
+        if(_poopChatRef){ _poopChatRef.off(); _poopChatRef=null; }
+        if(!chatId || typeof database==='undefined') return;
+        _poopChatRef = database.ref('chats/'+chatId+'/poopAnim');
+        _poopChatRef.on('value', snap=>{
+            if(!snap.val()) return;
+            const t = snap.val().t||0;
+            if(t > _lastPoopT && t > Date.now()-5000){
+                _lastPoopT = t;
+                launchPoopParticles();
+            }
+        });
+    }
  
     /* ── TICK SVG ── */
     const TICK_SVG = '<svg viewBox="0 0 16 16"><path d="M2.5 8.5l3.5 3.5 7.5-8"/></svg>';
@@ -2517,6 +2591,7 @@
     function openChat(chatId){
         if(activeChatId===chatId) return;
         unsubscribeActiveChat(); activeChatId=chatId;
+        subscribePoopListener(chatId);
         const chat=getChatById(chatId); if(!chat) return;
         // Сбрасываем непрочитанные
         clearUnread(chatId);
@@ -4090,7 +4165,6 @@ const LANGUAGES = [
     { code: 'es', flag: '🇪🇸', name: 'Spanish', native: 'Español' },
     { code: 'tr', flag: '🇹🇷', name: 'Turkish', native: 'Türkçe' },
     { code: 'kk', flag: '🇰🇿', name: 'Kazakh', native: 'Қазақша' },
-    { code: 'ru', flag: '🇷🇺', name: 'Russian', native: 'Русский' },
 ];
 
 let currentLang = localStorage.getItem('chatterLang') || 'en';
@@ -4139,7 +4213,14 @@ function applyLanguage(code){
     if(lang) showToast('' + lang.name + ' — ' + lang.native);
 }
 
-document.getElementById('lang-btn').addEventListener('click', openLangModal);
+const _langBtn = document.getElementById('lang-btn');
+_langBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:#4a7fcb;display:block;">
+  <circle cx="12" cy="12" r="9"/>
+  <ellipse cx="12" cy="12" rx="4" ry="9"/>
+  <line x1="3.5" y1="9" x2="20.5" y2="9"/>
+  <line x1="3.5" y1="15" x2="20.5" y2="15"/>
+</svg>`;
+_langBtn.addEventListener('click', openLangModal);
 document.getElementById('lang-confirm-btn').addEventListener('click', () => {
     applyLanguage(pendingLang);
 });
