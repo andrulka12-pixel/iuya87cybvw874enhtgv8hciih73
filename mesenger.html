@@ -102,30 +102,141 @@
         .call-btn.visible { display: flex; }
         .call-btn:hover { background: rgba(50,50,60,0.15); }
         .call-btn svg { width: 16px; height: 16px; fill: #3a3a4a; }
-        .wallpaper-picker-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 700; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .wallpaper-picker-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 700; display: none; align-items: flex-end; justify-content: center; }
         .wallpaper-picker-overlay.open { display: flex; }
-        .wallpaper-picker-card { width: min(100%, 520px); background: #fff; border-radius: 24px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.18); animation: slideUp 0.28s ease; }
-        .wallpaper-picker-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; border-bottom: 1px solid #f0f0f0; }
+        .wallpaper-picker-card { width: min(100%, 520px); background: #fff; border-radius: 24px 24px 0 0; max-height: 92vh; display: flex; flex-direction: column; box-shadow: 0 -8px 40px rgba(0,0,0,0.18); animation: slideUp 0.28s ease; overflow: hidden; }
+        body.dark-theme .wallpaper-picker-card { background: #181c22; }
+        .wallpaper-picker-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 12px; border-bottom: 1px solid #f0f0f0; flex-shrink: 0; }
+        body.dark-theme .wallpaper-picker-header { border-color: rgba(255,255,255,0.08); }
         .wallpaper-picker-header h3 { font-size: 16px; font-weight: 700; color: #1a1a1a; }
+        body.dark-theme .wallpaper-picker-header h3 { color: #e8eef7; }
         .wallpaper-header-actions { display: flex; align-items: center; gap: 10px; }
-        .theme-toggle-btn { padding: 10px 14px; border: none; border-radius: 12px; background: rgba(74,127,203,0.12); color: var(--blue); font-size: 13px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+        .theme-toggle-btn { padding: 8px 12px; border: none; border-radius: 12px; background: rgba(74,127,203,0.12); color: var(--blue); font-size: 13px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
         .theme-toggle-btn:hover { background: rgba(74,127,203,0.18); }
+        body.dark-theme .theme-toggle-btn { background: #1f252e; color: #e8eef7; }
         .wallpaper-picker-close { width: 32px; height: 32px; border: none; background: #f0f2f5; border-radius: 12px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 16px; color: #4a7fcb; }
-        .wallpaper-preview { padding: 16px; background: #f7f9ff; }
+        body.dark-theme .wallpaper-picker-close { background: #1f252e; color: #e8eef7; }
+
+        /* Scrollable body */
+        .wallpaper-picker-body { flex: 1; overflow-y: auto; padding: 0 0 12px; }
+
+        /* Preview area */
+        .wallpaper-preview { padding: 14px 16px; background: transparent; flex-shrink: 0; }
+        body.dark-theme .wallpaper-preview { background: transparent; }
+        .wallpaper-preview-inner { min-height: 200px; border-radius: 18px; overflow: hidden; padding: 16px 14px 12px; display: flex; flex-direction: column; gap: 10px; background: var(--bg); transition: background 0.3s ease; }
+        /* Preview message bubbles — styled with current selected colors */
+        .preview-msg-row { display: flex; width: 100%; }
+        .preview-msg-row.incoming { justify-content: flex-start; }
+        .preview-msg-row.outgoing { justify-content: flex-end; }
+        .preview-bubble { max-width: 72%; padding: 8px 12px 22px; border-radius: 16px; font-size: 13px; line-height: 1.45; color: #1a1a1a; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .preview-bubble.incoming { border-radius: 16px 16px 16px 4px; background: var(--preview-in-bg, #fff); }
+        .preview-bubble.outgoing { border-radius: 16px 16px 4px 16px; background: var(--preview-out-bg, #e7f5fc); }
+        .preview-bubble-meta { position: absolute; bottom: 5px; right: 10px; font-size: 10px; color: rgba(0,0,0,0.4); }
+        .preview-bubble.outgoing .preview-bubble-meta { color: rgba(0,0,0,0.5); }
+
+        /* Section labels inside picker */
+        .wp-section-label { font-size: 11px; font-weight: 700; color: #8a9aaa; text-transform: uppercase; letter-spacing: 0.8px; padding: 14px 18px 8px; }
+        body.dark-theme .wp-section-label { color: #4a5568; }
+        /* System/custom color labels — lighter, like left panel separators */
+        #wp-system-colors-label, #wp-custom-colors-section .wp-section-label {
+            font-size: 10px; font-weight: 600; color: #b0bec5; letter-spacing: 1px; padding: 10px 18px 6px; text-transform: uppercase;
+        }
+        body.dark-theme #wp-system-colors-label,
+        body.dark-theme #wp-custom-colors-section .wp-section-label { color: #3a4555; }
+
+        /* Wallpaper gradient tiles — scrollable row of 5 */
+        .wp-tiles-scroll { overflow-x: auto; padding: 4px 14px 10px; scrollbar-width: none; }
+        .wp-tiles-scroll::-webkit-scrollbar { display: none; }
+        .wp-tiles-row { display: flex; gap: 10px; width: max-content; padding-right: 14px; }
+        .wp-tile { width: 64px; height: 64px; border-radius: 16px; flex-shrink: 0; cursor: pointer; position: relative; border: 2.5px solid transparent; transition: border-color 0.18s, transform 0.15s; overflow: hidden; }
+        .wp-tile:hover { transform: scale(1.05); }
+        .wp-tile.selected { border-color: var(--blue); transform: scale(1.07); }
+        .wp-tile-label { position: absolute; bottom: 0; left: 0; right: 0; font-size: 8.5px; font-weight: 600; color: rgba(0,0,0,0.7); text-align: center; padding: 3px 2px; background: rgba(255,255,255,0.55); line-height: 1.2; }
+
+        /* Color circle palette */
+        .wp-color-scroll { overflow-x: auto; padding: 4px 14px 10px; scrollbar-width: none; }
+        .wp-color-scroll::-webkit-scrollbar { display: none; }
+        .wp-color-row { display: flex; gap: 10px; flex-wrap: wrap; width: 100%; }
+        /* Split circle — half incoming (light), half outgoing (selected) */
+        .wp-color-circle { width: 48px; height: 48px; border-radius: 50%; cursor: pointer; position: relative; flex-shrink: 0; border: 2.5px solid transparent; transition: border-color 0.18s, transform 0.15s; overflow: hidden; }
+        .wp-color-circle:hover { transform: scale(1.08); }
+        .wp-color-circle.selected { border-color: #3a7eed; transform: scale(1.12); }
+        .wp-color-circle-half-out { position: absolute; inset: 0; clip-path: polygon(100% 0, 100% 100%, 0 100%); }
+        .wp-color-circle-half-in { position: absolute; inset: 0; clip-path: polygon(0 0, 100% 0, 0 100%); }
+
+        /* Custom color add button */
+        .wp-color-add-btn { width: 48px; height: 48px; border-radius: 50%; border: 2.5px dashed #c0ccd8; background: none; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: border-color 0.18s, transform 0.15s, background 0.15s; color: #8a9aaa; font-size: 22px; line-height: 1; }
+        .wp-color-add-btn:hover { border-color: var(--blue); color: var(--blue); background: rgba(74,127,203,0.06); transform: scale(1.08); }
+        .wp-color-add-btn.has-custom { border-style: solid; border-color: #3a7eed; }
+
+
+
+        /* Custom color modal overlay */
+        .custom-color-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.52); z-index: 800; display: none; align-items: flex-end; justify-content: center; }
+        .custom-color-overlay.open { display: flex; animation: overlayIn 0.2s ease; }
+        .custom-color-card { background: #fff; width: 100%; max-width: 420px; border-radius: 24px 24px 0 0; padding-bottom: max(20px, env(safe-area-inset-bottom)); animation: slideUp 0.28s cubic-bezier(0.4,0,0.2,1); display: flex; flex-direction: column; max-height: 92vh; overflow: hidden; }
+        body.dark-theme .custom-color-card { background: #181c22; }
+        .custom-color-handle { width: 40px; height: 4px; background: rgba(0,0,0,0.12); border-radius: 2px; margin: 12px auto 0; flex-shrink: 0; }
+        .custom-color-header { padding: 14px 20px 10px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+        .custom-color-title { font-size: 17px; font-weight: 700; color: #1a1a1a; }
+        body.dark-theme .custom-color-title { color: #e8eef7; }
+        .custom-color-close-btn { width: 30px; height: 30px; border: none; background: #f0f2f5; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #4a7fcb; }
+        body.dark-theme .custom-color-close-btn { background: #1f252e; color: #e8eef7; }
+        .custom-color-body { flex: 1; overflow-y: auto; padding: 0 20px 16px; display: flex; flex-direction: column; gap: 18px; }
+
+        /* Mini live preview inside custom color modal */
+        .cc-preview-wrap { border-radius: 16px; overflow: hidden; padding: 14px 12px 10px; display: flex; flex-direction: column; gap: 8px; transition: background 0.25s; }
+        .cc-preview-row { display: flex; }
+        .cc-preview-row.in { justify-content: flex-start; }
+        .cc-preview-row.out { justify-content: flex-end; }
+        .cc-preview-bubble { max-width: 74%; padding: 8px 12px 20px; border-radius: 14px; font-size: 13px; line-height: 1.4; color: #1a1a1a; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: background 0.2s; }
+        .cc-preview-bubble.in { border-radius: 14px 14px 14px 4px; }
+        .cc-preview-bubble.out { border-radius: 14px 14px 4px 14px; }
+        .cc-preview-time { position: absolute; bottom: 4px; right: 8px; font-size: 10px; color: rgba(0,0,0,0.4); }
+
+        /* Color pickers row */
+        .cc-pickers-row { display: flex; gap: 14px; align-items: flex-start; }
+        .cc-picker-col { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+        .cc-picker-label { font-size: 12px; font-weight: 600; color: #8a9aaa; text-transform: uppercase; letter-spacing: 0.5px; }
+        body.dark-theme .cc-picker-label { color: #4a5568; }
+        .cc-picker-swatch { width: 100%; height: 44px; border-radius: 12px; border: 2px solid rgba(0,0,0,0.08); cursor: pointer; position: relative; overflow: hidden; transition: transform 0.15s; }
+        .cc-picker-swatch:hover { transform: scale(1.03); }
+        .cc-picker-swatch input[type=color] { position: absolute; inset: -6px; width: calc(100% + 12px); height: calc(100% + 12px); opacity: 0; cursor: pointer; border: none; padding: 0; }
+
+        /* Gradient toggle */
+        .cc-gradient-toggle { display: flex; gap: 8px; align-items: center; }
+        .cc-gradient-toggle-label { font-size: 13px; font-weight: 600; color: #1a1a1a; flex: 1; }
+        body.dark-theme .cc-gradient-toggle-label { color: #e8eef7; }
+        .cc-toggle-switch { width: 44px; height: 24px; background: #d0d8e4; border-radius: 12px; cursor: pointer; position: relative; transition: background 0.2s; border: none; flex-shrink: 0; }
+        .cc-toggle-switch.on { background: var(--blue); }
+        .cc-toggle-knob { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: left 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.18); }
+        .cc-toggle-switch.on .cc-toggle-knob { left: 23px; }
+
+        /* Second color for gradient (shown when gradient is on) */
+        .cc-gradient-second { display: none; }
+        .cc-gradient-second.visible { display: flex; gap: 14px; }
+
+        .cc-apply-btn { background: var(--blue); color: #fff; border: none; border-radius: 14px; padding: 13px 0; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; transition: background 0.15s; flex-shrink: 0; }
+        .cc-apply-btn:hover { background: #3a6fbb; }
+
+        /* Apply button */
+        .apply-wallpaper-btn { width: calc(100% - 36px); margin: 8px 18px 10px; background: var(--blue); color: #fff; border: none; border-radius: 14px; padding: 14px 0; font-size: 14px; font-weight: 700; cursor: pointer; flex-shrink: 0; }
+
+        /* Beautiful angle slider */
+        .cc-angle-slider-wrap { flex: 1; position: relative; height: 36px; display: flex; align-items: center; }
+        .cc-angle-range { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 99px; background: linear-gradient(90deg, var(--blue) 0%, #b8d4ff 100%); outline: none; cursor: pointer; border: none; transition: background 0.2s; }
+        .cc-angle-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 3px solid var(--blue); box-shadow: 0 2px 8px rgba(74,127,203,0.35); cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
+        .cc-angle-range::-webkit-slider-thumb:hover { transform: scale(1.18); box-shadow: 0 3px 14px rgba(74,127,203,0.5); }
+        .cc-angle-range::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 3px solid var(--blue); box-shadow: 0 2px 8px rgba(74,127,203,0.35); cursor: pointer; }
+        .cc-angle-range::-moz-range-track { height: 6px; border-radius: 99px; background: linear-gradient(90deg, var(--blue) 0%, #b8d4ff 100%); }
+        body.dark-theme .cc-angle-range { background: linear-gradient(90deg, #5a9bff 0%, #2a3a5a 100%); }
+        body.dark-theme .cc-angle-range::-webkit-slider-thumb { background: #1f252e; border-color: #5a9bff; }
+
         body.dark-theme { background: #111214; color: #e8eef7; }
         body.dark-theme .chats-panel { background: #121518; }
         body.dark-theme .chats-panel-header,
         body.dark-theme .chats-panel-footer,
-        body.dark-theme .header,
-        body.dark-theme .wallpaper-picker-card,
-        body.dark-theme .wallpaper-preview { background: #181c22; }
-        body.dark-theme .wallpaper-picker-header { border-color: rgba(255,255,255,0.08); }
-        body.dark-theme .wallpaper-picker-close,
-        body.dark-theme .carousel-nav,
-        body.dark-theme .theme-toggle-btn,
-        body.dark-theme .picker-emoji { background: #1f252e; color: #e8eef7; }
-        body.dark-theme .picker-emoji.selected { background: rgba(74,127,203,0.2); }
-        body.dark-theme .apply-wallpaper-btn { background: #2f4ea0; }
+        body.dark-theme .header { background: #181c22; }
         body.dark-theme .wallpaper-btn,
         body.dark-theme .connect-id-btn { background: #161b21; border-color: #2f3642; }
         body.dark-theme .chat-item { border-color: #22272f; }
@@ -142,25 +253,7 @@
         body.dark-theme .header-sub.offline-status { color: #9aa4b2; }
         body.dark-theme .nickname-input { background: #1d222a; border-color: #2f3642; }
         body.dark-theme .my-id-value { background: rgba(74,127,203,0.12); }
-        .wallpaper-preview-inner { min-height: 140px; border-radius: 18px; overflow: hidden; padding: 14px; display: flex; flex-direction: column; gap: 8px; background: var(--bg); transition: background 0.3s ease; }
-        .preview-sample { display: flex; flex-direction: column; gap: 8px; }
-        .preview-sample .message-bubble { max-width: 70%; padding: 8px 10px 14px 10px; border-radius: 14px; background: rgba(255,255,255,0.9); font-size: 13px; line-height: 1.4; color: rgba(0,0,0,0.88); }
-        .preview-sample .message-bubble.my-row { align-self: flex-end; background: rgba(255,255,255,0.9); }
-        .preview-sample .message-bubble.incoming { align-self: flex-start; }
-        .preview-sample .preview-meta { display: flex; justify-content: flex-end; gap: 6px; font-size: 11px; color: rgba(0,0,0,0.65); }
-        .wallpaper-picker-carousel { position: relative; padding: 16px 18px 0; }
-        .carousel-wrapper { overflow: hidden; }
-        .carousel-track { display: flex; transition: transform 0.28s ease; }
-        .carousel-item { width: 100%; flex-shrink: 0; border-radius: 18px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; min-height: 150px; color: #fff; box-sizing: border-box; }
-        .carousel-item h4 { font-size: 14px; margin-bottom: 10px; line-height: 1.2; color: rgba(0,0,0,0.88); }
-        .carousel-item p { font-size: 12px; opacity: 0.82; color: rgba(0,0,0,0.72); }
-        .carousel-controls { display: flex; justify-content: space-between; gap: 10px; margin-top: 16px; }
-        .carousel-nav { width: 36px; height: 36px; border: none; border-radius: 12px; background: #f0f2f5; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
-        .carousel-nav svg { width: 18px; height: 18px; fill: var(--blue); }
-        .picker-emoji-row { display: flex; gap: 8px; flex-wrap: wrap; padding: 12px 18px 0; }
-        .picker-emoji { width: 36px; height: 36px; border: none; border-radius: 12px; background: #f0f2f5; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; transition: transform 0.15s ease, background 0.2s; }
-        .picker-emoji.selected { background: rgba(74,127,203,0.14); transform: scale(1.05); }
-        .apply-wallpaper-btn { width: calc(100% - 36px); margin: 18px; background: var(--blue); color: #fff; border: none; border-radius: 14px; padding: 14px 0; font-size: 14px; font-weight: 700; cursor: pointer; }
+        body.dark-theme .apply-wallpaper-btn { background: #2f4ea0; }
         .call-btn.visible { display: flex; }
         .call-btn:hover { background: rgba(50,50,60,0.15); }
         .call-btn svg { width: 16px; height: 16px; fill: #3a3a4a; }
@@ -424,6 +517,26 @@
         @keyframes poopSplash { 0% { transform: scale(0); opacity: 0.9; } 70% { transform: scale(1.2); opacity: 0.7; } 100% { transform: scale(1.5); opacity: 0; } }
  
         @keyframes heartPop { 0%{transform:scale(0);opacity:1} 50%{transform:scale(1.4);opacity:1} 100%{transform:scale(1) translateY(-30px);opacity:0} }
+
+        /* HEART ANIMATION */
+        #heart-overlay { position: fixed; inset: 0; z-index: 9999; pointer-events: none; overflow: hidden; display: none; }
+        #heart-overlay.active { display: block; }
+        .heart-particle { position: absolute; font-size: 26px; animation: heartFly var(--dur) ease-out forwards; opacity: 1; }
+        @keyframes heartFly {
+            0%   { transform: translate(0,0) scale(0.6) rotate(var(--rot)); opacity: 1; }
+            40%  { transform: translate(var(--tx2), var(--ty2)) scale(1.4) rotate(calc(var(--rot) * -0.5)); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0.2) rotate(var(--rot)); opacity: 0; }
+        }
+
+        /* FIRE ANIMATION */
+        #fire-overlay { position: fixed; inset: 0; z-index: 9999; pointer-events: none; overflow: hidden; display: none; }
+        #fire-overlay.active { display: block; }
+        .fire-particle { position: absolute; font-size: 24px; animation: fireFly var(--dur) ease-in-out forwards; opacity: 1; }
+        @keyframes fireFly {
+            0%   { transform: translate(0,0) scale(1) rotate(0deg); opacity: 1; }
+            30%  { transform: translate(var(--tx2), var(--ty2)) scale(1.6) rotate(var(--rot)); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0.15) rotate(calc(var(--rot)*2)); opacity: 0; }
+        }
 
         /* SEARCH BAR */
         .chats-search-wrap { padding: 8px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
@@ -774,6 +887,16 @@
     </div>
 </div>
 
+<!-- DELETE CUSTOM COLOR MODAL -->
+<div class="modal-overlay" id="delete-custom-color-modal">
+    <div class="modal-card">
+        <h3>Удалить кастомный цвет?</h3>
+        <p style="font-size:14px;color:#8a9aaa;">Ваш сохранённый кастомный цвет сообщений будет удалён безвозвратно.</p>
+        <button id="delete-custom-color-confirm-btn" class="modal-btn-danger">Удалить</button>
+        <button class="modal-btn-cancel" id="delete-custom-color-cancel-btn">Отмена</button>
+    </div>
+</div>
+
 <!-- NEW GROUP MODAL -->
 <div class="modal-overlay" id="new-group-modal">
     <div class="modal-card" style="max-width:360px;">
@@ -873,6 +996,8 @@
  
 <!-- REACTIONS PICKER -->
 <div id="poop-overlay"></div>
+<div id="heart-overlay"></div>
+<div id="fire-overlay"></div>
 <div class="reactions-picker" id="reactions-picker"></div>
  
 <!-- PHOTO VIEWER -->
@@ -979,32 +1104,118 @@
 <div class="wallpaper-picker-overlay" id="wallpaper-picker-overlay">
     <div class="wallpaper-picker-card">
         <div class="wallpaper-picker-header">
-            <h3>Выберите фон чата</h3>
+            <h3>Фон и оформление</h3>
             <div class="wallpaper-header-actions">
-                <button class="theme-toggle-btn" id="theme-toggle-btn">Тёмная тема</button>
                 <button class="wallpaper-picker-close" id="wallpaper-picker-close">✕</button>
             </div>
         </div>
-        <div class="wallpaper-preview">
-            <div class="wallpaper-preview-inner" id="wallpaper-preview-inner">
-                <div class="preview-sample">
-                    <div class="message-bubble incoming">Привет! Как тебе этот фон? 😎</div>
-                    <div class="message-bubble my-row">Очень круто! 🤩 Это обновление Chatter! 17.0.4</div>
+        <div class="wallpaper-picker-body">
+            <!-- Live preview -->
+            <div class="wallpaper-preview">
+                <div class="wallpaper-preview-inner" id="wallpaper-preview-inner">
+                    <div class="preview-msg-row incoming">
+                        <div class="preview-bubble incoming" id="preview-bubble-in">Привет! Как тебе этот фон? 😎<span class="preview-bubble-meta">13:40</span></div>
+                    </div>
+                    <div class="preview-msg-row outgoing">
+                        <div class="preview-bubble outgoing" id="preview-bubble-out">Очень круто! 🤩 Нравится это обновление!<span class="preview-bubble-meta">13:41 ✓✓</span></div>
+                    </div>
+                    <div class="preview-msg-row incoming">
+                        <div class="preview-bubble incoming">Согласен, выглядит стильно 👌<span class="preview-bubble-meta">13:41</span></div>
+                    </div>
+                    <div class="preview-msg-row outgoing">
+                        <div class="preview-bubble outgoing">Особенно цвета сообщений 🎨<span class="preview-bubble-meta">13:42 ✓✓</span></div>
+                    </div>
                 </div>
-                <div class="preview-meta"><span>13:41</span><span>✓✓</span></div>
+            </div>
+
+            <!-- BG section -->
+            <div class="wp-section-label">Фон чата</div>
+            <div class="wp-tiles-scroll" id="wp-tiles-scroll">
+                <div class="wp-tiles-row" id="wp-tiles-row"></div>
+            </div>
+
+            <!-- Message color section -->
+            <div class="wp-section-label" id="wp-system-colors-label">Системные цвета</div>
+            <div class="wp-color-scroll">
+                <div class="wp-color-row" id="wp-color-row"></div>
+            </div>
+            <!-- User custom colors section (shown only when there are custom colors) -->
+            <div id="wp-custom-colors-section" style="display:none;">
+                <div style="margin: 4px 18px 0; height:1px; background: var(--border);"></div>
+                <div class="wp-section-label" style="padding-top:10px;">Ваши цвета</div>
+                <div class="wp-color-scroll">
+                    <div class="wp-color-row" id="wp-custom-color-row"></div>
+                </div>
+            </div>
+            <div style="padding: 10px 18px 18px;">
+                <button class="apply-wallpaper-btn" id="apply-wallpaper-btn" style="width:100%;margin:0;">Применить</button>
             </div>
         </div>
-        <div class="wallpaper-picker-carousel">
-            <div class="carousel-wrapper">
-                <div class="carousel-track" id="wallpaper-carousel-track"></div>
-            </div>
-            <div class="carousel-controls">
-                <button class="carousel-nav" id="wallpaper-carousel-prev" title="Предыдущий фон"><svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg></button>
-                <button class="carousel-nav" id="wallpaper-carousel-next" title="Следующий фон"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></button>
-            </div>
+    </div>
+</div>
+
+<!-- CUSTOM COLOR PICKER MODAL -->
+<div class="custom-color-overlay" id="custom-color-overlay">
+    <div class="custom-color-card">
+        <div class="custom-color-handle"></div>
+        <div class="custom-color-header">
+            <div class="custom-color-title">Свой цвет сообщений</div>
+            <button class="custom-color-close-btn" id="custom-color-close-btn">✕</button>
         </div>
-        <div class="picker-emoji-row" id="wallpaper-emoji-row"></div>
-        <button class="apply-wallpaper-btn" id="apply-wallpaper-btn">Применить</button>
+        <div class="custom-color-body">
+            <!-- Mini preview -->
+            <div class="cc-preview-wrap" id="cc-preview-wrap">
+                <div class="cc-preview-row in">
+                    <div class="cc-preview-bubble in" id="cc-preview-in">Привет! Это пример 👋<span class="cc-preview-time">13:40</span></div>
+                </div>
+                <div class="cc-preview-row out">
+                    <div class="cc-preview-bubble out" id="cc-preview-out">Отлично выглядит! ✨<span class="cc-preview-time">13:41 ✓✓</span></div>
+                </div>
+            </div>
+
+            <!-- Main color pickers -->
+            <div class="cc-pickers-row">
+                <div class="cc-picker-col">
+                    <div class="cc-picker-label">Мои сообщения</div>
+                    <div class="cc-picker-swatch" id="cc-swatch-out" style="background:#dcf0fc;">
+                        <input type="color" id="cc-input-out" value="#dcf0fc">
+                    </div>
+                </div>
+                <div class="cc-picker-col">
+                    <div class="cc-picker-label">Собеседника</div>
+                    <div class="cc-picker-swatch" id="cc-swatch-in" style="background:#ffffff;">
+                        <input type="color" id="cc-input-in" value="#ffffff">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gradient toggle for "my messages" -->
+            <div class="cc-gradient-toggle">
+                <div class="cc-gradient-toggle-label">Градиент (мои сообщения)</div>
+                <button class="cc-toggle-switch" id="cc-gradient-toggle"><div class="cc-toggle-knob"></div></button>
+            </div>
+
+            <!-- Second gradient color (hidden until gradient on) -->
+            <div class="cc-gradient-second" id="cc-gradient-second">
+                <div class="cc-picker-col">
+                    <div class="cc-picker-label">Цвет 2 (градиент)</div>
+                    <div class="cc-picker-swatch" id="cc-swatch-out2" style="background:#b8e0ff;">
+                        <input type="color" id="cc-input-out2" value="#b8e0ff">
+                    </div>
+                </div>
+                <div class="cc-picker-col">
+                    <div class="cc-picker-label">Угол градиента</div>
+                    <div style="display:flex;align-items:center;gap:10px;padding-top:10px;">
+                        <div class="cc-angle-slider-wrap">
+                            <input type="range" id="cc-angle-range" min="0" max="360" value="135" class="cc-angle-range">
+                        </div>
+                        <span id="cc-angle-label" style="font-size:13px;font-weight:700;color:var(--blue);min-width:38px;text-align:right;">135°</span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="cc-apply-btn" id="cc-apply-btn">Применить свой цвет</button>
+        </div>
     </div>
 </div>
  
@@ -1318,12 +1529,8 @@
     const wallpaperBtn=document.getElementById('wallpaper-btn');
     const wallpaperOverlay=document.getElementById('wallpaper-picker-overlay');
     const wallpaperPreviewInner=document.getElementById('wallpaper-preview-inner');
-    const carouselTrack=document.getElementById('wallpaper-carousel-track');
-    const wallpaperPrevBtn=document.getElementById('wallpaper-carousel-prev');
-    const wallpaperNextBtn=document.getElementById('wallpaper-carousel-next');
     const wallpaperCloseBtn=document.getElementById('wallpaper-picker-close');
     const wallpaperApplyBtn=document.getElementById('apply-wallpaper-btn');
-    const wallpaperEmojiRow=document.getElementById('wallpaper-emoji-row');
     const themeToggleBtn=document.getElementById('theme-toggle-btn');
     const pinnedBanner=document.getElementById('pinned-message-banner');
     const pinnedAuthor=document.getElementById('pinned-message-author');
@@ -1332,46 +1539,119 @@
     const deletePinnedModal=document.getElementById('delete-pinned-modal');
     const deletePinnedConfirmBtn=document.getElementById('delete-pinned-confirm-btn');
     const deletePinnedCancelBtn=document.getElementById('delete-pinned-cancel-btn');
+
+    /* ── WALLPAPER DATA (10 обычных + 5 уже были, добавляем до 10 обычных) ── */
     const wallpaperGradients=[
-        {name:'Зелёный луг', css:'linear-gradient(140deg,#d4ffd9 0%,#ecfff2 100%)', emoji:'🌿'},
-        {name:'Лазурное море', css:'linear-gradient(140deg,#daf0ff 0%,#b8dbff 100%)', emoji:'🌊'},
-        {name:'Рассвет', css:'linear-gradient(140deg,#fff0e3 0%,#ffd6b5 100%)', emoji:'🌅'},
-        {name:'Лаванда', css:'linear-gradient(140deg,#f5e6ff 0%,#e8d4ff 100%)', emoji:'💜'},
-        {name:'Тёплый песок', css:'linear-gradient(140deg,#fff3d6 0%,#ffd8a6 100%)', emoji:'🏖️'},
-        {name:'Розовое небо', css:'linear-gradient(140deg,#ffe1f3 0%,#ffd1f0 100%)', emoji:'🌸'},
-        {name:'Космос', css:'linear-gradient(140deg,#2e3b7b 0%,#5f73d6 100%)', emoji:'🌌'},
-        {name:'Мятный', css:'linear-gradient(140deg,#dbfff4 0%,#b9ffef 100%)', emoji:'🍃'},
-        {name:'Персиковый', css:'linear-gradient(140deg,#ffe2c3 0%,#ffd2a8 100%)', emoji:'🍑'},
-        {name:'Смоуки', css:'linear-gradient(140deg,#e7effb 0%,#cad4f7 100%)', emoji:'☁️'},
-        {name:'Полярный', css:'linear-gradient(140deg,#e7f1ff 0%,#d0dfff 100%)', emoji:'❄️'},
-        {name:'Хамелеон', css:'linear-gradient(140deg,#ffd6d6 0%,#d6f3ff 100%)', emoji:'🌈'},
-        {name:'Яркий закат', css:'linear-gradient(140deg,#ffd8b6 0%,#ff9d8b 100%)', emoji:'🌇'},
-        {name:'Океан', css:'linear-gradient(140deg,#c3e7ff 0%,#87c2ff 100%)', emoji:'🐬'},
-        {name:'Лесная свежесть', css:'linear-gradient(140deg,#dcffe2 0%,#b6ffcd 100%)', emoji:'🍀'}
+        {name:'Зелёный луг',   css:'linear-gradient(140deg,#d4ffd9 0%,#ecfff2 100%)',   emoji:'🌿'},
+        {name:'Лазурное море', css:'linear-gradient(140deg,#daf0ff 0%,#b8dbff 100%)',   emoji:'🌊'},
+        {name:'Рассвет',       css:'linear-gradient(140deg,#fff0e3 0%,#ffd6b5 100%)',   emoji:'🌅'},
+        {name:'Лаванда',       css:'linear-gradient(140deg,#f5e6ff 0%,#e8d4ff 100%)',   emoji:'💜'},
+        {name:'Тёплый песок',  css:'linear-gradient(140deg,#fff3d6 0%,#ffd8a6 100%)',   emoji:'🏖️'},
+        {name:'Розовое небо',  css:'linear-gradient(140deg,#ffe1f3 0%,#ffd1f0 100%)',   emoji:'🌸'},
+        {name:'Мятный',        css:'linear-gradient(140deg,#dbfff4 0%,#b9ffef 100%)',   emoji:'🍃'},
+        {name:'Персиковый',    css:'linear-gradient(140deg,#ffe2c3 0%,#ffd2a8 100%)',   emoji:'🍑'},
+        {name:'Смоуки',        css:'linear-gradient(140deg,#e7effb 0%,#cad4f7 100%)',   emoji:'☁️'},
+        {name:'Полярный',      css:'linear-gradient(140deg,#e7f1ff 0%,#d0dfff 100%)',   emoji:'❄️'},
+        {name:'Хамелеон',      css:'linear-gradient(140deg,#ffd6d6 0%,#d6f3ff 100%)',   emoji:'🌈'},
+        {name:'Яркий закат',   css:'linear-gradient(140deg,#ffd8b6 0%,#ff9d8b 100%)',   emoji:'🌇'},
+        {name:'Океан',         css:'linear-gradient(140deg,#c3e7ff 0%,#87c2ff 100%)',   emoji:'🐬'},
+        {name:'Лесная свежесть',css:'linear-gradient(140deg,#dcffe2 0%,#b6ffcd 100%)', emoji:'🍀'},
+        {name:'Космос',        css:'linear-gradient(140deg,#2e3b7b 0%,#5f73d6 100%)',   emoji:'🌌'},
     ];
-    let wallpaperSelectedIndex=0;
- 
+    let wallpaperSelectedIndex = 0;
+
+    /* ── MESSAGE COLOR PALETTES (10 solid + 10 gradient) ── */
+    // Each entry: { outCss, inCss } — outCss = our bubble, inCss = peer bubble (derived lighter)
+    const msgColorPalettes = [
+        // 10 solid
+        { label:'Голубой',   outCss:'#dcf0fc',  inCss:'#ffffff' },
+        { label:'Зелёный',   outCss:'#d6f5d6',  inCss:'#f0fff0' },
+        { label:'Лиловый',   outCss:'#ead6fc',  inCss:'#f9f0ff' },
+        { label:'Розовый',   outCss:'#fcd6e8',  inCss:'#fff0f6' },
+        { label:'Жёлтый',    outCss:'#fdf6d6',  inCss:'#fffdf0' },
+        { label:'Оранжевый', outCss:'#fce8d6',  inCss:'#fff5ef' },
+        { label:'Мятный',    outCss:'#d6f5ed',  inCss:'#f0fff9' },
+        { label:'Индиго',    outCss:'#d6dcfc',  inCss:'#f0f2ff' },
+        { label:'Красный',   outCss:'#fcd6d6',  inCss:'#fff0f0' },
+        { label:'Тёмный',    outCss:'#d0d8e4',  inCss:'#f2f4f8' },
+        // 10 gradient
+        { label:'Закат',     outCss:'linear-gradient(135deg,#ffd6e7 0%,#ffd6b0 100%)',  inCss:'linear-gradient(135deg,#fff5f9 0%,#fff8f0 100%)' },
+        { label:'Океан',     outCss:'linear-gradient(135deg,#b8dcff 0%,#c8f0ff 100%)',  inCss:'linear-gradient(135deg,#f0f8ff 0%,#f0fdff 100%)' },
+        { label:'Аврора',    outCss:'linear-gradient(135deg,#c8f0dc 0%,#b8e0ff 100%)',  inCss:'linear-gradient(135deg,#f0fff6 0%,#f0f8ff 100%)' },
+        { label:'Лаванда',   outCss:'linear-gradient(135deg,#e0d0ff 0%,#ffd0f0 100%)',  inCss:'linear-gradient(135deg,#f8f0ff 0%,#fff0fc 100%)' },
+        { label:'Тропик',    outCss:'linear-gradient(135deg,#c0f8c0 0%,#c0f8f0 100%)',  inCss:'linear-gradient(135deg,#f0fff0 0%,#f0fffb 100%)' },
+        { label:'Сиена',     outCss:'linear-gradient(135deg,#ffe0b0 0%,#ffc0a0 100%)',  inCss:'linear-gradient(135deg,#fff8f0 0%,#fff4f0 100%)' },
+        { label:'Полночь',   outCss:'linear-gradient(135deg,#c0d0f8 0%,#d0c0f8 100%)',  inCss:'linear-gradient(135deg,#f0f4ff 0%,#f4f0ff 100%)' },
+        { label:'Манго',     outCss:'linear-gradient(135deg,#ffe080 0%,#ffb060 100%)',   inCss:'linear-gradient(135deg,#fff9e0 0%,#fff4e0 100%)' },
+        { label:'Мята',      outCss:'linear-gradient(135deg,#a8ffdc 0%,#a8f0ff 100%)',  inCss:'linear-gradient(135deg,#f0fff9 0%,#f0fdff 100%)' },
+        { label:'Коралл',    outCss:'linear-gradient(135deg,#ffa8a8 0%,#ffa8d8 100%)',   inCss:'linear-gradient(135deg,#fff4f4 0%,#fff4fb 100%)' },
+    ];
+    let msgColorSelectedIndex = parseInt(localStorage.getItem('msgColorIndex')||'0');
+    // Clamp to valid range; -1 = custom color
+    if(msgColorSelectedIndex < -1 || msgColorSelectedIndex >= msgColorPalettes.length) msgColorSelectedIndex = 0;
+
+    function getMsgOutCss(){ 
+        if(msgColorSelectedIndex === -1){
+            const sel = _getSelectedCustomColor();
+            if(sel) return sel.outCss;
+        }
+        return msgColorPalettes[msgColorSelectedIndex]?.outCss || '#dcf0fc'; 
+    }
+    function getMsgInCss(){ 
+        if(msgColorSelectedIndex === -1){
+            const sel = _getSelectedCustomColor();
+            if(sel) return sel.inCss;
+        }
+        return msgColorPalettes[msgColorSelectedIndex]?.inCss || '#ffffff'; 
+    }
+
+    function applyMsgColors(){
+        const styleEl = document.getElementById('bubble-color-style') || (() => {
+            const s = document.createElement('style'); s.id='bubble-color-style'; document.head.appendChild(s); return s;
+        })();
+        const outCss = getMsgOutCss();
+        const inCss = getMsgInCss();
+        // Incoming = .message-bubble NOT inside .my-row
+        // Outgoing = .my-row .message-bubble
+        styleEl.textContent = `
+            .message-bubble { background: ${inCss} !important; }
+            .message-row.my-row .message-bubble { background: ${outCss} !important; }
+        `;
+    }
+
+    function updatePreviewColors(){
+        const outCss = getMsgOutCss();
+        const inCss  = getMsgInCss();
+        document.querySelectorAll('#wallpaper-preview-inner .preview-bubble.outgoing').forEach(el=>{
+            el.style.background = outCss;
+        });
+        document.querySelectorAll('#wallpaper-preview-inner .preview-bubble.incoming').forEach(el=>{
+            el.style.background = inCss;
+        });
+    }
+
     function selectWallpaperIndex(index){
         if(index<0) index=0;
         if(index>=wallpaperGradients.length) index=wallpaperGradients.length-1;
         wallpaperSelectedIndex=index;
-        updateWallpaperPicker();
+        // Update tiles selection
+        document.querySelectorAll('.wp-tile').forEach((t,i)=>t.classList.toggle('selected',i===index));
+        // Update preview background
+        if(wallpaperPreviewInner) wallpaperPreviewInner.style.background = wallpaperGradients[index].css;
     }
-    function updateWallpaperPicker(){
-        if(!carouselTrack) return;
-        carouselTrack.style.transform='translateX(-'+(wallpaperSelectedIndex*100)+'%)';
-        const selected=wallpaperGradients[wallpaperSelectedIndex];
-        if(wallpaperPreviewInner){
-            wallpaperPreviewInner.style.background = selected.css;
-        }
-        if(wallpaperEmojiRow){
-            wallpaperEmojiRow.querySelectorAll('.picker-emoji').forEach((el,i)=>{
-                el.classList.toggle('selected', i===wallpaperSelectedIndex);
-            });
-        }
+
+    function selectMsgColorIndex(index){
+        msgColorSelectedIndex = index;
+        _selectedCustomId = null;
+        // Deselect all system circles
+        document.querySelectorAll('#wp-color-row .wp-color-circle').forEach((c,i)=>c.classList.toggle('selected',i===index));
+        // Deselect all custom circles
+        document.querySelectorAll('#wp-custom-color-row .wp-color-circle').forEach(c=>c.classList.remove('selected'));
+        updatePreviewColors();
     }
+
     function openWallpaperPicker(){
-        if(wallpaperOverlay){ wallpaperOverlay.classList.add('open'); updateWallpaperPicker(); }
+        if(wallpaperOverlay){ wallpaperOverlay.classList.add('open'); updatePreviewColors(); }
     }
     function closeWallpaperPicker(){ if(wallpaperOverlay) wallpaperOverlay.classList.remove('open'); }
     let themeMode = localStorage.getItem('chatTheme') || 'light';
@@ -1399,49 +1679,394 @@
         lastLightWallpaperCss = selected.css;
         localStorage.setItem('chatWallpaper',selected.css);
         localStorage.setItem('lastLightWallpaper',selected.css);
+        localStorage.setItem('msgColorIndex', String(msgColorSelectedIndex));
+        if(msgColorSelectedIndex === -1 && _selectedCustomId){
+            localStorage.setItem('selectedCustomColorId', _selectedCustomId);
+        }
         if(themeMode==='light' && chatBox){
             chatBox.style.background=selected.css;
         }
+        applyMsgColors();
         closeWallpaperPicker();
     }
     function initWallpaperPicker(){
-        if(!carouselTrack||!wallpaperEmojiRow) return;
+        const tilesRow = document.getElementById('wp-tiles-row');
+        const colorRow = document.getElementById('wp-color-row');
+        if(!tilesRow || !colorRow) return;
+
+        // Build wallpaper tiles
         wallpaperGradients.forEach((item,index)=>{
-            const tile=document.createElement('div');
-            tile.className='carousel-item';
-            tile.style.background=item.css;
-            tile.innerHTML='<div><h4>'+item.name+'</h4><p>Маленький пример того, как будет выглядеть чат.</p></div>';
-            carouselTrack.appendChild(tile);
-            const emojiBtn=document.createElement('button');
-            emojiBtn.type='button';
-            emojiBtn.className='picker-emoji';
-            emojiBtn.textContent=item.emoji;
-            emojiBtn.addEventListener('click',()=>selectWallpaperIndex(index));
-            wallpaperEmojiRow.appendChild(emojiBtn);
+            const tile = document.createElement('div');
+            tile.className = 'wp-tile' + (index===wallpaperSelectedIndex?' selected':'');
+            tile.style.background = item.css;
+            tile.innerHTML = '<div class="wp-tile-label">'+item.emoji+'</div>';
+            tile.addEventListener('click',()=>selectWallpaperIndex(index));
+            tilesRow.appendChild(tile);
         });
-        updateWallpaperPicker();
+
+        // Build color circles (system palettes only)
+        msgColorPalettes.forEach((pal,index)=>{
+            const circle = document.createElement('div');
+            circle.className = 'wp-color-circle' + (index===msgColorSelectedIndex?' selected':'');
+            circle.title = pal.label;
+            // half-out (our bubble) = bottom-right triangle
+            const halfOut = document.createElement('div');
+            halfOut.className = 'wp-color-circle-half-out';
+            halfOut.style.background = pal.outCss;
+            // half-in (peer bubble) = top-left triangle
+            const halfIn = document.createElement('div');
+            halfIn.className = 'wp-color-circle-half-in';
+            halfIn.style.background = pal.inCss;
+            circle.appendChild(halfOut);
+            circle.appendChild(halfIn);
+            // Long-press on preset circle → close wallpaper picker
+            let _pHold = null, _pDidHold = false;
+            circle.addEventListener('pointerdown', ()=>{ _pDidHold=false; _pHold=setTimeout(()=>{ _pDidHold=true; document.getElementById('wallpaper-picker-overlay').classList.remove('open'); },550); });
+            circle.addEventListener('pointerup', ()=>clearTimeout(_pHold));
+            circle.addEventListener('pointerleave', ()=>clearTimeout(_pHold));
+            circle.addEventListener('pointercancel', ()=>clearTimeout(_pHold));
+            circle.addEventListener('click',()=>{ if(_pDidHold){ _pDidHold=false; return; } selectMsgColorIndex(index); });
+            colorRow.appendChild(circle);
+        });
+
+        // Plus button — add custom color — lives in the system color row
+        const addBtn = document.createElement('button');
+        addBtn.className = 'wp-color-add-btn';
+        addBtn.id = 'wp-color-add-btn';
+        addBtn.title = 'Свой цвет';
+        addBtn.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>';
+        addBtn.addEventListener('click', openCustomColorModal);
+        colorRow.appendChild(addBtn);
+
+        // Restore saved custom colors
+        renderAllCustomColorCircles();
+
+        // Init tile highlight for current saved wallpaper
+        const savedWp = localStorage.getItem('chatWallpaper');
+        if(savedWp){
+            const idx = wallpaperGradients.findIndex(w=>w.css===savedWp);
+            if(idx>=0) selectWallpaperIndex(idx);
+        }
+        updatePreviewColors();
+
         if(wallpaperBtn) wallpaperBtn.addEventListener('click',openWallpaperPicker);
         if(wallpaperCloseBtn) wallpaperCloseBtn.addEventListener('click',closeWallpaperPicker);
         if(wallpaperOverlay) wallpaperOverlay.addEventListener('click',e=>{ if(e.target===wallpaperOverlay) closeWallpaperPicker(); });
-        if(wallpaperPrevBtn) wallpaperPrevBtn.addEventListener('click',()=>selectWallpaperIndex(wallpaperSelectedIndex-1));
-        if(wallpaperNextBtn) wallpaperNextBtn.addEventListener('click',()=>selectWallpaperIndex(wallpaperSelectedIndex+1));
         if(wallpaperApplyBtn) wallpaperApplyBtn.addEventListener('click',applySelectedWallpaper);
         if(themeToggleBtn) themeToggleBtn.addEventListener('click',toggleThemeMode);
-        const carouselArea = carouselTrack.parentElement;
-        if(carouselArea){
-            let startX=0, currentX=0, dragging=false;
-            carouselArea.addEventListener('touchstart',e=>{ startX=e.touches[0].clientX; currentX=startX; dragging=true; });
-            carouselArea.addEventListener('touchmove',e=>{ if(!dragging) return; currentX=e.touches[0].clientX; });
-            carouselArea.addEventListener('touchend',()=>{
-                if(!dragging) return;
-                const diff = currentX - startX;
-                if(diff>30) selectWallpaperIndex(wallpaperSelectedIndex-1);
-                else if(diff<-30) selectWallpaperIndex(wallpaperSelectedIndex+1);
-                dragging=false;
-            });
-        }
     }
     function setPinnedMessage(chatId,pin){ if(!chatId) return; database.ref('chats/'+chatId+'/pinned').set(pin); }
+
+    /* ── CUSTOM COLOR MODAL ── */
+    let _customGradientOn = localStorage.getItem('customMsgGrad') === '1';
+    let _customOutColor  = localStorage.getItem('customMsgOut')  || '#dcf0fc';
+    let _customInColor   = localStorage.getItem('customMsgIn')   || '#ffffff';
+    let _customOut2Color = localStorage.getItem('customMsgOut2') || '#b8e0ff';
+    let _customAngle     = parseInt(localStorage.getItem('customMsgAngle')||'135');
+
+    // Array of saved custom colors: [{outCss, inCss, id}, ...]
+    // id is used to match which custom color is selected (msgColorSelectedIndex = 'custom_N')
+    let _customColorsList = [];
+    try {
+        const saved = localStorage.getItem('customColorsList');
+        if(saved) _customColorsList = JSON.parse(saved);
+        // Migrate legacy single custom color
+        const legacyOut = localStorage.getItem('customMsgOut');
+        const legacyIn  = localStorage.getItem('customMsgIn');
+        if(legacyOut && legacyIn && _customColorsList.length === 0){
+            const legacyGrad = localStorage.getItem('customMsgGrad') === '1';
+            const legacyOut2 = localStorage.getItem('customMsgOut2') || '#b8e0ff';
+            const legacyAngle = parseInt(localStorage.getItem('customMsgAngle')||'135');
+            let outCss = legacyOut;
+            if(legacyGrad) outCss = 'linear-gradient('+legacyAngle+'deg,'+legacyOut+' 0%,'+legacyOut2+' 100%)';
+            _customColorsList.push({ outCss, inCss: legacyIn, id: Date.now() });
+            localStorage.setItem('customColorsList', JSON.stringify(_customColorsList));
+        }
+    } catch(e){ _customColorsList = []; }
+
+    // Selected custom color id (or null)
+    let _selectedCustomId = localStorage.getItem('selectedCustomColorId') || null;
+    // Convert legacy -1 index to custom selection
+    if(msgColorSelectedIndex === -1 && _customColorsList.length > 0){
+        _selectedCustomId = _selectedCustomId || String(_customColorsList[_customColorsList.length-1].id);
+        msgColorSelectedIndex = -1;
+    }
+
+    function _saveCustomColorsList(){
+        localStorage.setItem('customColorsList', JSON.stringify(_customColorsList));
+    }
+
+    function _getSelectedCustomColor(){
+        if(_selectedCustomId === null) return null;
+        return _customColorsList.find(c=>String(c.id)===String(_selectedCustomId)) || null;
+    }
+
+    function getCustomOutCss(){
+        if(msgColorSelectedIndex === -1){
+            const sel = _getSelectedCustomColor();
+            if(sel) return sel.outCss;
+        }
+        if(_customGradientOn){
+            return 'linear-gradient('+_customAngle+'deg, '+_customOutColor+' 0%, '+_customOut2Color+' 100%)';
+        }
+        return _customOutColor;
+    }
+
+    function _updateCustomSection(){
+        const section = document.getElementById('wp-custom-colors-section');
+        if(section) section.style.display = _customColorsList.length > 0 ? '' : 'none';
+    }
+
+    function renderAllCustomColorCircles(){
+        const customRow = document.getElementById('wp-custom-color-row');
+        if(!customRow) return;
+        // Remove all existing custom circles (keep + button)
+        customRow.querySelectorAll('.wp-color-circle').forEach(c=>c.remove());
+        const addBtn = document.getElementById('wp-color-add-btn');
+        // Re-render each saved custom color
+        _customColorsList.forEach(entry=>{
+            _createCustomCircleEl(entry, customRow, addBtn);
+        });
+        _updateCustomSection();
+        // Restore selection
+        if(msgColorSelectedIndex === -1 && _selectedCustomId){
+            const circle = customRow.querySelector('[data-custom-id="'+_selectedCustomId+'"]');
+            if(circle) circle.classList.add('selected');
+        }
+    }
+
+    function _createCustomCircleEl(entry, customRow, addBtn){
+        const circle = document.createElement('div');
+        circle.className = 'wp-color-circle';
+        circle.dataset.customId = String(entry.id);
+        circle.title = 'Мой цвет (зажми — удалить)';
+        const halfOut = document.createElement('div');
+        halfOut.className = 'wp-color-circle-half-out';
+        halfOut.style.background = entry.outCss;
+        const halfIn = document.createElement('div');
+        halfIn.className = 'wp-color-circle-half-in';
+        halfIn.style.background = entry.inCss;
+        circle.appendChild(halfOut);
+        circle.appendChild(halfIn);
+
+        // Long-press → delete this specific circle
+        let _holdTimer = null, _didHold = false;
+        function _startHold(){
+            _didHold = false;
+            _holdTimer = setTimeout(()=>{
+                _didHold = true;
+                _pendingDeleteCustomId = String(entry.id);
+                document.getElementById('wallpaper-picker-overlay').classList.remove('open');
+                document.getElementById('delete-custom-color-modal').style.display = 'flex';
+            }, 550);
+        }
+        function _cancelHold(){ clearTimeout(_holdTimer); }
+        circle.addEventListener('pointerdown', _startHold);
+        circle.addEventListener('pointerup', _cancelHold);
+        circle.addEventListener('pointerleave', _cancelHold);
+        circle.addEventListener('pointercancel', _cancelHold);
+
+        circle.addEventListener('click', ()=>{
+            if(_didHold){ _didHold = false; return; }
+            document.querySelectorAll('.wp-color-circle').forEach(c=>c.classList.remove('selected'));
+            circle.classList.add('selected');
+            msgColorSelectedIndex = -1;
+            _selectedCustomId = String(entry.id);
+            localStorage.setItem('selectedCustomColorId', _selectedCustomId);
+            document.querySelectorAll('#wallpaper-preview-inner .preview-bubble.outgoing').forEach(el=>{ el.style.background = entry.outCss; });
+            document.querySelectorAll('#wallpaper-preview-inner .preview-bubble.incoming').forEach(el=>{ el.style.background = entry.inCss; });
+        });
+
+        customRow.appendChild(circle);
+        return circle;
+    }
+
+    // Which custom color id is pending deletion
+    let _pendingDeleteCustomId = null;
+
+    function renderCustomColorCircle(outCss, inCss){
+        // Legacy compat — adds a new entry
+        const entry = { outCss, inCss, id: Date.now() };
+        _customColorsList.push(entry);
+        _saveCustomColorsList();
+        const customRow = document.getElementById('wp-custom-color-row');
+        const addBtn    = document.getElementById('wp-color-add-btn');
+        if(customRow && addBtn) _createCustomCircleEl(entry, customRow, addBtn);
+        _updateCustomSection();
+        const btn = document.getElementById('wp-color-add-btn');
+        if(btn) btn.classList.add('has-custom');
+    }
+
+    function updateCCPreview(){
+        const outCss = getCustomOutCss();
+        const inCss  = _customInColor;
+        const previewIn  = document.getElementById('cc-preview-in');
+        const previewOut = document.getElementById('cc-preview-out');
+        const previewWrap= document.getElementById('cc-preview-wrap');
+        const swatchOut  = document.getElementById('cc-swatch-out');
+        const swatchIn   = document.getElementById('cc-swatch-in');
+        const swatchOut2 = document.getElementById('cc-swatch-out2');
+        if(previewOut) previewOut.style.background = outCss;
+        if(previewIn)  previewIn.style.background  = inCss;
+        // Use same bg as main wallpaper for preview wrap
+        const wpCss = wallpaperGradients[wallpaperSelectedIndex]?.css || '';
+        if(previewWrap) previewWrap.style.background = wpCss;
+        if(swatchOut) swatchOut.style.background = outCss;
+        if(swatchIn)  swatchIn.style.background  = inCss;
+        if(swatchOut2) swatchOut2.style.background = _customOut2Color;
+        // Update second preview example — removed (top preview is sufficient)
+
+    }
+
+    // Wire up delete custom color modal
+    (function(){
+        const modal = document.getElementById('delete-custom-color-modal');
+        const confirmBtn = document.getElementById('delete-custom-color-confirm-btn');
+        const cancelBtn  = document.getElementById('delete-custom-color-cancel-btn');
+        if(!modal) return;
+        cancelBtn.addEventListener('click', ()=>{ modal.style.display='none'; _pendingDeleteCustomId=null; });
+        modal.addEventListener('click', e=>{ if(e.target===modal){ modal.style.display='none'; _pendingDeleteCustomId=null; } });
+        confirmBtn.addEventListener('click', ()=>{
+            modal.style.display='none';
+            if(!_pendingDeleteCustomId) return;
+            const deleteId = _pendingDeleteCustomId;
+            _pendingDeleteCustomId = null;
+            // Remove from array
+            _customColorsList = _customColorsList.filter(c=>String(c.id)!==String(deleteId));
+            _saveCustomColorsList();
+            // Remove circle from UI
+            const customRow = document.getElementById('wp-custom-color-row');
+            if(customRow){
+                const circle = customRow.querySelector('[data-custom-id="'+deleteId+'"]');
+                if(circle) circle.remove();
+            }
+            _updateCustomSection();
+            // If the deleted color was selected, fall back to first preset
+            if(msgColorSelectedIndex === -1 && String(_selectedCustomId)===String(deleteId)){
+                if(_customColorsList.length > 0){
+                    _selectedCustomId = String(_customColorsList[_customColorsList.length-1].id);
+                    localStorage.setItem('selectedCustomColorId', _selectedCustomId);
+                    const customRow2 = document.getElementById('wp-custom-color-row');
+                    if(customRow2){
+                        const remaining = customRow2.querySelector('[data-custom-id="'+_selectedCustomId+'"]');
+                        if(remaining) remaining.classList.add('selected');
+                    }
+                } else {
+                    _selectedCustomId = null;
+                    localStorage.removeItem('selectedCustomColorId');
+                    msgColorSelectedIndex = 0;
+                    localStorage.setItem('msgColorIndex', '0');
+                    document.querySelectorAll('.wp-color-circle').forEach((c,i)=>c.classList.toggle('selected', i===0));
+                    updatePreviewColors();
+                }
+            }
+            showToast('Цвет удалён');
+        });
+    })();
+
+    function openCustomColorModal(){
+        const overlay = document.getElementById('custom-color-overlay');
+        if(!overlay) return;
+        // Sync inputs
+        document.getElementById('cc-input-out').value  = _customOutColor;
+        document.getElementById('cc-input-in').value   = _customInColor;
+        document.getElementById('cc-input-out2').value = _customOut2Color;
+        document.getElementById('cc-angle-range').value= _customAngle;
+        document.getElementById('cc-angle-label').textContent = _customAngle+'°';
+        const toggleBtn = document.getElementById('cc-gradient-toggle');
+        if(_customGradientOn) toggleBtn.classList.add('on');
+        else toggleBtn.classList.remove('on');
+        const gradSecond = document.getElementById('cc-gradient-second');
+        if(gradSecond) gradSecond.classList.toggle('visible', _customGradientOn);
+        updateCCPreview();
+        overlay.classList.add('open');
+    }
+    function closeCustomColorModal(){
+        const overlay = document.getElementById('custom-color-overlay');
+        if(overlay) overlay.classList.remove('open');
+    }
+
+    // Wire up custom color modal events after DOM ready
+    (function initCustomColorModal(){
+        const overlay    = document.getElementById('custom-color-overlay');
+        const closeBtn   = document.getElementById('custom-color-close-btn');
+        const inputOut   = document.getElementById('cc-input-out');
+        const inputIn    = document.getElementById('cc-input-in');
+        const inputOut2  = document.getElementById('cc-input-out2');
+        const angleRange = document.getElementById('cc-angle-range');
+        const angleLabel = document.getElementById('cc-angle-label');
+        const gradToggle = document.getElementById('cc-gradient-toggle');
+        const gradSecond = document.getElementById('cc-gradient-second');
+        const applyBtn   = document.getElementById('cc-apply-btn');
+
+        if(!overlay) return;
+
+        closeBtn.addEventListener('click', closeCustomColorModal);
+        overlay.addEventListener('click', e=>{ if(e.target===overlay) closeCustomColorModal(); });
+
+        inputOut.addEventListener('input', ()=>{
+            _customOutColor = inputOut.value;
+            updateCCPreview();
+        });
+        inputIn.addEventListener('input', ()=>{
+            _customInColor = inputIn.value;
+            updateCCPreview();
+        });
+        inputOut2.addEventListener('input', ()=>{
+            _customOut2Color = inputOut2.value;
+            updateCCPreview();
+        });
+        angleRange.addEventListener('input', ()=>{
+            _customAngle = parseInt(angleRange.value);
+            angleLabel.textContent = _customAngle+'°';
+            updateCCPreview();
+        });
+        gradToggle.addEventListener('click', ()=>{
+            _customGradientOn = !_customGradientOn;
+            gradToggle.classList.toggle('on', _customGradientOn);
+            gradSecond.classList.toggle('visible', _customGradientOn);
+            updateCCPreview();
+        });
+
+        applyBtn.addEventListener('click', ()=>{
+            // Build outCss directly from current modal inputs — don't rely on getCustomOutCss()
+            const outCss = _customGradientOn
+                ? 'linear-gradient('+_customAngle+'deg, '+_customOutColor+' 0%, '+_customOut2Color+' 100%)'
+                : _customOutColor;
+            const inCss  = _customInColor;
+            // Save modal state for next open
+            localStorage.setItem('customMsgOut',   _customOutColor);
+            localStorage.setItem('customMsgIn',    _customInColor);
+            localStorage.setItem('customMsgOut2',  _customOut2Color);
+            localStorage.setItem('customMsgAngle', String(_customAngle));
+            localStorage.setItem('customMsgGrad',  _customGradientOn ? '1' : '0');
+            // Add new entry to the list
+            const newEntry = { outCss, inCss, id: Date.now() };
+            _customColorsList.push(newEntry);
+            _saveCustomColorsList();
+            // Create circle in custom row
+            const customRow = document.getElementById('wp-custom-color-row');
+            if(customRow) _createCustomCircleEl(newEntry, customRow, null);
+            _updateCustomSection();
+            const addBtnRef = document.getElementById('wp-color-add-btn');
+            if(addBtnRef) addBtnRef.classList.add('has-custom');
+            // Select the new entry immediately (don't rely on click())
+            msgColorSelectedIndex = -1;
+            _selectedCustomId = String(newEntry.id);
+            localStorage.setItem('msgColorIndex', '-1');
+            localStorage.setItem('selectedCustomColorId', _selectedCustomId);
+            // Update selection highlight
+            document.querySelectorAll('#wp-color-row .wp-color-circle').forEach(c=>c.classList.remove('selected'));
+            document.querySelectorAll('#wp-custom-color-row .wp-color-circle').forEach(c=>{
+                c.classList.toggle('selected', c.dataset.customId === _selectedCustomId);
+            });
+            // Update preview and apply to chat bubbles
+            document.querySelectorAll('#wallpaper-preview-inner .preview-bubble.outgoing').forEach(el=>{ el.style.background = outCss; });
+            document.querySelectorAll('#wallpaper-preview-inner .preview-bubble.incoming').forEach(el=>{ el.style.background = inCss; });
+            applyMsgColors();
+            closeCustomColorModal();
+        });
+    })();
     function getPinnedMessage(chatId){ return chatId===activeChatId ? activePinnedData : null; }
     function removePinnedMessage(chatId){ if(!chatId) return; database.ref('chats/'+chatId+'/pinned').set(null); }
     function renderPinnedMessage(chatId){ if(!pinnedBanner) return; const pin = getPinnedMessage(chatId); if(!pin){ pinnedBanner.style.display='none'; return; } pinnedAuthor.textContent = pin.pinnerId===myFrameId ? 'Вы:' : pin.author; pinnedText.textContent = pin.text || '[медиа]'; pinnedTime.textContent = 'Закреплено: '+pin.pinnedAt; pinnedBanner.style.display='block'; }
@@ -2138,6 +2763,8 @@
         btn.addEventListener('click',()=>{
             if(selectedMsgData) addReaction(selectedMsgData.id,emoji);
             if(emoji==='💩') triggerPoopAnimation();
+            if(emoji==='❤️') triggerHeartAnimation();
+            if(emoji==='🔥') triggerFireAnimation();
             reactionsPicker.classList.remove('open'); ctxMenu.style.display='none';
         });
         reactionsPicker.appendChild(btn);
@@ -2152,6 +2779,119 @@
         if(activeChatId && typeof database!=='undefined'){
             database.ref('chats/'+activeChatId+'/poopAnim').set({t: now});
         }
+    }
+
+    /* ── HEART ANIMATION ── */
+    function triggerHeartAnimation(){
+        const now = Date.now();
+        _lastHeartT = now;
+        launchHeartParticles();
+        if(activeChatId && typeof database!=='undefined'){
+            database.ref('chats/'+activeChatId+'/heartAnim').set({t: now});
+        }
+    }
+    function launchHeartParticles(){
+        const overlay = document.getElementById('heart-overlay');
+        overlay.innerHTML = '';
+        overlay.classList.add('active');
+        const count = 35;
+        const W = window.innerWidth, H = window.innerHeight;
+        for(let i=0;i<count;i++){
+            const el = document.createElement('div');
+            el.className='heart-particle';
+            const startX = Math.random()*W;
+            const startY = Math.random()*H;
+            el.style.left = startX+'px';
+            el.style.top = startY+'px';
+            el.textContent = ['❤️','💗','💖','💓','💕'][Math.floor(Math.random()*5)];
+            const angle = Math.random()*360;
+            const dist = 100+Math.random()*220;
+            const tx = Math.cos(angle*Math.PI/180)*dist;
+            const ty = Math.sin(angle*Math.PI/180)*dist - 60 - Math.random()*100;
+            const tx2 = tx*0.4; const ty2 = ty*0.4 - 30;
+            const dur = (0.7+Math.random()*1.0).toFixed(2)+'s';
+            const rot = (Math.random()*60-30).toFixed(0)+'deg';
+            el.style.setProperty('--tx', tx+'px');
+            el.style.setProperty('--ty', ty+'px');
+            el.style.setProperty('--tx2', tx2+'px');
+            el.style.setProperty('--ty2', ty2+'px');
+            el.style.setProperty('--dur', dur);
+            el.style.setProperty('--rot', rot);
+            el.style.animationDelay = (Math.random()*0.35).toFixed(2)+'s';
+            overlay.appendChild(el);
+        }
+        setTimeout(()=>{ overlay.classList.remove('active'); overlay.innerHTML=''; }, 2800);
+    }
+    let _heartChatRef = null, _lastHeartT = 0;
+    function subscribeHeartListener(chatId){
+        if(_heartChatRef){ _heartChatRef.off(); _heartChatRef=null; }
+        if(!chatId || typeof database==='undefined') return;
+        _heartChatRef = database.ref('chats/'+chatId+'/heartAnim');
+        _heartChatRef.on('value', snap=>{
+            if(!snap.val()) return;
+            const t = snap.val().t||0;
+            if(t > _lastHeartT && t > Date.now()-5000){
+                _lastHeartT = t;
+                launchHeartParticles();
+            }
+        });
+    }
+
+    /* ── FIRE ANIMATION ── */
+    function triggerFireAnimation(){
+        const now = Date.now();
+        _lastFireT = now;
+        launchFireParticles();
+        if(activeChatId && typeof database!=='undefined'){
+            database.ref('chats/'+activeChatId+'/fireAnim').set({t: now});
+        }
+    }
+    function launchFireParticles(){
+        const overlay = document.getElementById('fire-overlay');
+        overlay.innerHTML = '';
+        overlay.classList.add('active');
+        const count = 35;
+        const W = window.innerWidth, H = window.innerHeight;
+        for(let i=0;i<count;i++){
+            const el = document.createElement('div');
+            el.className='fire-particle';
+            const startX = Math.random()*W;
+            const startY = H * 0.4 + Math.random()*(H*0.5);
+            el.style.left = startX+'px';
+            el.style.top = startY+'px';
+            el.textContent = ['🔥','🔥','🔥','✨','💥'][Math.floor(Math.random()*5)];
+            const angle = -90 + (Math.random()*80-40);
+            const dist = 150+Math.random()*250;
+            const tx = Math.cos(angle*Math.PI/180)*dist;
+            const ty = Math.sin(angle*Math.PI/180)*dist;
+            const tx2 = tx*0.5 + (Math.random()*60-30);
+            const ty2 = ty*0.5;
+            const dur = (0.5+Math.random()*0.8).toFixed(2)+'s';
+            const rot = (Math.random()*90-45).toFixed(0)+'deg';
+            el.style.setProperty('--tx', tx+'px');
+            el.style.setProperty('--ty', ty+'px');
+            el.style.setProperty('--tx2', tx2+'px');
+            el.style.setProperty('--ty2', ty2+'px');
+            el.style.setProperty('--dur', dur);
+            el.style.setProperty('--rot', rot);
+            el.style.animationDelay = (Math.random()*0.3).toFixed(2)+'s';
+            overlay.appendChild(el);
+        }
+        setTimeout(()=>{ overlay.classList.remove('active'); overlay.innerHTML=''; }, 2500);
+    }
+    let _fireChatRef = null, _lastFireT = 0;
+    function subscribeFireListener(chatId){
+        if(_fireChatRef){ _fireChatRef.off(); _fireChatRef=null; }
+        if(!chatId || typeof database==='undefined') return;
+        _fireChatRef = database.ref('chats/'+chatId+'/fireAnim');
+        _fireChatRef.on('value', snap=>{
+            if(!snap.val()) return;
+            const t = snap.val().t||0;
+            if(t > _lastFireT && t > Date.now()-5000){
+                _lastFireT = t;
+                launchFireParticles();
+            }
+        });
     }
     function launchPoopParticles(){
         const overlay = document.getElementById('poop-overlay');
@@ -2592,6 +3332,8 @@
         if(activeChatId===chatId) return;
         unsubscribeActiveChat(); activeChatId=chatId;
         subscribePoopListener(chatId);
+        subscribeHeartListener(chatId);
+        subscribeFireListener(chatId);
         const chat=getChatById(chatId); if(!chat) return;
         // Сбрасываем непрочитанные
         clearUnread(chatId);
@@ -3019,13 +3761,20 @@
 
         memberCtxMenu.style.display = 'flex';
         _memberCtxJustOpened = true;
-        // Position
+        // Position — spawn ABOVE the touch/click point so "Удалить из группы" is visible
         const touch = e.touches ? e.touches[0] : e;
         const x = touch ? touch.clientX : (e.clientX||100);
         const y = touch ? touch.clientY : (e.clientY||100);
-        const mw = 220, mh = 200;
+        const mw = 240;
+        // measure menu height dynamically (items are shown/hidden)
+        memberCtxMenu.style.visibility = 'hidden';
+        memberCtxMenu.style.left = '0px'; memberCtxMenu.style.top = '-9999px';
+        const mh = memberCtxMenu.offsetHeight || 260;
+        memberCtxMenu.style.visibility = '';
         const left = Math.min(x, window.innerWidth - mw - 8);
-        const top = Math.min(y, window.innerHeight - mh - 8);
+        // Place menu above the finger, with 10px gap
+        let top = y - mh - 10;
+        if(top < 8) top = Math.min(y + 10, window.innerHeight - mh - 8);
         memberCtxMenu.style.left = left + 'px';
         memberCtxMenu.style.top = top + 'px';
     }
@@ -3152,9 +3901,10 @@
         removeTargetInfo = memberCtxTargetInfo;
         removeTargetChat = memberCtxTargetChat;
         closeMemberCtxMenu();
+        profileCardOverlay.classList.remove('open');
         if(!removeTargetPid || !removeTargetChat) return;
         confirmRemoveMemberName.textContent = removeTargetInfo.name || removeTargetPid;
-        confirmRemoveMemberModal.style.display = 'flex';
+        setTimeout(()=>{ confirmRemoveMemberModal.style.display = 'flex'; }, 200);
     });
     confirmRemoveMemberCancelBtn.addEventListener('click', ()=>{ confirmRemoveMemberModal.style.display='none'; });
     confirmRemoveMemberModal.addEventListener('click', e=>{ if(e.target===confirmRemoveMemberModal) confirmRemoveMemberModal.style.display='none'; });
@@ -3177,6 +3927,8 @@
         chatSubtitle.textContent='участников: '+cnt;
         renderChatsList();
         showToast('Участник удалён из группы');
+        // Скрыть карточку группы
+        profileCardOverlay.classList.remove('open');
         removeTargetPid=null; removeTargetInfo=null; removeTargetChat=null;
     });
 
@@ -3956,6 +4708,7 @@
     listenGroupUpdates();
     renderChatsList();
     initWallpaperPicker();
+    applyMsgColors();
     setThemeMode(themeMode);
     loadSavedWallpaper();
     // Запускаем слежение за непрочитанными для всех чатов
