@@ -631,6 +631,14 @@
         }
         .msg-vcircle-wrap.playing .msg-vcircle-play { opacity: 0; }
         .msg-vcircle-play svg { fill: #fff; width: 44px; height: 44px; filter: drop-shadow(0 1px 4px rgba(0,0,0,0.4)); }
+        /* Video circle — no bubble wrapper at all */
+        .message-row.vcircle-row .message-bubble {
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            min-width: 0 !important;
+            border-radius: 0 !important;
+        }
     </style>
 </head>
 <body>
@@ -2993,7 +3001,8 @@
     function createMessageElement(id,data){
         const isMe=data.frameId===myFrameId;
         const row=document.createElement('div');
-        row.className='message-row'+(isMe?' my-row':'');
+        const isVideoCircleEarly = data.mediaType === 'videoCircle';
+        row.className='message-row'+(isMe?' my-row':'')+(isVideoCircleEarly?' vcircle-row':'');
         row.id='msg-'+id; row.dataset.id=id;
         const replyHTML=data.replyToText?'<div class="reply-in-bubble"><b>'+escapeHtml(data.replyToAuthor)+'</b>: '+escapeHtml(data.replyToText)+'</div>':'';
         const editedLabel=data.edited?' <span style="opacity:.55;font-style:italic;font-size:10px">ред.</span>':'';
@@ -3013,10 +3022,10 @@
         }
         const textPart=data.mediaType?'':(data.text?'<div class="message-text">'+escapeHtml(data.text)+'</div>':'');
         // For videoCircle, special minimal bubble
-        const isVideoCircle = data.mediaType === 'videoCircle';
+        const isVideoCircle = isVideoCircleEarly;
         // галочка прочитано/отправлено — только для своих
         const tickHTML = isMe && !isVideoCircle ? '<span class="message-status sent" title="Отправлено"></span>' : '';
-        const bubbleStyle = isVideoCircle ? ' style="background:transparent;box-shadow:none;padding:0 0 0 0;"' : '';
+        const bubbleStyle = '';
         row.innerHTML='<div class="message-bubble"'+bubbleStyle+'>'+replyHTML+(isVideoCircle?'':('<div class="author-name" data-pid="'+escapeHtml(data.frameId||'')+'" data-orig-name="'+escapeHtml(data.author)+'">'+escapeHtml(getDisplayAuthorName(data))+getAuthorTagHTML(data.frameId)+'</div>'))+mediaHTML+textPart+(isVideoCircle?'':'<div class="message-meta-info"><span>'+data.time+editedLabel+'</span>'+tickHTML+'</div>')+'</div><div class="swipe-indicator"><svg viewBox="0 0 24 24"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg></div>';
         // reaction badge
         if(data.reaction){
