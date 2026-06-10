@@ -288,7 +288,60 @@
         .swipe-indicator { position: absolute; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; background: rgba(0,0,0,0.08); border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.1s; right: -36px; }
         .swipe-indicator svg { width: 14px; height: 14px; fill: var(--blue); }
         .message-media img { max-width: 220px; max-height: 220px; border-radius: 8px; display: block; cursor: zoom-in; margin-bottom: 2px; }
-        .message-media audio { width: 200px; margin: 4px 0; }
+        /* ── VOICE MESSAGE PLAYER (Telegram style) ── */
+        .voice-player {
+            display: flex; align-items: center; gap: 9px;
+            min-width: 220px; max-width: 260px;
+            padding: 6px 4px 2px;
+            user-select: none; cursor: default;
+        }
+        .vp-play-btn {
+            width: 38px; height: 38px; border-radius: 50%; border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            transition: transform 0.12s, background 0.15s;
+            background: var(--blue);
+            box-shadow: 0 2px 8px rgba(74,127,203,0.35);
+        }
+        .my-row .vp-play-btn { background: #3a6fbb; }
+        .vp-play-btn:active { transform: scale(0.9); }
+        .vp-play-btn svg { fill: #fff; width: 16px; height: 16px; flex-shrink: 0; }
+        .vp-play-btn svg.icon-pause { display: none; }
+        .vp-play-btn.playing svg.icon-play { display: none; }
+        .vp-play-btn.playing svg.icon-pause { display: block; }
+        .vp-right { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+        .vp-waveform {
+            position: relative; height: 28px; display: flex;
+            align-items: center; gap: 2px;
+            cursor: pointer;
+        }
+        .vp-bar {
+            flex: 1; min-width: 0; max-width: 6px; border-radius: 2px;
+            transition: background 0.12s;
+            background: rgba(74,127,203,0.28);
+        }
+        .my-row .vp-bar { background: rgba(58,111,187,0.3); }
+        .vp-bar.played { background: var(--blue); }
+        .my-row .vp-bar.played { background: #3a6fbb; }
+        .vp-bar.active {
+            background: var(--blue) !important;
+            animation: vpPulse 0.5s ease-in-out infinite alternate;
+        }
+        @keyframes vpPulse { from { opacity: 0.7; transform: scaleY(1); } to { opacity: 1; transform: scaleY(1.15); } }
+        .vp-scrub-overlay {
+            position: absolute; inset: 0; cursor: pointer;
+        }
+        .vp-bottom { display: flex; align-items: center; justify-content: space-between; }
+        .vp-duration { font-size: 11px; color: var(--dim); font-variant-numeric: tabular-nums; min-width: 34px; }
+        .vp-speed-btn {
+            font-size: 10px; font-weight: 700; color: var(--blue);
+            background: rgba(74,127,203,0.12); border: none; border-radius: 6px;
+            padding: 2px 5px; cursor: pointer; transition: background 0.15s;
+            line-height: 1.4;
+        }
+        .vp-speed-btn:hover { background: rgba(74,127,203,0.22); }
+        .my-row .vp-speed-btn { background: rgba(58,111,187,0.15); }
+        body.dark-theme .vp-bar { background: rgba(120,160,220,0.25); }
+        body.dark-theme .vp-bar.played, body.dark-theme .vp-bar.active { background: #6aaaf5; }
         /* GIF */
         .message-media .msg-gif { max-width: 220px; max-height: 200px; border-radius: 8px; display: block; margin-bottom: 2px; }
         /* VIDEO */
@@ -1624,6 +1677,7 @@
         styleEl.textContent = `
             .message-bubble { background: ${inCss} !important; }
             .message-row.my-row .message-bubble { background: ${outCss} !important; }
+            .message-row.vcircle-row .message-bubble { background: transparent !important; box-shadow: none !important; padding: 0 !important; min-width: 0 !important; border-radius: 0 !important; }
         `;
     }
 
@@ -2997,6 +3051,145 @@
         return '<span class="member-tag custom-member" style="margin-left:5px;font-size:10px;">'+escapeHtml(tag)+'</span>';
     }
 
+    /* ── VOICE PLAYER ENGINE ── */
+    const SPEEDS = [1, 1.5, 2];
+    let _activeVP = null; // {audio, vpEl} — only one plays at a time
+
+    function formatVPTime(sec){
+        const s = Math.floor(sec); return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60);
+    }
+
+    function buildWaveformBars(waveEl, amplitudes){
+        waveEl.innerHTML='';
+        amplitudes.forEach(amp=>{
+            const bar=document.createElement('div');
+            bar.className='vp-bar';
+            // map 0..1 amplitude → 4..26px height
+            bar.style.height = Math.round(4 + amp * 22) + 'px';
+            waveEl.appendChild(bar);
+        });
+        return waveEl.querySelectorAll('.vp-bar');
+    }
+
+    function buildFakeWaveform(waveEl, count){
+        const amps=[];
+        for(let i=0;i<count;i++) amps.push(Math.abs(Math.sin(i*0.42+1.7)*0.65 + Math.abs(Math.sin(i*0.9+0.3))*0.35));
+        return buildWaveformBars(waveEl, amps);
+    }
+
+    async function analyzeAudioWaveform(src, barCount){
+        try {
+            // fetch the audio data
+            const resp = await fetch(src);
+            const arrayBuf = await resp.arrayBuffer();
+            const actx = new (window.AudioContext || window.webkitAudioContext)();
+            const decoded = await actx.decodeAudioData(arrayBuf);
+            actx.close();
+            // use first channel
+            const raw = decoded.getChannelData(0);
+            const blockSize = Math.floor(raw.length / barCount);
+            const amps = [];
+            for(let i=0;i<barCount;i++){
+                let sum=0;
+                const start = i*blockSize;
+                for(let j=0;j<blockSize;j++) sum += Math.abs(raw[start+j]||0);
+                amps.push(sum/blockSize);
+            }
+            // normalize to 0..1
+            const max = Math.max(...amps, 0.0001);
+            return amps.map(a=>a/max);
+        } catch(e){ return null; }
+    }
+
+    function initVoicePlayer(vpEl){
+        const src = vpEl.dataset.src;
+        const playBtn = vpEl.querySelector('.vp-play-btn');
+        const waveEl = vpEl.querySelector('.vp-waveform');
+        const durEl = vpEl.querySelector('.vp-duration');
+        const speedBtn = vpEl.querySelector('.vp-speed-btn');
+
+        const BAR_COUNT = 44;
+        // Start with fake waveform, replace with real after decode
+        let bars = buildFakeWaveform(waveEl, BAR_COUNT);
+        let audio = new Audio(src);
+        let speedIdx = 0;
+        let dragging = false;
+
+        // Decode real waveform async — replace bars once ready
+        analyzeAudioWaveform(src, BAR_COUNT).then(amps=>{
+            if(amps){
+                bars = buildWaveformBars(waveEl, amps);
+                // re-apply played state if already playing
+                if(audio.duration){
+                    const prog = audio.currentTime / audio.duration;
+                    const playedCount = Math.round(prog * BAR_COUNT);
+                    bars.forEach((b,i)=>{ b.classList.toggle('played', i<playedCount); b.classList.toggle('active', i===playedCount); });
+                }
+            }
+        });
+
+        // When metadata loads, show duration
+        audio.addEventListener('loadedmetadata', ()=>{
+            if(isFinite(audio.duration)) durEl.textContent = formatVPTime(audio.duration);
+        });
+
+        // Animate waveform while playing
+        audio.addEventListener('timeupdate', ()=>{
+            if(!audio.duration || dragging) return;
+            const prog = audio.currentTime / audio.duration;
+            const playedCount = Math.round(prog * BAR_COUNT);
+            bars.forEach((b, i)=>{
+                b.classList.toggle('played', i < playedCount);
+                b.classList.toggle('active', i === playedCount);
+            });
+            durEl.textContent = formatVPTime(audio.currentTime);
+        });
+
+        audio.addEventListener('ended', ()=>{
+            playBtn.classList.remove('playing');
+            bars.forEach(b=>{ b.classList.remove('played','active'); });
+            durEl.textContent = formatVPTime(audio.duration||0);
+            _activeVP = null;
+        });
+
+        // Play/pause
+        playBtn.addEventListener('click', e=>{
+            e.stopPropagation();
+            if(_activeVP && _activeVP.vpEl !== vpEl){
+                _activeVP.audio.pause();
+                _activeVP.vpEl.querySelector('.vp-play-btn').classList.remove('playing');
+                _activeVP.vpEl.querySelectorAll('.vp-bar').forEach(b=>b.classList.remove('active'));
+            }
+            if(audio.paused){
+                audio.play().catch(()=>{});
+                playBtn.classList.add('playing');
+                _activeVP = {audio, vpEl};
+            } else {
+                audio.pause();
+                playBtn.classList.remove('playing');
+                _activeVP = null;
+                // stop pulsing active bar
+                bars.forEach(b=>b.classList.remove('active'));
+            }
+        });
+
+        // Scrub via click on waveform
+        waveEl.addEventListener('click', e=>{
+            if(!audio.duration) return;
+            const rect = waveEl.getBoundingClientRect();
+            const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+            audio.currentTime = ratio * audio.duration;
+        });
+
+        // Speed toggle
+        speedBtn.addEventListener('click', e=>{
+            e.stopPropagation();
+            speedIdx = (speedIdx+1) % SPEEDS.length;
+            audio.playbackRate = SPEEDS[speedIdx];
+            speedBtn.textContent = SPEEDS[speedIdx]+'×';
+        });
+    }
+
     /* ── CREATE MESSAGE ELEMENT ── */
     function createMessageElement(id,data){
         const isMe=data.frameId===myFrameId;
@@ -3012,7 +3205,20 @@
         } else if(data.mediaType==='gif'&&data.gifUrl){
             mediaHTML='<div class="message-media"><img src="'+data.gifUrl+'" alt="GIF" class="msg-gif"></div>';
         } else if(data.mediaType==='audio'&&data.mediaData){
-            mediaHTML='<div class="message-media"><audio controls src="'+data.mediaData+'"></audio></div>';
+            const vpId='vp-'+id;
+            mediaHTML=`<div class="message-media"><div class="voice-player" id="${vpId}" data-src="${data.mediaData}">
+                <button class="vp-play-btn" aria-label="Play">
+                    <svg class="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    <svg class="icon-pause" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                </button>
+                <div class="vp-right">
+                    <div class="vp-waveform" data-vpid="${vpId}"></div>
+                    <div class="vp-bottom">
+                        <span class="vp-duration">0:00</span>
+                        <button class="vp-speed-btn">1×</button>
+                    </div>
+                </div>
+            </div></div>`;
         } else if(data.mediaType==='video'&&data.mediaData){
             mediaHTML='<div class="message-media"><div class="msg-video-wrap" data-src="'+data.mediaData+'" data-author="'+escapeHtml(data.author+(isMe?' (Вы)':''))+'" data-time="'+escapeHtml(data.time)+'"><video src="'+data.mediaData+'" preload="metadata" style="max-width:100%;max-height:200px;border-radius:10px;display:block;pointer-events:none"></video><div class="msg-video-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div></div>';
         } else if(data.mediaType==='videoCircle'&&data.mediaData){
@@ -3057,6 +3263,10 @@
             });
         }
  
+        // voice player init
+        const vpEl = row.querySelector('.voice-player');
+        if(vpEl) initVoicePlayer(vpEl);
+
         setupInteraction(row,isMe,data);
         return row;
     }
@@ -3072,8 +3282,8 @@
             document.getElementById('menu-delete').style.display=isMe?'block':'none';
             document.getElementById('menu-react').style.display=isMe?'none':'block';
             document.getElementById('menu-pin').style.display='block';
-            // Запретить ответ на кружки
-            document.getElementById('menu-reply').style.display=data.mediaType==='videoCircle'?'none':'block';
+            // Запретить ответ на кружки и голосовые
+            document.getElementById('menu-reply').style.display=(data.mediaType==='videoCircle'||data.mediaType==='audio')?'none':'block';
         }
         function handleDoubleTap(e){ e.preventDefault(); addReaction(row.dataset.id,'❤'); showHeartAnim(bubble); }
         function showHeartAnim(b){
@@ -3086,7 +3296,7 @@
         bubble.addEventListener('dblclick',e=>handleDoubleTap(e));
         bubble.addEventListener('mousedown',e=>{ if(e.button!==0) return; if(e.target.closest('.msg-photo,.msg-video-wrap,.msg-gif')) return; isLongPress=false; startX=e.clientX; isSwiping=true; pressTimer=setTimeout(()=>{handleLongPress(e);isSwiping=false;},600); });
         window.addEventListener('mousemove',e=>{ if(!isSwiping) return; currentX=e.clientX; const d=startX-currentX; if(Math.abs(d)>10) clearTimeout(pressTimer); if(d>0&&d<80){bubble.style.transform='translateX(-'+d+'px)';indicator.style.opacity=d/60;} });
-        window.addEventListener('mouseup',()=>{ clearTimeout(pressTimer); if(!isSwiping) return; if(startX-currentX>=50&&!isLongPress&&data.mediaType!=='videoCircle') triggerReplyMode(row.dataset.id,data.author,data.text||'[медиа]'); bubble.style.transform='translateX(0)';indicator.style.opacity=0;isSwiping=false; });
+        window.addEventListener('mouseup',()=>{ clearTimeout(pressTimer); if(!isSwiping) return; if(startX-currentX>=50&&!isLongPress&&data.mediaType!=='videoCircle'&&data.mediaType!=='audio') triggerReplyMode(row.dataset.id,data.author,data.text||'[медиа]'); bubble.style.transform='translateX(0)';indicator.style.opacity=0;isSwiping=false; });
         bubble.addEventListener('touchstart',e=>{
             if(e.target.closest('.msg-photo,.msg-video-wrap,.msg-gif')) return;
             isLongPress=false; startX=e.touches[0].clientX; isSwiping=true;
@@ -3094,7 +3304,7 @@
             const now=Date.now(); if(now-lastTap<350){handleDoubleTap(e);clearTimeout(pressTimer);} lastTap=now;
         },{passive:false});
         bubble.addEventListener('touchmove',e=>{ if(!isSwiping) return; currentX=e.touches[0].clientX; const d=startX-currentX; if(Math.abs(d)>10) clearTimeout(pressTimer); if(d>0&&d<80){bubble.style.transform='translateX(-'+d+'px)';indicator.style.opacity=d/60;} },{passive:true});
-        bubble.addEventListener('touchend',()=>{ clearTimeout(pressTimer); if(!isSwiping) return; if(startX-currentX>=50&&!isLongPress&&data.mediaType!=='videoCircle') triggerReplyMode(row.dataset.id,data.author,data.text||'[медиа]'); bubble.style.transform='translateX(0)';indicator.style.opacity=0;isSwiping=false; });
+        bubble.addEventListener('touchend',()=>{ clearTimeout(pressTimer); if(!isSwiping) return; if(startX-currentX>=50&&!isLongPress&&data.mediaType!=='videoCircle'&&data.mediaType!=='audio') triggerReplyMode(row.dataset.id,data.author,data.text||'[медиа]'); bubble.style.transform='translateX(0)';indicator.style.opacity=0;isSwiping=false; });
     }
  
     /* ── REPLY/EDIT ── */
