@@ -199,9 +199,98 @@
         .cc-picker-col { flex: 1; display: flex; flex-direction: column; gap: 8px; }
         .cc-picker-label { font-size: 12px; font-weight: 600; color: #8a9aaa; text-transform: uppercase; letter-spacing: 0.5px; }
         body.dark-theme .cc-picker-label { color: #4a5568; }
-        .cc-picker-swatch { width: 100%; height: 44px; border-radius: 12px; border: 2px solid rgba(0,0,0,0.08); cursor: pointer; position: relative; overflow: hidden; transition: transform 0.15s; }
-        .cc-picker-swatch:hover { transform: scale(1.03); }
-        .cc-picker-swatch input[type=color] { position: absolute; inset: -6px; width: calc(100% + 12px); height: calc(100% + 12px); opacity: 0; cursor: pointer; border: none; padding: 0; }
+
+        /* Кастомная кнопка-свотч — открывает красивую палитру */
+        .cc-picker-swatch {
+            width: 100%; height: 44px; border-radius: 12px;
+            border: 2px solid rgba(0,0,0,0.08); cursor: pointer;
+            position: relative; transition: transform 0.15s, box-shadow 0.15s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .cc-picker-swatch:hover { transform: scale(1.03); box-shadow: 0 2px 10px rgba(0,0,0,0.14); }
+        .cc-picker-swatch-icon { pointer-events: none; opacity: 0.55; }
+        .cc-picker-swatch-icon svg { width: 18px; height: 18px; fill: #fff; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4)); }
+
+        /* ── КРАСИВАЯ ПАЛИТРА (попап) ── */
+        .cpk-overlay {
+            position: fixed; inset: 0; z-index: 1200;
+            display: none; align-items: flex-end; justify-content: center;
+            background: rgba(0,0,0,0.42);
+        }
+        .cpk-overlay.open { display: flex; }
+        .cpk-card {
+            background: #fff; width: 100%; max-width: 400px;
+            border-radius: 24px 24px 0 0;
+            padding: 0 0 max(20px,env(safe-area-inset-bottom));
+            animation: slideUp 0.26s cubic-bezier(0.4,0,0.2,1);
+            display: flex; flex-direction: column;
+            box-shadow: 0 -8px 40px rgba(0,0,0,0.18);
+        }
+        body.dark-theme .cpk-card { background: #1a1f27; }
+        .cpk-handle { width: 40px; height: 4px; background: rgba(0,0,0,0.12); border-radius: 2px; margin: 12px auto 0; flex-shrink: 0; }
+        body.dark-theme .cpk-handle { background: rgba(255,255,255,0.12); }
+        .cpk-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px 10px; flex-shrink: 0; }
+        .cpk-title { font-size: 16px; font-weight: 700; color: #1a1a1a; }
+        body.dark-theme .cpk-title { color: #e8eef7; }
+        .cpk-close { width: 28px; height: 28px; border: none; background: rgba(0,0,0,0.06); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #666; }
+        body.dark-theme .cpk-close { background: rgba(255,255,255,0.08); color: #aaa; }
+
+        /* Градиентный квадрат */
+        .cpk-canvas-wrap { position: relative; margin: 0 16px; border-radius: 12px; overflow: hidden; flex-shrink: 0; }
+        #cpk-canvas { display: block; width: 100%; height: 220px; cursor: crosshair; border-radius: 12px; }
+        .cpk-cursor {
+            position: absolute; width: 18px; height: 18px; border-radius: 50%;
+            border: 3px solid #fff; box-shadow: 0 1px 6px rgba(0,0,0,0.45);
+            pointer-events: none; transform: translate(-50%,-50%);
+            top: 30%; left: 70%;
+        }
+
+        /* Hue slider */
+        .cpk-hue-wrap { margin: 12px 16px 0; position: relative; height: 22px; flex-shrink: 0; }
+        #cpk-hue {
+            -webkit-appearance: none; appearance: none;
+            width: 100%; height: 22px; border-radius: 11px; border: none; outline: none;
+            cursor: pointer;
+            background: linear-gradient(to right,
+                hsl(0,100%,50%), hsl(30,100%,50%), hsl(60,100%,50%),
+                hsl(90,100%,50%), hsl(120,100%,50%), hsl(150,100%,50%),
+                hsl(180,100%,50%), hsl(210,100%,50%), hsl(240,100%,50%),
+                hsl(270,100%,50%), hsl(300,100%,50%), hsl(330,100%,50%),
+                hsl(360,100%,50%));
+        }
+        #cpk-hue::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 26px; height: 26px; border-radius: 50%;
+            background: #fff; border: 3px solid rgba(255,255,255,0.9);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.35); cursor: pointer;
+        }
+        #cpk-hue::-moz-range-thumb {
+            width: 26px; height: 26px; border-radius: 50%;
+            background: #fff; border: 3px solid rgba(255,255,255,0.9);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.35); cursor: pointer;
+        }
+
+        /* Превью + hex */
+        .cpk-bottom { display: flex; align-items: center; gap: 12px; margin: 12px 16px 0; flex-shrink: 0; }
+        .cpk-preview { width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0; border: 2px solid rgba(0,0,0,0.08); transition: background 0.1s; }
+        .cpk-hex-wrap { flex: 1; background: #f3f4f6; border-radius: 12px; display: flex; align-items: center; padding: 0 12px; height: 44px; border: 1.5px solid transparent; transition: border-color 0.15s; }
+        body.dark-theme .cpk-hex-wrap { background: #252b36; }
+        .cpk-hex-wrap:focus-within { border-color: var(--blue); }
+        .cpk-hex-hash { font-size: 15px; font-weight: 700; color: #8a9aaa; margin-right: 4px; }
+        #cpk-hex-input {
+            flex: 1; background: none; border: none; outline: none;
+            font-size: 15px; font-weight: 600; color: #1a1a1a; font-family: monospace;
+            text-transform: uppercase;
+        }
+        body.dark-theme #cpk-hex-input { color: #e8eef7; }
+
+        /* Кнопка ОК */
+        .cpk-ok {
+            margin: 12px 16px 0; background: var(--blue); color: #fff;
+            border: none; border-radius: 14px; padding: 13px 0;
+            font-size: 15px; font-weight: 700; cursor: pointer;
+            transition: background 0.15s; flex-shrink: 0;
+        }
+        .cpk-ok:hover { background: #3a6fbb; }
 
         /* Gradient toggle */
         .cc-gradient-toggle { display: flex; gap: 8px; align-items: center; }
@@ -288,60 +377,100 @@
         .swipe-indicator { position: absolute; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; background: rgba(0,0,0,0.08); border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.1s; right: -36px; }
         .swipe-indicator svg { width: 14px; height: 14px; fill: var(--blue); }
         .message-media img { max-width: 220px; max-height: 220px; border-radius: 8px; display: block; cursor: zoom-in; margin-bottom: 2px; }
-        /* ── VOICE MESSAGE PLAYER (Telegram style) ── */
-        .voice-player {
-            display: flex; align-items: center; gap: 9px;
-            min-width: 220px; max-width: 260px;
-            padding: 6px 4px 2px;
+        /* ── VOICE MESSAGE PLAYER ── */
+
+        /* Убираем паддинг у bubble когда внутри только голосовое */
+        .message-bubble:has(.voice-msg-bubble) {
+            padding: 0 !important;
+            min-width: unset !important;
+        }
+        /* Прячем author-name когда bubble — голосовое (имя уже не нужно отдельно) */
+        .message-bubble:has(.voice-msg-bubble) .author-name {
+            display: none !important;
+        }
+
+        /* Голосовой пузырь — почти белый с едва заметным голубым */
+        .voice-msg-bubble {
+            display: flex; align-items: center; gap: 10px;
+            min-width: 230px; max-width: 270px;
+            padding: 10px 12px 10px 10px;
+            border-radius: 16px 16px 16px 4px;
+            background: #f3f8fe;
             user-select: none; cursor: default;
         }
-        .vp-play-btn {
-            width: 38px; height: 38px; border-radius: 50%; border: none; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-            transition: transform 0.12s, background 0.15s;
-            background: var(--blue);
-            box-shadow: 0 2px 8px rgba(74,127,203,0.35);
+        .my-row .voice-msg-bubble {
+            border-radius: 16px 16px 4px 16px;
+            background: #eaf2fb;
         }
-        .my-row .vp-play-btn { background: #3a6fbb; }
-        .vp-play-btn:active { transform: scale(0.9); }
-        .vp-play-btn svg { fill: #fff; width: 16px; height: 16px; flex-shrink: 0; }
+
+        /* Кнопка play — приглушённо-синяя, иконка белая */
+        .vp-play-btn {
+            width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            transition: transform 0.12s, filter 0.15s;
+            background: #4a7fcb;
+        }
+        .vp-play-btn:active { transform: scale(0.88); filter: brightness(0.88); }
+        .vp-play-btn svg {
+            fill: #fff;
+            width: 15px; height: 15px;
+            flex-shrink: 0;
+            display: block;
+        }
         .vp-play-btn svg.icon-pause { display: none; }
         .vp-play-btn.playing svg.icon-play { display: none; }
         .vp-play-btn.playing svg.icon-pause { display: block; }
+        .vp-play-btn svg.icon-play { transform: translateX(1px); }
+
         .vp-right { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+
         .vp-waveform {
-            position: relative; height: 28px; display: flex;
+            position: relative; height: 30px; display: flex;
             align-items: center; gap: 2px;
             cursor: pointer;
         }
         .vp-bar {
-            flex: 1; min-width: 0; max-width: 6px; border-radius: 2px;
-            transition: background 0.12s;
-            background: rgba(74,127,203,0.28);
+            flex: 1; min-width: 0; max-width: 3px; border-radius: 2px;
+            transition: background 0.1s;
+            background: rgba(74,127,203,0.3);
         }
-        .my-row .vp-bar { background: rgba(58,111,187,0.3); }
-        .vp-bar.played { background: var(--blue); }
-        .my-row .vp-bar.played { background: #3a6fbb; }
+        .vp-bar.played { background: #4a7fcb; }
         .vp-bar.active {
-            background: var(--blue) !important;
+            background: #4a7fcb !important;
             animation: vpPulse 0.5s ease-in-out infinite alternate;
         }
-        @keyframes vpPulse { from { opacity: 0.7; transform: scaleY(1); } to { opacity: 1; transform: scaleY(1.15); } }
-        .vp-scrub-overlay {
-            position: absolute; inset: 0; cursor: pointer;
-        }
+        @keyframes vpPulse { from { opacity: 0.7; transform: scaleY(1); } to { opacity: 1; transform: scaleY(1.18); } }
+
+        .vp-scrub-overlay { position: absolute; inset: 0; cursor: pointer; }
+
         .vp-bottom { display: flex; align-items: center; justify-content: space-between; }
-        .vp-duration { font-size: 11px; color: var(--dim); font-variant-numeric: tabular-nums; min-width: 34px; }
+        .vp-duration { font-size: 11px; color: rgba(0,0,0,0.4); font-variant-numeric: tabular-nums; min-width: 34px; }
+
         .vp-speed-btn {
-            font-size: 10px; font-weight: 700; color: var(--blue);
-            background: rgba(74,127,203,0.12); border: none; border-radius: 6px;
+            font-size: 10px; font-weight: 700; color: #4a7fcb;
+            background: rgba(74,127,203,0.14); border: none; border-radius: 6px;
             padding: 2px 5px; cursor: pointer; transition: background 0.15s;
             line-height: 1.4;
         }
-        .vp-speed-btn:hover { background: rgba(74,127,203,0.22); }
-        .my-row .vp-speed-btn { background: rgba(58,111,187,0.15); }
-        body.dark-theme .vp-bar { background: rgba(120,160,220,0.25); }
+        .vp-speed-btn:hover { background: rgba(74,127,203,0.24); }
+
+        body.dark-theme .voice-msg-bubble { background: #1c2a3a; }
+        body.dark-theme .my-row .voice-msg-bubble { background: #1a3050; }
+        body.dark-theme .vp-bar { background: rgba(120,170,230,0.25); }
         body.dark-theme .vp-bar.played, body.dark-theme .vp-bar.active { background: #6aaaf5; }
+        body.dark-theme .vp-duration { color: rgba(255,255,255,0.45); }
+        body.dark-theme .vp-speed-btn { color: #6aaaf5; background: rgba(106,170,245,0.12); }
+
+        /* Мета-строка внутри voice-msg-bubble */
+        .vp-meta {
+            display: flex; align-items: center; gap: 4px;
+            margin-left: auto;
+        }
+        /* speed-btn внутри vp-meta */
+        .vp-meta .vp-speed-btn { margin-right: 2px; }
+        .vp-meta-time { font-size: 11px; color: rgba(0,0,0,0.35); }
+        .vp-meta-tick { font-size: 11px; color: rgba(0,0,0,0.4); }
+        .vp-meta-tick.read { color: var(--blue); }
         /* GIF */
         .message-media .msg-gif { max-width: 220px; max-height: 200px; border-radius: 8px; display: block; margin-bottom: 2px; }
         /* VIDEO */
@@ -692,6 +821,50 @@
             min-width: 0 !important;
             border-radius: 0 !important;
         }
+
+        /* ── AI DISCLAIMER ── */
+        .ai-disclaimer {
+            display: none;
+            text-align: center;
+            font-size: 11px;
+            color: #b0bec5;
+            padding: 4px 16px 6px;
+            background: var(--header);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .ai-disclaimer.visible { display: block; }
+        body.dark-theme .ai-disclaimer { color: #4a5568; }
+        .ai-label {
+            font-size: 10px;
+            color: var(--dim);
+            font-style: italic;
+            margin-left: 4px;
+            opacity: 0.85;
+        }
+
+        /* AI thinking inside header-sub */
+        .ai-thinking-dots {
+            display: inline-flex;
+            gap: 3px;
+            align-items: center;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
+        .ai-thinking-dots span {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--blue);
+            display: inline-block;
+            animation: aiDot 1.2s infinite ease-in-out;
+        }
+        .ai-thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .ai-thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes aiDot {
+            0%, 80%, 100% { transform: scale(0.65); opacity: 0.35; }
+            40% { transform: scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -769,6 +942,7 @@
             <span class="pinned-message-time" id="pinned-message-time"></span>
         </div>
     </div>
+    <div class="ai-disclaimer" id="ai-disclaimer">Чати — это ИИ. Он может делать ошибки</div>
  
     <div class="typing-bar" id="typing-bar">
         <span id="typing-text">Печатает</span>
@@ -1238,14 +1412,14 @@
             <div class="cc-pickers-row">
                 <div class="cc-picker-col">
                     <div class="cc-picker-label">Мои сообщения</div>
-                    <div class="cc-picker-swatch" id="cc-swatch-out" style="background:#dcf0fc;">
-                        <input type="color" id="cc-input-out" value="#dcf0fc">
+                    <div class="cc-picker-swatch" id="cc-swatch-out" style="background:#dcf0fc;" onclick="openCPK('out')">
+                        <span class="cc-picker-swatch-icon"><svg viewBox="0 0 24 24"><path d="M12 3C6.5 3 2 7.5 2 13a10 10 0 0010 10c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.97-4.03-10-9-10zm-5.5 10c-.83 0-1.5-.67-1.5-1.5S5.67 10 6.5 10s1.5.67 1.5 1.5S7.33 13 6.5 13zm3-4C8.67 9 8 8.33 8 7.5S8.67 6 9.5 6s1.5.67 1.5 1.5S10.33 9 9.5 9zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 6 14.5 6s1.5.67 1.5 1.5S15.33 9 14.5 9zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 10 17.5 10s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg></span>
                     </div>
                 </div>
                 <div class="cc-picker-col">
                     <div class="cc-picker-label">Собеседника</div>
-                    <div class="cc-picker-swatch" id="cc-swatch-in" style="background:#ffffff;">
-                        <input type="color" id="cc-input-in" value="#ffffff">
+                    <div class="cc-picker-swatch" id="cc-swatch-in" style="background:#ffffff;" onclick="openCPK('in')">
+                        <span class="cc-picker-swatch-icon"><svg viewBox="0 0 24 24"><path d="M12 3C6.5 3 2 7.5 2 13a10 10 0 0010 10c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.97-4.03-10-9-10zm-5.5 10c-.83 0-1.5-.67-1.5-1.5S5.67 10 6.5 10s1.5.67 1.5 1.5S7.33 13 6.5 13zm3-4C8.67 9 8 8.33 8 7.5S8.67 6 9.5 6s1.5.67 1.5 1.5S10.33 9 9.5 9zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 6 14.5 6s1.5.67 1.5 1.5S15.33 9 14.5 9zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 10 17.5 10s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg></span>
                     </div>
                 </div>
             </div>
@@ -1260,8 +1434,8 @@
             <div class="cc-gradient-second" id="cc-gradient-second">
                 <div class="cc-picker-col">
                     <div class="cc-picker-label">Цвет 2 (градиент)</div>
-                    <div class="cc-picker-swatch" id="cc-swatch-out2" style="background:#b8e0ff;">
-                        <input type="color" id="cc-input-out2" value="#b8e0ff">
+                    <div class="cc-picker-swatch" id="cc-swatch-out2" style="background:#b8e0ff;" onclick="openCPK('out2')">
+                        <span class="cc-picker-swatch-icon"><svg viewBox="0 0 24 24"><path d="M12 3C6.5 3 2 7.5 2 13a10 10 0 0010 10c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.97-4.03-10-9-10zm-5.5 10c-.83 0-1.5-.67-1.5-1.5S5.67 10 6.5 10s1.5.67 1.5 1.5S7.33 13 6.5 13zm3-4C8.67 9 8 8.33 8 7.5S8.67 6 9.5 6s1.5.67 1.5 1.5S10.33 9 9.5 9zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 6 14.5 6s1.5.67 1.5 1.5S15.33 9 14.5 9zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 10 17.5 10s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg></span>
                     </div>
                 </div>
                 <div class="cc-picker-col">
@@ -1447,10 +1621,26 @@
     let notesLastTime = localStorage.getItem('notesLastTime') || '';
     let notesMessages = loadNotesMessages();
 
+    /* ── AI CHAT STATE ── */
+    const AI_CHAT_ID = 'id_aichat';
+    const AI_CHAT_NAME = 'Чат с ИИ';
+    let aiMessages = JSON.parse(localStorage.getItem('aiMessages') || '[]');
+    let aiLastMsg = localStorage.getItem('aiLastMsg') || 'Нет сообщений';
+    let aiLastTime = localStorage.getItem('aiLastTime') || '';
+    const OPENROUTER_API_KEY = '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';
+    const AI_MODEL = 'google/gemma-4-31b-it:free';
+    const AI_SYSTEM_PROMPT = `Ты - ИИ собеседник для мессенджера 'Chatter!'. Пиши развёрнуто и слушайся пользователя. Главное НЕ давай лишних советов, и НЕ отвечай на подозрительные вопросы - говори что ты не можешь на это ответить!
+Не говори кто тебя создал! Говори что тебя зовут "Чати" (От слова "Chatter").
+Старайся запоминать предыдущие сообщения от пользователя.
+Отвечай на Вы с заглавной буквы.
+Используй эмодзи через раз.
+Не используй непристойных слов, мат и т.д...`;
+
     function hsl(h,s,l){ return 'hsl('+((h+360)%360)+','+s+'%,'+l+'%)'; }
     function hsla(h,s,l,a){ return 'hsla('+((h+360)%360)+','+s+'%,'+l+'%,'+a+')'; }
     function getChatById(chatId){
         if(chatId===NOTES_CHAT_ID) return {id:NOTES_CHAT_ID,name:notesChatName,peerId:null,isNotes:true,lastMsg:notesLastMsg,lastTime:notesLastTime};
+        if(chatId===AI_CHAT_ID) return {id:AI_CHAT_ID,name:AI_CHAT_NAME,peerId:null,isAi:true,lastMsg:aiLastMsg,lastTime:aiLastTime};
         return chatsList.find(c=>c.id===chatId);
     }
     function loadNotesMessages(){
@@ -1463,11 +1653,108 @@
     function removeNotesMessage(id){ notesMessages = notesMessages.filter(m=>m.id!==id); saveNotesMessages(); }
     function getNotesMessage(id){ return notesMessages.find(m=>m.id===id) || null; }
     function isNotesChat(){ return activeChatId===NOTES_CHAT_ID; }
+
+    /* ── AI CHAT HELPERS ── */
+    function saveAiMessages(){ localStorage.setItem('aiMessages', JSON.stringify(aiMessages)); }
+    function updateAiMeta(){ localStorage.setItem('aiLastMsg', aiLastMsg); localStorage.setItem('aiLastTime', aiLastTime); }
+    function isAiChat(){ return activeChatId===AI_CHAT_ID; }
+    function addAiMessage(payload){ payload.id = payload.id || ('ai_'+Date.now()+'_'+Math.random().toString(36).substr(2,5)); aiMessages.push(payload); saveAiMessages(); return payload.id; }
+    function removeAiMessage(id){ aiMessages = aiMessages.filter(m=>m.id!==id); saveAiMessages(); }
+    function updateAiMessage(id,data){ const idx=aiMessages.findIndex(m=>m.id===id); if(idx<0) return null; aiMessages[idx]=Object.assign({},aiMessages[idx],data); saveAiMessages(); return aiMessages[idx]; }
+    function getAiMessage(id){ return aiMessages.find(m=>m.id===id)||null; }
+
+    function renderAiChat(){
+        if(!chatBox) return;
+        chatBox.innerHTML='';
+        if(!aiMessages.length){ emptyState.style.display='flex'; }
+        else { emptyState.style.display='none'; aiMessages.forEach(msg=>{ chatBox.appendChild(createMessageElement(msg.id,msg)); }); chatBox.scrollTop=chatBox.scrollHeight; }
+    }
+
+    async function sendAiMessage(userText){
+        if(!userText.trim()) return;
+        const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
+        const userPayload={id:'ai_'+Date.now()+'_u',frameId:myFrameId,author:myCurrentNickname||'Вы',text:userText,time:timeStr,edited:false,isAiUser:true};
+        addAiMessage(userPayload);
+        aiLastMsg=userText; aiLastTime=timeStr; updateAiMeta();
+        renderAiChat(); renderChatsList();
+
+        // Check for "forget/change topic" command
+        const lowerText=userText.toLowerCase();
+        if(lowerText.includes('забудь всё')||lowerText.includes('забудь все')||lowerText.includes('смени тему')||lowerText.includes('новая тема')){
+            aiMessages=[userPayload]; saveAiMessages();
+            renderAiChat();
+        }
+
+        // Show AI thinking indicator in header subtitle
+        const thinkBar=document.getElementById('ai-thinking-bar');
+        if(thinkBar) thinkBar.classList.add('visible');
+        if(activeChatId===AI_CHAT_ID){
+            chatSubtitle.className='header-sub typing-status';
+            chatSubtitle.innerHTML='Думаю<span class="ai-thinking-dots"><span></span><span></span><span></span></span>';
+        }
+
+        try {
+            // Build conversation history for API
+            const history=aiMessages.filter(m=>m.id!==userPayload.id).map(m=>({
+                role: m.isAiUser ? 'user' : 'assistant',
+                content: m.text
+            }));
+            history.push({role:'user',content:userText});
+
+            const response=await fetch('https://openrouter.ai/api/v1/chat/completions',{
+                method:'POST',
+                headers:{'Content-Type':'application/json','Authorization':'Bearer '+OPENROUTER_API_KEY,'HTTP-Referer':'https://chatter.app','X-Title':'Chatter AI'},
+                body:JSON.stringify({model:AI_MODEL,messages:[{role:'system',content:AI_SYSTEM_PROMPT},...history],max_tokens:1024})
+            });
+            const data=await response.json();
+            let aiText = '';
+            if(data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content){
+                aiText = data.choices[0].message.content;
+            } else if(data.error){
+                aiText = 'Ошибка API: '+(data.error.message||JSON.stringify(data.error));
+            } else {
+                aiText = 'Нет ответа от сервера. Ответ: '+JSON.stringify(data).substr(0,200);
+            }
+            const aiTime=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
+            const aiPayload={id:'ai_'+Date.now()+'_r',frameId:'__ai__',author:'Чати - ИИ',text:aiText,time:aiTime,edited:false,isAiBot:true};
+            addAiMessage(aiPayload);
+            aiLastMsg=aiText.length>40?aiText.substr(0,40)+'...':aiText; aiLastTime=aiTime; updateAiMeta();
+            renderAiChat(); renderChatsList();
+        } catch(e){
+            console.error('AI error:',e);
+            const errTime=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
+            const errPayload={id:'ai_'+Date.now()+'_e',frameId:'__ai__',author:'Чати - ИИ',text:'Ошибка соединения: '+String(e),time:errTime,edited:false,isAiBot:true};
+            addAiMessage(errPayload);
+            renderAiChat(); renderChatsList();
+        } finally {
+            const thinkBar=document.getElementById('ai-thinking-bar');
+            if(thinkBar) thinkBar.classList.remove('visible');
+            if(activeChatId===AI_CHAT_ID){
+                chatSubtitle.className='header-sub offline-status';
+                chatSubtitle.textContent='';
+            }
+        }
+    }
     function getLocalMessageLabel(msg){ if(!msg) return ''; if(msg.mediaType){ return msg.mediaType==='image'?'Фото':msg.mediaType==='gif'?'🎞 GIF':msg.mediaType==='video'?'Видео':msg.mediaType==='document'?''+(msg.mediaName||'Документ'):'Аудио'; } return msg.text; }
     function renderNotesChat(){ if(!chatBox) return; notesMessages = loadNotesMessages(); chatBox.innerHTML=''; if(!notesMessages.length){ emptyState.style.display='flex'; } else { emptyState.style.display='none'; notesMessages.forEach(msg=>{ chatBox.appendChild(createMessageElement(msg.id,msg)); }); chatBox.scrollTop=chatBox.scrollHeight; } }
-    function sendChatMessage(payload){ if(isNotesChat()){ addNotesMessage(payload); notesLastMsg = getLocalMessageLabel(payload); notesLastTime = payload.time; updateNotesMeta(); renderNotesChat(); renderChatsList(); return; } database.ref('chats/'+activeChatId+'/messages').push(payload); notifyPeer(); }
-    function updateChatMessage(id,data){ if(isNotesChat()){ updateNotesMessage(id,data); const msg = getNotesMessage(id); if(msg){ notesLastMsg = getLocalMessageLabel(msg); notesLastTime = msg.time; updateNotesMeta(); } renderNotesChat(); renderChatsList(); return; } database.ref('chats/'+activeChatId+'/messages/'+id).update(data); }
-    function deleteChatMessage(id){ if(isNotesChat()){ removeNotesMessage(id); notesMessages = loadNotesMessages(); notesLastMsg = notesMessages.length? getLocalMessageLabel(notesMessages[notesMessages.length-1]):''; notesLastTime = notesMessages.length? notesMessages[notesMessages.length-1].time:''; updateNotesMeta(); renderNotesChat(); renderChatsList(); return; } database.ref('chats/'+activeChatId+'/messages/'+id).remove(); }
+    function sendChatMessage(payload){
+        if(isNotesChat()){ addNotesMessage(payload); notesLastMsg = getLocalMessageLabel(payload); notesLastTime = payload.time; updateNotesMeta(); renderNotesChat(); renderChatsList(); return; }
+        if(isAiChat()){
+            if(payload.mediaType){
+                payload.id = payload.id || ('ai_'+Date.now()+'_u');
+                payload.isAiUser = true;
+                addAiMessage(payload);
+                aiLastMsg = getLocalMessageLabel(payload); aiLastTime = payload.time; updateAiMeta();
+                renderAiChat(); renderChatsList();
+            } else {
+                sendAiMessage(payload.text);
+            }
+            return;
+        }
+        database.ref('chats/'+activeChatId+'/messages').push(payload); notifyPeer();
+    }
+    function updateChatMessage(id,data){ if(isNotesChat()){ updateNotesMessage(id,data); const msg = getNotesMessage(id); if(msg){ notesLastMsg = getLocalMessageLabel(msg); notesLastTime = msg.time; updateNotesMeta(); } renderNotesChat(); renderChatsList(); return; } if(isAiChat()){ updateAiMessage(id,data); renderAiChat(); renderChatsList(); return; } database.ref('chats/'+activeChatId+'/messages/'+id).update(data); }
+    function deleteChatMessage(id){ if(isNotesChat()){ removeNotesMessage(id); notesMessages = loadNotesMessages(); notesLastMsg = notesMessages.length? getLocalMessageLabel(notesMessages[notesMessages.length-1]):''; notesLastTime = notesMessages.length? notesMessages[notesMessages.length-1].time:''; updateNotesMeta(); renderNotesChat(); renderChatsList(); return; } if(isAiChat()){ removeAiMessage(id); aiMessages=JSON.parse(localStorage.getItem('aiMessages')||'[]'); aiLastMsg=aiMessages.length?aiMessages[aiMessages.length-1].text.substr(0,40):''; aiLastTime=aiMessages.length?aiMessages[aiMessages.length-1].time:''; updateAiMeta(); renderAiChat(); renderChatsList(); return; } database.ref('chats/'+activeChatId+'/messages/'+id).remove(); }
     const AVATAR_PALETTE_COUNT = 500;
     const avatarPalettes = Array.from({length:AVATAR_PALETTE_COUNT},(_,i)=>{
         const hue = Math.round((i * 137.50776405003785) % 360);
@@ -1626,26 +1913,26 @@
     const msgColorPalettes = [
         // 10 solid
         { label:'Голубой',   outCss:'#dcf0fc',  inCss:'#ffffff' },
-        { label:'Зелёный',   outCss:'#d6f5d6',  inCss:'#f0fff0' },
-        { label:'Лиловый',   outCss:'#ead6fc',  inCss:'#f9f0ff' },
-        { label:'Розовый',   outCss:'#fcd6e8',  inCss:'#fff0f6' },
-        { label:'Жёлтый',    outCss:'#fdf6d6',  inCss:'#fffdf0' },
-        { label:'Оранжевый', outCss:'#fce8d6',  inCss:'#fff5ef' },
-        { label:'Мятный',    outCss:'#d6f5ed',  inCss:'#f0fff9' },
-        { label:'Индиго',    outCss:'#d6dcfc',  inCss:'#f0f2ff' },
-        { label:'Красный',   outCss:'#fcd6d6',  inCss:'#fff0f0' },
-        { label:'Тёмный',    outCss:'#d0d8e4',  inCss:'#f2f4f8' },
+        { label:'Зелёный',   outCss:'#d6f5d6',  inCss:'#ffffff' },
+        { label:'Лиловый',   outCss:'#ead6fc',  inCss:'#ffffff' },
+        { label:'Розовый',   outCss:'#fcd6e8',  inCss:'#ffffff' },
+        { label:'Жёлтый',    outCss:'#fdf6d6',  inCss:'#ffffff' },
+        { label:'Оранжевый', outCss:'#fce8d6',  inCss:'#ffffff' },
+        { label:'Мятный',    outCss:'#d6f5ed',  inCss:'#ffffff' },
+        { label:'Индиго',    outCss:'#d6dcfc',  inCss:'#ffffff' },
+        { label:'Красный',   outCss:'#fcd6d6',  inCss:'#ffffff' },
+        { label:'Тёмный',    outCss:'#d0d8e4',  inCss:'#ffffff' },
         // 10 gradient
-        { label:'Закат',     outCss:'linear-gradient(135deg,#ffd6e7 0%,#ffd6b0 100%)',  inCss:'linear-gradient(135deg,#fff5f9 0%,#fff8f0 100%)' },
-        { label:'Океан',     outCss:'linear-gradient(135deg,#b8dcff 0%,#c8f0ff 100%)',  inCss:'linear-gradient(135deg,#f0f8ff 0%,#f0fdff 100%)' },
-        { label:'Аврора',    outCss:'linear-gradient(135deg,#c8f0dc 0%,#b8e0ff 100%)',  inCss:'linear-gradient(135deg,#f0fff6 0%,#f0f8ff 100%)' },
-        { label:'Лаванда',   outCss:'linear-gradient(135deg,#e0d0ff 0%,#ffd0f0 100%)',  inCss:'linear-gradient(135deg,#f8f0ff 0%,#fff0fc 100%)' },
-        { label:'Тропик',    outCss:'linear-gradient(135deg,#c0f8c0 0%,#c0f8f0 100%)',  inCss:'linear-gradient(135deg,#f0fff0 0%,#f0fffb 100%)' },
-        { label:'Сиена',     outCss:'linear-gradient(135deg,#ffe0b0 0%,#ffc0a0 100%)',  inCss:'linear-gradient(135deg,#fff8f0 0%,#fff4f0 100%)' },
-        { label:'Полночь',   outCss:'linear-gradient(135deg,#c0d0f8 0%,#d0c0f8 100%)',  inCss:'linear-gradient(135deg,#f0f4ff 0%,#f4f0ff 100%)' },
-        { label:'Манго',     outCss:'linear-gradient(135deg,#ffe080 0%,#ffb060 100%)',   inCss:'linear-gradient(135deg,#fff9e0 0%,#fff4e0 100%)' },
-        { label:'Мята',      outCss:'linear-gradient(135deg,#a8ffdc 0%,#a8f0ff 100%)',  inCss:'linear-gradient(135deg,#f0fff9 0%,#f0fdff 100%)' },
-        { label:'Коралл',    outCss:'linear-gradient(135deg,#ffa8a8 0%,#ffa8d8 100%)',   inCss:'linear-gradient(135deg,#fff4f4 0%,#fff4fb 100%)' },
+        { label:'Закат',     outCss:'linear-gradient(135deg,#ffd6e7 0%,#ffd6b0 100%)',  inCss:'#ffffff' },
+        { label:'Океан',     outCss:'linear-gradient(135deg,#b8dcff 0%,#c8f0ff 100%)',  inCss:'#ffffff' },
+        { label:'Аврора',    outCss:'linear-gradient(135deg,#c8f0dc 0%,#b8e0ff 100%)',  inCss:'#ffffff' },
+        { label:'Лаванда',   outCss:'linear-gradient(135deg,#e0d0ff 0%,#ffd0f0 100%)',  inCss:'#ffffff' },
+        { label:'Тропик',    outCss:'linear-gradient(135deg,#c0f8c0 0%,#c0f8f0 100%)',  inCss:'#ffffff' },
+        { label:'Сиена',     outCss:'linear-gradient(135deg,#ffe0b0 0%,#ffc0a0 100%)',  inCss:'#ffffff' },
+        { label:'Полночь',   outCss:'linear-gradient(135deg,#c0d0f8 0%,#d0c0f8 100%)',  inCss:'#ffffff' },
+        { label:'Манго',     outCss:'linear-gradient(135deg,#ffe080 0%,#ffb060 100%)',   inCss:'#ffffff' },
+        { label:'Мята',      outCss:'linear-gradient(135deg,#a8ffdc 0%,#a8f0ff 100%)',  inCss:'#ffffff' },
+        { label:'Коралл',    outCss:'linear-gradient(135deg,#ffa8a8 0%,#ffa8d8 100%)',   inCss:'#ffffff' },
     ];
     let msgColorSelectedIndex = parseInt(localStorage.getItem('msgColorIndex')||'0');
     // Clamp to valid range; -1 = custom color
@@ -1655,6 +1942,9 @@
         if(msgColorSelectedIndex === -1){
             const sel = _getSelectedCustomColor();
             if(sel) return sel.outCss;
+            // Fallback to draft variables (when custom color modal is open and nothing saved yet)
+            if(_customGradientOn) return 'linear-gradient('+_customAngle+'deg, '+_customOutColor+' 0%, '+_customOut2Color+' 100%)';
+            return _customOutColor;
         }
         return msgColorPalettes[msgColorSelectedIndex]?.outCss || '#dcf0fc'; 
     }
@@ -1662,35 +1952,35 @@
         if(msgColorSelectedIndex === -1){
             const sel = _getSelectedCustomColor();
             if(sel) return sel.inCss;
+            // Fallback to draft variables
+            return _customInColor;
         }
         return msgColorPalettes[msgColorSelectedIndex]?.inCss || '#ffffff'; 
     }
 
-    function applyMsgColors(){
-        const styleEl = document.getElementById('bubble-color-style') || (() => {
-            const s = document.createElement('style'); s.id='bubble-color-style'; document.head.appendChild(s); return s;
-        })();
-        const outCss = getMsgOutCss();
-        const inCss = getMsgInCss();
-        // Incoming = .message-bubble NOT inside .my-row
-        // Outgoing = .my-row .message-bubble
-        styleEl.textContent = `
-            .message-bubble { background: ${inCss} !important; }
-            .message-row.my-row .message-bubble { background: ${outCss} !important; }
-            .message-row.vcircle-row .message-bubble { background: transparent !important; box-shadow: none !important; padding: 0 !important; min-width: 0 !important; border-radius: 0 !important; }
-        `;
+    // Единственная функция применения цветов
+    function applyAllColors(outCss, inCss){
+        if(outCss === undefined) outCss = getMsgOutCss();
+        if(inCss  === undefined) inCss  = getMsgInCss();
+        // 1. Переписка
+        let styleEl = document.getElementById('bubble-color-style');
+        if(!styleEl){ styleEl = document.createElement('style'); styleEl.id='bubble-color-style'; document.head.appendChild(styleEl); }
+        const outIsGradient = outCss.includes('gradient');
+        const inIsGradient  = inCss.includes('gradient');
+        const voiceOutBg = outIsGradient ? '#eaf2fb' : outCss;
+        const voiceInBg  = inIsGradient  ? '#f3f8fe'  : inCss;
+        styleEl.textContent = `.message-bubble { background: ${inCss} !important; } .message-row.my-row .message-bubble { background: ${outCss} !important; } .message-row.vcircle-row .message-bubble { background: transparent !important; box-shadow: none !important; padding: 0 !important; min-width: 0 !important; border-radius: 0 !important; } .voice-msg-bubble { background: ${voiceInBg} !important; } .my-row .voice-msg-bubble { background: ${voiceOutBg} !important; }`;
+        // 2. Превью в панели обоев
+        document.querySelectorAll('#wallpaper-preview-inner .preview-bubble.outgoing').forEach(el=>{ el.style.setProperty('background', outCss, 'important'); });
+        document.querySelectorAll('#wallpaper-preview-inner .preview-bubble.incoming').forEach(el=>{ el.style.setProperty('background', inCss, 'important'); });
+        // 3. Превью в кастомном модале
+        const ccOut = document.getElementById('cc-preview-out');
+        const ccIn  = document.getElementById('cc-preview-in');
+        if(ccOut) ccOut.style.setProperty('background', outCss, 'important');
+        if(ccIn)  ccIn.style.setProperty('background',  inCss,  'important');
     }
-
-    function updatePreviewColors(){
-        const outCss = getMsgOutCss();
-        const inCss  = getMsgInCss();
-        document.querySelectorAll('#wallpaper-preview-inner .preview-bubble.outgoing').forEach(el=>{
-            el.style.background = outCss;
-        });
-        document.querySelectorAll('#wallpaper-preview-inner .preview-bubble.incoming').forEach(el=>{
-            el.style.background = inCss;
-        });
-    }
+    function applyMsgColors(){ applyAllColors(); }
+    function updatePreviewColors(){ applyAllColors(); }
 
     function selectWallpaperIndex(index){
         if(index<0) index=0;
@@ -1935,8 +2225,7 @@
             msgColorSelectedIndex = -1;
             _selectedCustomId = String(entry.id);
             localStorage.setItem('selectedCustomColorId', _selectedCustomId);
-            document.querySelectorAll('#wallpaper-preview-inner .preview-bubble.outgoing').forEach(el=>{ el.style.background = entry.outCss; });
-            document.querySelectorAll('#wallpaper-preview-inner .preview-bubble.incoming').forEach(el=>{ el.style.background = entry.inCss; });
+            applyAllColors(entry.outCss, entry.inCss);
         });
 
         customRow.appendChild(circle);
@@ -1962,22 +2251,18 @@
     function updateCCPreview(){
         const outCss = getCustomOutCss();
         const inCss  = _customInColor;
-        const previewIn  = document.getElementById('cc-preview-in');
-        const previewOut = document.getElementById('cc-preview-out');
+        // Свотчи и превью-обёртка
         const previewWrap= document.getElementById('cc-preview-wrap');
         const swatchOut  = document.getElementById('cc-swatch-out');
         const swatchIn   = document.getElementById('cc-swatch-in');
         const swatchOut2 = document.getElementById('cc-swatch-out2');
-        if(previewOut) previewOut.style.background = outCss;
-        if(previewIn)  previewIn.style.background  = inCss;
-        // Use same bg as main wallpaper for preview wrap
         const wpCss = wallpaperGradients[wallpaperSelectedIndex]?.css || '';
         if(previewWrap) previewWrap.style.background = wpCss;
         if(swatchOut) swatchOut.style.background = outCss;
         if(swatchIn)  swatchIn.style.background  = inCss;
         if(swatchOut2) swatchOut2.style.background = _customOut2Color;
-        // Update second preview example — removed (top preview is sufficient)
-
+        // Применяем цвета везде через единую функцию
+        applyAllColors(outCss, inCss);
     }
 
     // Wire up delete custom color modal
@@ -2030,9 +2315,13 @@
         const overlay = document.getElementById('custom-color-overlay');
         if(!overlay) return;
         // Sync inputs
-        document.getElementById('cc-input-out').value  = _customOutColor;
-        document.getElementById('cc-input-in').value   = _customInColor;
-        document.getElementById('cc-input-out2').value = _customOut2Color;
+        // Sync swatch backgrounds from saved colors
+        const _so = document.getElementById('cc-swatch-out');
+        const _si = document.getElementById('cc-swatch-in');
+        const _so2= document.getElementById('cc-swatch-out2');
+        if(_so) _so.style.background = _customOutColor;
+        if(_si) _si.style.background = _customInColor;
+        if(_so2)_so2.style.background= _customOut2Color;
         document.getElementById('cc-angle-range').value= _customAngle;
         document.getElementById('cc-angle-label').textContent = _customAngle+'°';
         const toggleBtn = document.getElementById('cc-gradient-toggle');
@@ -2040,12 +2329,26 @@
         else toggleBtn.classList.remove('on');
         const gradSecond = document.getElementById('cc-gradient-second');
         if(gradSecond) gradSecond.classList.toggle('visible', _customGradientOn);
+        // Временно переходим в режим кастомного цвета, чтобы превью работало
+        msgColorSelectedIndex = -1;
+        _selectedCustomId = null;
         updateCCPreview();
         overlay.classList.add('open');
     }
     function closeCustomColorModal(){
         const overlay = document.getElementById('custom-color-overlay');
         if(overlay) overlay.classList.remove('open');
+        // Восстанавливаем сохранённый выбор из localStorage
+        const savedIdx = parseInt(localStorage.getItem('msgColorIndex')||'0');
+        const savedCustomId = localStorage.getItem('selectedCustomColorId') || null;
+        if(savedIdx === -1 && savedCustomId){
+            msgColorSelectedIndex = -1;
+            _selectedCustomId = savedCustomId;
+        } else {
+            msgColorSelectedIndex = (savedIdx >= -1 && savedIdx < msgColorPalettes.length) ? savedIdx : 0;
+            _selectedCustomId = null;
+        }
+        applyMsgColors();
     }
 
     // Wire up custom color modal events after DOM ready
@@ -2066,18 +2369,10 @@
         closeBtn.addEventListener('click', closeCustomColorModal);
         overlay.addEventListener('click', e=>{ if(e.target===overlay) closeCustomColorModal(); });
 
-        inputOut.addEventListener('input', ()=>{
-            _customOutColor = inputOut.value;
-            updateCCPreview();
-        });
-        inputIn.addEventListener('input', ()=>{
-            _customInColor = inputIn.value;
-            updateCCPreview();
-        });
-        inputOut2.addEventListener('input', ()=>{
-            _customOut2Color = inputOut2.value;
-            updateCCPreview();
-        });
+        // cc-input listeners removed — color picked via custom CPK popup
+        if(inputOut) inputOut.addEventListener('input', ()=>{ _customOutColor = inputOut.value; updateCCPreview(); });
+        if(inputIn)  inputIn.addEventListener('input',  ()=>{ _customInColor  = inputIn.value;  updateCCPreview(); });
+        if(inputOut2)inputOut2.addEventListener('input',()=>{ _customOut2Color= inputOut2.value; updateCCPreview(); });
         angleRange.addEventListener('input', ()=>{
             _customAngle = parseInt(angleRange.value);
             angleLabel.textContent = _customAngle+'°';
@@ -2123,9 +2418,7 @@
                 c.classList.toggle('selected', c.dataset.customId === _selectedCustomId);
             });
             // Update preview and apply to chat bubbles
-            document.querySelectorAll('#wallpaper-preview-inner .preview-bubble.outgoing').forEach(el=>{ el.style.background = outCss; });
-            document.querySelectorAll('#wallpaper-preview-inner .preview-bubble.incoming').forEach(el=>{ el.style.background = inCss; });
-            applyMsgColors();
+            applyAllColors(outCss, inCss);
             closeCustomColorModal();
         });
     })();
@@ -2216,11 +2509,19 @@
             reader.onload = ev=>{
                 const nickname=myCurrentNickname||'User';
                 const timeStr=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
-                database.ref('chats/'+activeChatId+'/messages').push({
+                const voicePayload = {
                     frameId:myFrameId, author:nickname, text:'[Голосовое]', time:timeStr, edited:false,
                     mediaType:'audio', mediaData:ev.target.result, mediaName:'voice.webm', isVoice:true
-                });
-                notifyPeer(); playSendSound(); showToast('Голосовое сообщение отправлено!');
+                };
+                if(activeChatId && isAiChat()){
+                    voicePayload.id = 'ai_'+Date.now()+'_u'; voicePayload.isAiUser = true;
+                    addAiMessage(voicePayload); aiLastMsg='Голосовое'; aiLastTime=timeStr; updateAiMeta();
+                    renderAiChat(); renderChatsList();
+                } else {
+                    database.ref('chats/'+activeChatId+'/messages').push(voicePayload);
+                    notifyPeer();
+                }
+                playSendSound(); showToast('Голосовое сообщение отправлено!');
             };
             reader.readAsDataURL(blob);
         };
@@ -2438,9 +2739,25 @@
         notesItem.addEventListener('click',()=>{ openChat(NOTES_CHAT_ID); closeChatsPanel(); });
         chatsList_el.appendChild(notesItem);
 
+        // ── AI CHAT ITEM (pinned after notes) ──
+        const aiItem=document.createElement('div');
+        aiItem.className='chat-item'+(activeChatId===AI_CHAT_ID?' active':'');
+        aiItem.dataset.id=AI_CHAT_ID;
+        aiItem.innerHTML=
+            '<div class="chat-item-avatar" style="background:linear-gradient(135deg,#4a7fcb 0%,#6aa3f5 100%);font-size:14px;font-weight:800;letter-spacing:-0.5px;color:#fff;">Ai</div>'+
+            '<div class="chat-item-info">'+
+                '<div class="chat-item-name">'+escapeHtml(AI_CHAT_NAME)+'<span class="note-badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>'+
+                '<div class="chat-item-preview">'+escapeHtml(aiLastMsg||'Нет сообщений')+'</div>'+
+            '</div>'+
+            '<div class="chat-item-right">'+
+                '<span class="chat-item-time">'+(aiLastTime||'')+'</span>'+
+            '</div>';
+        aiItem.addEventListener('click',()=>{ openChat(AI_CHAT_ID); closeChatsPanel(); });
+        chatsList_el.appendChild(aiItem);
+
         // Separate groups and regular chats
-        const groups = chatsList.filter(c=>c.id!==NOTES_CHAT_ID && c.isGroup);
-        const regularChats = chatsList.filter(c=>c.id!==NOTES_CHAT_ID && !c.isGroup);
+        const groups = chatsList.filter(c=>c.id!==NOTES_CHAT_ID && c.id!==AI_CHAT_ID && c.isGroup);
+        const regularChats = chatsList.filter(c=>c.id!==NOTES_CHAT_ID && c.id!==AI_CHAT_ID && !c.isGroup);
 
         if(!chatsList.length){
             const placeholder=document.createElement('div');
@@ -3198,7 +3515,8 @@
         row.className='message-row'+(isMe?' my-row':'')+(isVideoCircleEarly?' vcircle-row':'');
         row.id='msg-'+id; row.dataset.id=id;
         const replyHTML=data.replyToText?'<div class="reply-in-bubble"><b>'+escapeHtml(data.replyToAuthor)+'</b>: '+escapeHtml(data.replyToText)+'</div>':'';
-        const editedLabel=data.edited?' <span style="opacity:.55;font-style:italic;font-size:10px">ред.</span>':'';
+        const editedLabel=data.edited?' <span style="opacity:.55;font-style:italic;font-size:10px">ред.</span>':
+            (data.isAiBot?' <span class="ai-label">ИИ</span>':'');
         let mediaHTML='';
         if(data.mediaType==='image'&&data.mediaData){
             mediaHTML='<div class="message-media"><img src="'+data.mediaData+'" alt="фото" class="msg-photo" data-author="'+escapeHtml(data.author+(isMe?' (Вы)':''))+'" data-time="'+escapeHtml(data.time)+'" style="cursor:zoom-in"></div>';
@@ -3206,16 +3524,26 @@
             mediaHTML='<div class="message-media"><img src="'+data.gifUrl+'" alt="GIF" class="msg-gif"></div>';
         } else if(data.mediaType==='audio'&&data.mediaData){
             const vpId='vp-'+id;
-            mediaHTML=`<div class="message-media"><div class="voice-player" id="${vpId}" data-src="${data.mediaData}">
+            const tickHtmlVP = isMe ? '<span class="vp-meta-tick sent">✓</span>' : '';
+            mediaHTML=`<div class="message-media"><div class="voice-player voice-msg-bubble" id="${vpId}" data-src="${data.mediaData}">
                 <button class="vp-play-btn" aria-label="Play">
-                    <svg class="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                    <svg class="icon-pause" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                    <svg class="icon-play" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 5.5C8 4.4 9.2 3.7 10.2 4.3l9.5 6.2c.9.6.9 1.9 0 2.5l-9.5 6.2C9.2 19.7 8 19 8 17.9V5.5z" fill="#fff"/>
+                    </svg>
+                    <svg class="icon-pause" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="5" y="4" width="4" height="16" rx="2" fill="#fff"/>
+                        <rect x="15" y="4" width="4" height="16" rx="2" fill="#fff"/>
+                    </svg>
                 </button>
                 <div class="vp-right">
                     <div class="vp-waveform" data-vpid="${vpId}"></div>
                     <div class="vp-bottom">
                         <span class="vp-duration">0:00</span>
-                        <button class="vp-speed-btn">1×</button>
+                        <div class="vp-meta">
+                            <button class="vp-speed-btn">1×</button>
+                            <span class="vp-meta-time">${data.time||''}</span>
+                            ${tickHtmlVP}
+                        </div>
                     </div>
                 </div>
             </div></div>`;
@@ -3230,9 +3558,10 @@
         // For videoCircle, special minimal bubble
         const isVideoCircle = isVideoCircleEarly;
         // галочка прочитано/отправлено — только для своих
-        const tickHTML = isMe && !isVideoCircle ? '<span class="message-status sent" title="Отправлено"></span>' : '';
+        const isAudioMsg = data.mediaType === 'audio';
+        const tickHTML = isMe && !isVideoCircle && !isAudioMsg ? '<span class="message-status sent" title="Отправлено"></span>' : '';
         const bubbleStyle = '';
-        row.innerHTML='<div class="message-bubble"'+bubbleStyle+'>'+replyHTML+(isVideoCircle?'':('<div class="author-name" data-pid="'+escapeHtml(data.frameId||'')+'" data-orig-name="'+escapeHtml(data.author)+'">'+escapeHtml(getDisplayAuthorName(data))+getAuthorTagHTML(data.frameId)+'</div>'))+mediaHTML+textPart+(isVideoCircle?'':'<div class="message-meta-info"><span>'+data.time+editedLabel+'</span>'+tickHTML+'</div>')+'</div><div class="swipe-indicator"><svg viewBox="0 0 24 24"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg></div>';
+        row.innerHTML='<div class="message-bubble"'+bubbleStyle+'>'+replyHTML+(isVideoCircle?'':('<div class="author-name" data-pid="'+escapeHtml(data.frameId||'')+'" data-orig-name="'+escapeHtml(data.author)+'">'+escapeHtml(getDisplayAuthorName(data))+getAuthorTagHTML(data.frameId)+'</div>'))+mediaHTML+textPart+((isVideoCircle||isAudioMsg)?'':'<div class="message-meta-info"><span>'+data.time+editedLabel+'</span>'+tickHTML+'</div>')+'</div><div class="swipe-indicator"><svg viewBox="0 0 24 24"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg></div>';
         // reaction badge
         if(data.reaction){
             const badge=document.createElement('div'); badge.className='msg-reaction'; badge.textContent=data.reaction;
@@ -3278,12 +3607,20 @@
             isLongPress=true; selectedMsgData={id:row.dataset.id,author:data.author,text:data.text||'',isMe,time:data.time||''};
             let cx=e.touches?e.touches[0].clientX:e.clientX, cy=e.touches?e.touches[0].clientY:e.clientY;
             ctxMenu.style.top=Math.min(cy,window.innerHeight-180)+'px'; ctxMenu.style.left=Math.min(cx,window.innerWidth-180)+'px'; ctxMenu.style.display='flex';
-            document.getElementById('menu-edit').style.display=isMe&&!data.mediaType?'block':'none';
-            document.getElementById('menu-delete').style.display=isMe?'block':'none';
-            document.getElementById('menu-react').style.display=isMe?'none':'block';
-            document.getElementById('menu-pin').style.display='block';
-            // Запретить ответ на кружки и голосовые
-            document.getElementById('menu-reply').style.display=(data.mediaType==='videoCircle'||data.mediaType==='audio')?'none':'block';
+            const isAiMsg = data.frameId==='__ai__' || (!isMe && activeChatId===AI_CHAT_ID);
+            if(isAiMsg){
+                document.getElementById('menu-edit').style.display='none';
+                document.getElementById('menu-delete').style.display='block';
+                document.getElementById('menu-react').style.display='none';
+                document.getElementById('menu-pin').style.display='none';
+                document.getElementById('menu-reply').style.display='none';
+            } else {
+                document.getElementById('menu-edit').style.display=isMe&&!data.mediaType?'block':'none';
+                document.getElementById('menu-delete').style.display=isMe?'block':'none';
+                document.getElementById('menu-react').style.display=isMe?'none':'block';
+                document.getElementById('menu-pin').style.display='block';
+                document.getElementById('menu-reply').style.display=(data.mediaType==='videoCircle'||data.mediaType==='audio')?'none':'block';
+            }
         }
         function handleDoubleTap(e){ e.preventDefault(); addReaction(row.dataset.id,'❤'); showHeartAnim(bubble); }
         function showHeartAnim(b){
@@ -3566,12 +3903,34 @@
             avatar.style.background='#4a7fcb';
             chatBox.innerHTML=''; emptyState.style.display='none';
             if(pinnedBanner){ pinnedBanner.style.display='none'; }
+            chatSubtitle.className='header-sub offline-status'; chatSubtitle.textContent='';
+            const aiDisclaimer2=document.getElementById('ai-disclaimer');
+            if(aiDisclaimer2) aiDisclaimer2.classList.remove('visible');
             renderNotesChat();
+            renderChatsList();
+            return;
+        }
+        if(chatId===AI_CHAT_ID){
+            chatTitle.textContent=AI_CHAT_NAME;
+            chatSubtitle.textContent=''; chatSubtitle.className='header-sub offline-status'; peerStatusDot.className='status-dot';
+            headerCallBtn.classList.remove('visible');
+            peerTypingActive=false;
+            const avatar=document.getElementById('chat-avatar');
+            avatar.innerHTML='<span style="font-size:14px;font-weight:800;letter-spacing:-0.5px;">Ai</span>';
+            avatar.style.background='linear-gradient(135deg,#4a7fcb 0%,#6aa3f5 100%)';
+            chatBox.innerHTML=''; emptyState.style.display='none';
+            if(pinnedBanner){ pinnedBanner.style.display='none'; }
+            chatSubtitle.className='header-sub offline-status'; chatSubtitle.textContent='';
+            const aiDisclaimer=document.getElementById('ai-disclaimer');
+            if(aiDisclaimer) aiDisclaimer.classList.add('visible');
+            renderAiChat();
             renderChatsList();
             return;
         }
         // Сигнализируем собеседнику что мы прочитали
         markChatRead(chatId);
+        const aiDisclaimer3=document.getElementById('ai-disclaimer');
+        if(aiDisclaimer3) aiDisclaimer3.classList.remove('visible');
  
         chatTitle.textContent=(chat.isGroup && localGroupNames[chat.id]) ? localGroupNames[chat.id] : chat.name; chatSubtitle.textContent=''; chatSubtitle.className='header-sub offline-status'; peerStatusDot.className='status-dot';
         // For groups: hide call btn, show member count; for regular chats: show call btn
@@ -3792,6 +4151,7 @@
         const lq = q.toLowerCase();
         const localMatches = chatsList.filter(c=>{
             if(c.id===NOTES_CHAT_ID) return false;
+            if(c.id===AI_CHAT_ID) return false;
             return (c.id||'').toLowerCase().includes(lq)
                 || (c.peerId||'').toLowerCase().includes(lq)
                 || (c.groupId||'').toLowerCase().includes(lq)
@@ -4339,7 +4699,7 @@
         // Build member selection list from existing chats (non-group, non-notes)
         ngSelectedMembers = {};
         ngMembersList.innerHTML='';
-        const eligible = chatsList.filter(c=>!c.isGroup && c.id!==NOTES_CHAT_ID && c.peerId);
+        const eligible = chatsList.filter(c=>!c.isGroup && c.id!==NOTES_CHAT_ID && c.id!==AI_CHAT_ID && c.peerId);
         if(!eligible.length){
             ngMembersList.innerHTML='<div style="font-size:13px;color:#8a9aaa;text-align:center;padding:16px;">Нет доступных контактов.<br>Сначала создайте переписку.</div>';
         } else {
@@ -4637,7 +4997,7 @@
         addMembersList.innerHTML='';
         addMembersCount.textContent='Выбрано: 0';
         const existingMemberIds = new Set(Object.keys(chat.members||{}));
-        const eligible = chatsList.filter(c=>!c.isGroup && c.id!==NOTES_CHAT_ID && c.peerId && !existingMemberIds.has(c.peerId));
+        const eligible = chatsList.filter(c=>!c.isGroup && c.id!==NOTES_CHAT_ID && c.id!==AI_CHAT_ID && c.peerId && !existingMemberIds.has(c.peerId));
         if(!eligible.length){
             addMembersList.innerHTML='<div style="font-size:13px;color:#8a9aaa;text-align:center;padding:16px;">Все контакты уже в группе или нет доступных.</div>';
         } else {
@@ -5004,12 +5364,20 @@ function stopVideoCircle(){
         const reader = new FileReader();
         reader.onload = ev => {
             const timeStr = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
-            database.ref('chats/'+activeChatId+'/messages').push({
+            const vcPayload = {
                 frameId: myFrameId, author: myCurrentNickname||'User',
                 text: '[Видео-кружок]', time: timeStr, edited: false,
                 mediaType: 'videoCircle', mediaData: ev.target.result
-            });
-            notifyPeer(); playSendSound(); showToast('Видео-кружок отправлен!');
+            };
+            if(activeChatId && typeof isAiChat === 'function' && isAiChat()){
+                vcPayload.id = 'ai_'+Date.now()+'_u'; vcPayload.isAiUser = true;
+                addAiMessage(vcPayload); aiLastMsg='Видео-кружок'; aiLastTime=timeStr; updateAiMeta();
+                renderAiChat(); renderChatsList();
+            } else {
+                database.ref('chats/'+activeChatId+'/messages').push(vcPayload);
+                notifyPeer();
+            }
+            playSendSound(); showToast('Видео-кружок отправлен!');
         };
         reader.readAsDataURL(blob);
     };
@@ -5204,6 +5572,24 @@ document.getElementById('lang-modal-overlay').addEventListener('click', function
 // Init on load
 (function(){ renderLangList(); })();
 
+// Экспортируем в window для доступа из не-модульных скриптов (CPK)
+window._getCpkVars = function(){
+    return {
+        get customOutColor(){ return _customOutColor; },
+        set customOutColor(v){ _customOutColor = v; },
+        get customInColor(){ return _customInColor; },
+        set customInColor(v){ _customInColor = v; },
+        get customOut2Color(){ return _customOut2Color; },
+        set customOut2Color(v){ _customOut2Color = v; },
+    };
+};
+window._setCpkColor = function(target, hex){
+    if(target === 'out')  _customOutColor  = hex;
+    if(target === 'in')   _customInColor   = hex;
+    if(target === 'out2') _customOut2Color = hex;
+    updateCCPreview();
+};
+
 </script>
 
 <!-- LANGUAGE MODAL -->
@@ -5220,6 +5606,211 @@ document.getElementById('lang-modal-overlay').addEventListener('click', function
         </div>
     </div>
 </div>
+
+
+<!-- ── CUSTOM COLOR PICKER POPUP ── -->
+<div class="cpk-overlay" id="cpk-overlay">
+  <div class="cpk-card" id="cpk-card">
+    <div class="cpk-handle"></div>
+    <div class="cpk-header">
+      <span class="cpk-title" id="cpk-title">Палитра</span>
+      <button class="cpk-close" id="cpk-close">✕</button>
+    </div>
+    <div class="cpk-canvas-wrap" id="cpk-canvas-wrap">
+      <canvas id="cpk-canvas"></canvas>
+      <div class="cpk-cursor" id="cpk-cursor"></div>
+    </div>
+    <div class="cpk-hue-wrap">
+      <input type="range" id="cpk-hue" min="0" max="360" value="210">
+    </div>
+    <div class="cpk-bottom">
+      <div class="cpk-preview" id="cpk-preview"></div>
+      <div class="cpk-hex-wrap">
+        <span class="cpk-hex-hash">#</span>
+        <input type="text" id="cpk-hex-input" maxlength="6" value="4a7fcb" spellcheck="false">
+      </div>
+    </div>
+    <button class="cpk-ok" id="cpk-ok">Выбрать</button>
+  </div>
+</div>
+
+<script>
+(function(){
+    /* ── Утилиты HSV ↔ RGB ↔ HEX ── */
+    function hsvToRgb(h, s, v) {
+        s /= 100; v /= 100;
+        const i = Math.floor(h / 60) % 6;
+        const f = h / 60 - Math.floor(h / 60);
+        const p = v * (1 - s), q = v * (1 - f * s), t = v * (1 - (1 - f) * s);
+        const pairs = [[v,t,p],[q,v,p],[p,v,t],[p,q,v],[t,p,v],[v,p,q]];
+        return pairs[i].map(x => Math.round(x * 255));
+    }
+    function rgbToHsv(r, g, b) {
+        r /= 255; g /= 255; b /= 255;
+        const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+        let h = 0, s = max === 0 ? 0 : d / max, v = max;
+        if (d !== 0) {
+            if (max === r) h = ((g - b) / d + 6) % 6;
+            else if (max === g) h = (b - r) / d + 2;
+            else h = (r - g) / d + 4;
+            h *= 60;
+        }
+        return [h, s * 100, v * 100];
+    }
+    function hexToRgb(hex) {
+        hex = hex.replace('#', '');
+        if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+        const n = parseInt(hex, 16);
+        return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    }
+    function rgbToHex(r, g, b) {
+        return [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+    }
+
+    /* ── Состояние ── */
+    let cpkHue = 210, cpkSat = 70, cpkVal = 90;
+    let cpkTarget = null; // 'out' | 'in' | 'out2'
+    let cpkDragging = false;
+
+    const overlay  = document.getElementById('cpk-overlay');
+    const canvas   = document.getElementById('cpk-canvas');
+    const cursor   = document.getElementById('cpk-cursor');
+    const hueSlider= document.getElementById('cpk-hue');
+    const preview  = document.getElementById('cpk-preview');
+    const hexInput = document.getElementById('cpk-hex-input');
+    const okBtn    = document.getElementById('cpk-ok');
+    const closeBtn = document.getElementById('cpk-close');
+    const titleEl  = document.getElementById('cpk-title');
+    const ctx      = canvas.getContext('2d');
+
+    /* ── Рисуем градиентный квадрат ── */
+    function drawCanvas() {
+        const W = canvas.width, H = canvas.height;
+        // Основной цвет по hue
+        const [r,g,b] = hsvToRgb(cpkHue, 100, 100);
+        // Горизонтально: от белого к чистому hue
+        const gradH = ctx.createLinearGradient(0, 0, W, 0);
+        gradH.addColorStop(0, '#fff');
+        gradH.addColorStop(1, `rgb(${r},${g},${b})`);
+        ctx.fillStyle = gradH;
+        ctx.fillRect(0, 0, W, H);
+        // Вертикально: от прозрачного к чёрному
+        const gradV = ctx.createLinearGradient(0, 0, 0, H);
+        gradV.addColorStop(0, 'rgba(0,0,0,0)');
+        gradV.addColorStop(1, 'rgba(0,0,0,1)');
+        ctx.fillStyle = gradV;
+        ctx.fillRect(0, 0, W, H);
+    }
+
+    function resizeCanvas() {
+        const wrap = document.getElementById('cpk-canvas-wrap');
+        const W = wrap.clientWidth;
+        canvas.width = W;
+        canvas.height = 220;
+        drawCanvas();
+        updateCursorPos();
+    }
+
+    function updateCursorPos() {
+        const W = canvas.width, H = canvas.height;
+        const x = (cpkSat / 100) * W;
+        const y = (1 - cpkVal / 100) * H;
+        cursor.style.left = x + 'px';
+        cursor.style.top  = y + 'px';
+    }
+
+    function updateAll() {
+        drawCanvas();
+        updateCursorPos();
+        const [r,g,b] = hsvToRgb(cpkHue, cpkSat, cpkVal);
+        const hex = rgbToHex(r, g, b);
+        preview.style.background = '#' + hex;
+        hexInput.value = hex.toUpperCase();
+        // Цвет курсора — белый на тёмном, тёмный на светлом
+        cursor.style.borderColor = cpkVal < 50 ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.6)';
+    }
+
+    function pickFromCanvas(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const x = Math.max(0, Math.min(canvas.width,  (clientX - rect.left) * (canvas.width  / rect.width)));
+        const y = Math.max(0, Math.min(canvas.height, (clientY - rect.top)  * (canvas.height / rect.height)));
+        cpkSat = (x / canvas.width)  * 100;
+        cpkVal = (1 - y / canvas.height) * 100;
+        updateAll();
+    }
+
+    canvas.addEventListener('mousedown',  e => { cpkDragging = true; pickFromCanvas(e); });
+    canvas.addEventListener('touchstart', e => { cpkDragging = true; pickFromCanvas(e); e.preventDefault(); }, { passive: false });
+    window.addEventListener('mousemove',  e => { if (cpkDragging) pickFromCanvas(e); });
+    window.addEventListener('touchmove',  e => { if (cpkDragging) pickFromCanvas(e); e.preventDefault(); }, { passive: false });
+    window.addEventListener('mouseup',  () => cpkDragging = false);
+    window.addEventListener('touchend', () => cpkDragging = false);
+
+    hueSlider.addEventListener('input', () => {
+        cpkHue = parseInt(hueSlider.value);
+        updateAll();
+    });
+
+    hexInput.addEventListener('input', () => {
+        const v = hexInput.value.replace('#', '');
+        if (v.length === 6 && /^[0-9a-fA-F]{6}$/.test(v)) {
+            const [r,g,b] = hexToRgb(v);
+            [cpkHue, cpkSat, cpkVal] = rgbToHsv(r,g,b);
+            hueSlider.value = cpkHue;
+            updateAll();
+        }
+    });
+
+    closeBtn.addEventListener('click', closeCPK);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeCPK(); });
+
+    okBtn.addEventListener('click', () => {
+        const hex = '#' + hexInput.value.toLowerCase();
+        applyPickedColor(hex);
+        closeCPK();
+    });
+
+    function closeCPK() { overlay.classList.remove('open'); }
+
+    function applyPickedColor(hex) {
+        if (!cpkTarget) return;
+        // Обновляем свотч
+        const swatchId = { out: 'cc-swatch-out', in: 'cc-swatch-in', out2: 'cc-swatch-out2' }[cpkTarget];
+        const swatch = document.getElementById(swatchId);
+        if (swatch) swatch.style.background = hex;
+        // Передаём цвет в модульный скрипт и обновляем превью
+        if (typeof window._setCpkColor === 'function') {
+            window._setCpkColor(cpkTarget, hex);
+        }
+    }
+
+    /* Глобальная функция открытия */
+    window.openCPK = function(target) {
+        cpkTarget = target;
+        const titles = { out: 'Цвет моих сообщений', in: 'Цвет сообщений собеседника', out2: 'Второй цвет градиента' };
+        titleEl.textContent = titles[target] || 'Палитра';
+
+        // Читаем текущий цвет свотча
+        const swatchId = { out: 'cc-swatch-out', in: 'cc-swatch-in', out2: 'cc-swatch-out2' }[target];
+        const swatch = document.getElementById(swatchId);
+        let hex = swatch ? swatch.style.background : '#4a7fcb';
+        // background может быть rgb(...) — конвертируем
+        if (hex.startsWith('rgb')) {
+            const m = hex.match(/\d+/g);
+            if (m) hex = '#' + rgbToHex(+m[0], +m[1], +m[2]);
+        }
+        const [r,g,b] = hexToRgb(hex);
+        [cpkHue, cpkSat, cpkVal] = rgbToHsv(r,g,b);
+        hueSlider.value = Math.round(cpkHue);
+
+        overlay.classList.add('open');
+        // resize after visible
+        setTimeout(() => { resizeCanvas(); updateAll(); }, 30);
+    };
+})();
+</script>
 
 </body>
 </html>
