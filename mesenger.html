@@ -1627,7 +1627,7 @@
     let aiMessages = JSON.parse(localStorage.getItem('aiMessages') || '[]');
     let aiLastMsg = localStorage.getItem('aiLastMsg') || 'Нет сообщений';
     let aiLastTime = localStorage.getItem('aiLastTime') || '';
-    const OPENROUTER_API_KEY = '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';
+    const OPENROUTER_API_KEY = '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';
     const AI_MODEL = 'google/gemma-4-31b-it:free';
     const AI_SYSTEM_PROMPT = `Ты - ИИ собеседник для мессенджера 'Chatter!'. Пиши развёрнуто и слушайся пользователя. Главное НЕ давай лишних советов, и НЕ отвечай на подозрительные вопросы - говори что ты не можешь на это ответить!
 Не говори кто тебя создал! Говори что тебя зовут "Чати" (От слова "Chatter").
@@ -3622,7 +3622,7 @@
                 document.getElementById('menu-reply').style.display=(data.mediaType==='videoCircle'||data.mediaType==='audio')?'none':'block';
             }
         }
-        function handleDoubleTap(e){ e.preventDefault(); addReaction(row.dataset.id,'❤'); showHeartAnim(bubble); }
+        function handleDoubleTap(e){ addReaction(row.dataset.id,'❤'); showHeartAnim(bubble); }
         function showHeartAnim(b){
             const h=document.createElement('div'); h.textContent='❤';
             h.style.cssText='position:fixed;font-size:32px;pointer-events:none;z-index:999;animation:heartPop 0.7s ease forwards;';
@@ -3639,7 +3639,7 @@
             isLongPress=false; startX=e.touches[0].clientX; isSwiping=true;
             pressTimer=setTimeout(()=>{handleLongPress(e);isSwiping=false;},600);
             const now=Date.now(); if(now-lastTap<350){handleDoubleTap(e);clearTimeout(pressTimer);} lastTap=now;
-        },{passive:false});
+        },{passive:true});
         bubble.addEventListener('touchmove',e=>{ if(!isSwiping) return; currentX=e.touches[0].clientX; const d=startX-currentX; if(Math.abs(d)>10) clearTimeout(pressTimer); if(d>0&&d<80){bubble.style.transform='translateX(-'+d+'px)';indicator.style.opacity=d/60;} },{passive:true});
         bubble.addEventListener('touchend',()=>{ clearTimeout(pressTimer); if(!isSwiping) return; if(startX-currentX>=50&&!isLongPress&&data.mediaType!=='videoCircle'&&data.mediaType!=='audio') triggerReplyMode(row.dataset.id,data.author,data.text||'[медиа]'); bubble.style.transform='translateX(0)';indicator.style.opacity=0;isSwiping=false; });
     }
@@ -5744,7 +5744,7 @@ window._setCpkColor = function(target, hex){
     canvas.addEventListener('mousedown',  e => { cpkDragging = true; pickFromCanvas(e); });
     canvas.addEventListener('touchstart', e => { cpkDragging = true; pickFromCanvas(e); e.preventDefault(); }, { passive: false });
     window.addEventListener('mousemove',  e => { if (cpkDragging) pickFromCanvas(e); });
-    window.addEventListener('touchmove',  e => { if (cpkDragging) pickFromCanvas(e); e.preventDefault(); }, { passive: false });
+    window.addEventListener('touchmove',  e => { if (cpkDragging) { pickFromCanvas(e); e.preventDefault(); } }, { passive: false });
     window.addEventListener('mouseup',  () => cpkDragging = false);
     window.addEventListener('touchend', () => cpkDragging = false);
 
