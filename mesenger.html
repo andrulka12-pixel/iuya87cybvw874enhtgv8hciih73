@@ -920,7 +920,10 @@
             <button class="call-btn" id="header-call-btn" title="Позвонить" style="display:none !important;">
                 <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
             </button>
-            <input type="text" id="nick-field" class="nickname-input" placeholder="Никнейм...">
+            <input type="text" id="nick-field" class="nickname-input" placeholder="Никнейм..." style="display:none !important;">
+            <button class="wallpaper-btn" id="nick-edit-btn" title="Изменить никнейм">
+                <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75l11.02-11.02-3.75-3.75L3 17.25zm14.71-9.04c.39-.39.39-1.02 0-1.41l-2.5-2.5a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.99-1.67z"/></svg>
+            </button>
             <button class="wallpaper-btn" id="wallpaper-btn" title="Фон чата">
                 <svg viewBox="0 0 24 24"><path d="M4 6h16v12H4V6zm2 2v8h12V8H6zm2 2h2v2H8v-2zm4 0h2v2h-2v-2zm-4 4h2v2H8v-2zm4 0h2v2h-2v-2z"/></svg>
             </button>
@@ -6135,3 +6138,98 @@ window._setCpkColor = function(target, hex){
 
 </body>
 </html>
+
+<!-- NICKNAME MODAL -->
+<style>
+.nick-modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 900;
+    display: none; align-items: center; justify-content: center; padding: 20px;
+}
+.nick-modal-overlay.open { display: flex; }
+.nick-modal-card {
+    background: #fff; border-radius: 20px; width: 100%; max-width: 340px;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.22);
+    animation: nickModalIn 0.22s cubic-bezier(0.4,0,0.2,1); overflow: hidden;
+}
+body.dark-theme .nick-modal-card { background: #1e2430; }
+@keyframes nickModalIn {
+    from { opacity: 0; transform: scale(0.92) translateY(12px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.nick-modal-header { padding: 20px 20px 10px; display: flex; align-items: center; gap: 10px; }
+.nick-modal-icon { width: 38px; height: 38px; background: rgba(74,127,203,0.12); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.nick-modal-icon svg { width: 18px; height: 18px; fill: var(--blue); }
+.nick-modal-title { font-size: 16px; font-weight: 700; color: #1a1a1a; }
+.nick-modal-sub { font-size: 12px; color: var(--dim); margin-top: 2px; }
+body.dark-theme .nick-modal-title { color: #e8eef7; }
+.nick-modal-body { padding: 6px 20px 16px; }
+.nick-modal-input {
+    width: 100%; padding: 11px 14px; background: #f0f2f5;
+    border: 1.5px solid #e0e0e0; border-radius: 14px;
+    font-size: 15px; outline: none; color: #1a1a1a;
+    transition: border-color 0.18s, box-shadow 0.18s;
+}
+.nick-modal-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(74,127,203,0.13); }
+body.dark-theme .nick-modal-input { background: #252c38; border-color: #2f3a4a; color: #e8eef7; }
+.nick-modal-footer { padding: 0 16px 16px; display: flex; gap: 8px; }
+.nick-modal-cancel { flex: 1; padding: 11px; border: 1.5px solid #e0e0e0; background: transparent; border-radius: 14px; font-size: 14px; font-weight: 600; color: var(--dim); cursor: pointer; transition: background 0.15s; }
+.nick-modal-cancel:hover { background: #f5f5f5; }
+body.dark-theme .nick-modal-cancel { border-color: #2f3a4a; color: #6a7a8a; }
+.nick-modal-confirm { flex: 2; padding: 11px; border: none; background: var(--blue); border-radius: 14px; font-size: 14px; font-weight: 700; color: #fff; cursor: pointer; transition: background 0.15s; }
+.nick-modal-confirm:hover { background: #3a6fbb; }
+</style>
+
+<div class="nick-modal-overlay" id="nick-modal-overlay">
+    <div class="nick-modal-card">
+        <div class="nick-modal-header">
+            <div class="nick-modal-icon">
+                <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75l11.02-11.02-3.75-3.75L3 17.25zm14.71-9.04c.39-.39.39-1.02 0-1.41l-2.5-2.5a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.99-1.67z"/></svg>
+            </div>
+            <div>
+                <div class="nick-modal-title">Изменить никнейм</div>
+                <div class="nick-modal-sub">Это имя увидят собеседники</div>
+            </div>
+        </div>
+        <div class="nick-modal-body">
+            <input type="text" id="nick-modal-input" class="nick-modal-input" placeholder="Введите никнейм..." maxlength="32" autocomplete="off">
+        </div>
+        <div class="nick-modal-footer">
+            <button class="nick-modal-cancel" id="nick-modal-cancel">Отмена</button>
+            <button class="nick-modal-confirm" id="nick-modal-confirm">Подтвердить</button>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const overlay   = document.getElementById('nick-modal-overlay');
+    const input     = document.getElementById('nick-modal-input');
+    const btnCancel = document.getElementById('nick-modal-cancel');
+    const btnOk     = document.getElementById('nick-modal-confirm');
+    const editBtn   = document.getElementById('nick-edit-btn');
+    const nickField = document.getElementById('nick-field');
+
+    function openModal() {
+        input.value = nickField.value || '';
+        overlay.classList.add('open');
+        setTimeout(() => input.focus(), 80);
+    }
+    function closeModal() { overlay.classList.remove('open'); }
+    function confirmNick() {
+        const v = input.value.trim();
+        if (!v) return;
+        nickField.value = v;
+        nickField.dispatchEvent(new Event('change'));
+        closeModal();
+    }
+
+    editBtn.addEventListener('click', openModal);
+    btnCancel.addEventListener('click', closeModal);
+    btnOk.addEventListener('click', confirmNick);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') confirmNick();
+        if (e.key === 'Escape') closeModal();
+    });
+})();
+</script>
