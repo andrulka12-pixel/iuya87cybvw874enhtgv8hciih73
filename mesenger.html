@@ -2807,24 +2807,29 @@
             const peerId = chat.peerId;
             const chatId = chat.id;
             const r = database.ref('presence_signal/'+peerId);
+            // _applyPeerOnlineState уже обновляет и сайдбар и шапку — вызываем напрямую без лишних условий
             r.on('value', snap=>{ _applyPeerOnlineState(chatId, snap.val()); });
             _sidebarPresenceRefs[peerId] = r;
         });
     }
 
     function watchPeerStatus(peerId){
-        // Для активного чата дополнительный listener не нужен —
-        // setupSidebarPresenceWatchers уже слушает всех. Просто применяем кэш.
         if(!peerId) return;
-        const cached = _peerOnlineCache[chatsList.find(c=>c.peerId===peerId)?.id];
-        // Если кэша нет — подписываемся отдельно (например при первом открытии)
-        if(cached === undefined){
+        const chat = chatsList.find(c=>c.peerId===peerId);
+        const chatId = chat ? chat.id : null;
+        if(!chatId) return;
+        // Если sidebar watcher уже слушает — он мгновенно применит статус через _applyPeerOnlineState.
+        // Делаем дополнительный once() только если watcher ещё не подключён (новый чат).
+        if(!_sidebarPresenceRefs || !_sidebarPresenceRefs[peerId]){
             const r = database.ref('presence_signal/'+peerId);
-            r.on('value', snap=>{
-                if(!activeChatId) return;
-                const chat = chatsList.find(c=>c.id===activeChatId);
-                if(!chat || chat.peerId !== peerId) return;
-                _applyPeerOnlineState(activeChatId, snap.val());
+            r.once('value', snap=>{ _applyPeerOnlineState(chatId, snap.val()); });
+            // Также добавляем постоянный watcher для этого пира
+            r.on('value', snap=>{ _applyPeerOnlineState(chatId, snap.val()); });
+            _sidebarPresenceRefs[peerId] = r;
+        } else {
+            // Watcher уже есть — запрашиваем текущее значение немедленно чтобы обновить шапку
+            database.ref('presence_signal/'+peerId).once('value', snap=>{
+                _applyPeerOnlineState(chatId, snap.val());
             });
         }
     }
@@ -4263,6 +4268,26 @@
             peerStatusDot.className='status-dot';
         } else {
             headerCallBtn.classList.add('visible');
+            // Immediately apply cached status so header is never empty
+            if(_peerOnlineCache[chatId] === true){
+                isPeerOnline = true;
+                peerStatusDot.className = 'status-dot online';
+                chatSubtitle.textContent = 'в сети';
+                chatSubtitle.className = 'header-sub';
+            } else {
+                isPeerOnline = false;
+                peerStatusDot.className = 'status-dot offline';
+                const _cachedPeerId = chat.peerId;
+                const _cachedTs = _cachedPeerId ? _lastSeenCache[_cachedPeerId] : null;
+                const _cachedTimeStr = _formatLastSeenTime(_cachedTs);
+                if(_peerOnlineCache[chatId] === false){
+                    chatSubtitle.textContent = _cachedTimeStr ? 'был(а) в сети: '+_cachedTimeStr : 'не в сети';
+                } else {
+                    // Never seen before — show "не в сети" as placeholder until real data arrives
+                    chatSubtitle.textContent = _cachedTimeStr ? 'был(а) в сети: '+_cachedTimeStr : 'не в сети';
+                }
+                chatSubtitle.className = 'header-sub offline-status';
+            }
         }
         peerTypingActive=false;
         const avatar=document.getElementById('chat-avatar');
