@@ -15,7 +15,7 @@
         .app-wrap { display: flex; flex-direction: column; height: 100%; height: 100dvh; }
  
         /* ЛЕВАЯ ПАНЕЛЬ */
-        .chats-panel { position: fixed; top: 0; left: 0; width: 300px; height: 100%; background: #fff; z-index: 200; display: flex; flex-direction: column; transform: translateX(-100%); transition: transform 0.26s cubic-bezier(0.4,0,0.2,1); }
+        .chats-panel { position: fixed; top: 0; left: 0; width: min(92vw, 480px); height: 100%; background: #fff; z-index: 200; display: flex; flex-direction: column; transform: translateX(-100%); transition: transform 0.26s cubic-bezier(0.4,0,0.2,1); }
         .chats-panel.open { transform: translateX(0); }
         .chats-panel-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.81); z-index: 199; display: none; opacity: 0; transition: opacity 0.26s; }
         .chats-panel-overlay.visible { display: block; opacity: 1; }
@@ -27,7 +27,7 @@
         .chat-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; cursor: pointer; transition: background 0.12s; position: relative; border-bottom: 1px solid #e8e8e8; }
         .chat-item:hover, .chat-item.active { background: #d0e6ff; }
         .chat-item-avatar { width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: #fff; position: relative; }
-        .chat-item-online-dot { position: absolute; bottom: 1px; right: 1px; width: 11px; height: 11px; border-radius: 50%; background: var(--green); border: 2px solid #fff; display: none; }
+        .chat-item-online-dot { position: absolute; bottom: 1px; right: 1px; width: 11px; height: 11px; border-radius: 50%; background: #4a7fcb; border: 2px solid #fff; display: none; }
         .chat-item-online-dot.visible { display: block; }
         .chat-item-info { flex: 1; overflow: hidden; min-width: 0; }
         .chat-item-name { font-size: 15px; font-weight: 600; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -86,13 +86,17 @@
         .avatar-container { position: relative; width: 38px; height: 38px; cursor: pointer; }
         .avatar { width: 100%; height: 100%; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #fff; }
         .status-dot { position: absolute; bottom: 0; right: 0; width: 11px; height: 11px; border-radius: 50%; border: 2px solid var(--header); display: none; }
-        .status-dot.online { display: block; background: var(--green); }
-        .status-dot.offline { display: block; background: var(--dim); }
+        .status-dot.online { display: block; background: #4a7fcb; }
+        .status-dot.offline { display: none; }
         .meta-text { display: flex; flex-direction: column; line-height: 1.2; }
         .header-title { font-size: 15px; font-weight: 600; color: #1a1a1a; }
-        .header-sub { font-size: 12px; color: var(--green); }
-        .header-sub.offline-status { color: var(--dim); }
-        .header-sub.typing-status { color: var(--blue); font-style: italic; }
+        .header-sub { font-size: 12px; color: #6a9fd8; font-weight: 400; }
+        .header-sub.offline-status { color: #a0aab4; font-weight: 400; font-size: 12px; }
+        .header-sub.typing-status { color: var(--blue); font-style: normal; }
+        .typing-subtitle-dots { display: inline-flex; gap: 2px; margin-left: 3px; vertical-align: middle; }
+        .typing-subtitle-dots span { width: 3px; height: 3px; background: var(--blue); border-radius: 50%; display: inline-block; animation: tb 1.2s infinite; }
+        .typing-subtitle-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-subtitle-dots span:nth-child(3) { animation-delay: 0.4s; }
         .header-right { display: flex; align-items: center; gap: 6px; }
         .nickname-input { padding: 6px 10px; background: #f0f2f5; border: 1px solid #e0e0e0; border-radius: 18px; font-size: 13px; outline: none; color: #1a1a1a; width: 90px; min-width: 90px; }
         .nickname-input::placeholder { color: var(--dim); }
@@ -335,11 +339,11 @@
         body.dark-theme .chat-item-preview,
         body.dark-theme .chat-item-time,
         body.dark-theme .header-title,
-        body.dark-theme .header-sub,
         body.dark-theme .my-id-label,
         body.dark-theme .my-id-copy,
         body.dark-theme .nickname-input { color: #e8eef7; }
-        body.dark-theme .header-sub.offline-status { color: #9aa4b2; }
+        body.dark-theme .header-sub { color: #7ab4e8; }
+        body.dark-theme .header-sub.offline-status { color: #8a96a4; }
         body.dark-theme .nickname-input { background: #1d222a; border-color: #2f3642; }
         body.dark-theme .my-id-value { background: rgba(74,127,203,0.12); }
         body.dark-theme .apply-wallpaper-btn { background: #2f4ea0; }
@@ -348,8 +352,7 @@
         .call-btn svg { width: 16px; height: 16px; fill: #3a3a4a; }
  
         /* TYPING BAR */
-        .typing-bar { height: 0; overflow: hidden; background: var(--header); display: flex; align-items: center; padding: 0 16px; font-size: 12px; color: var(--blue); font-style: italic; transition: height 0.2s; flex-shrink: 0; }
-        .typing-bar.visible { height: 22px; }
+        .typing-bar { display: none !important; }
         .typing-dots { display: inline-flex; gap: 3px; margin-left: 4px; }
         .typing-dots span { width: 4px; height: 4px; background: var(--blue); border-radius: 50%; animation: tb 1.2s infinite; }
         .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
@@ -570,6 +573,9 @@
         .pinned-message-banner.active { outline: 2px solid rgba(74,127,203,0.16); }
  
         
+        /* FORWARDED LABEL */
+        .forwarded-label { font-size: 11px; color: var(--blue); font-weight: 600; margin-bottom: 3px; opacity: 0.8; letter-spacing: 0.1px; }
+
         /* TOAST */
         .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(14px); background: rgba(0,0,0,0.75); color: #fff; padding: 8px 18px; border-radius: 20px; font-size: 13px; z-index: 500; opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none; white-space: nowrap; }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -639,8 +645,8 @@
         .profile-card-body { padding: 50px 20px 16px; text-align: center; }
         .profile-card-name { font-size: 20px; font-weight: 700; color: #1a1a1a; }
         .profile-card-id { font-size: 12px; color: var(--dim); margin-top: 4px; }
-        .profile-card-status { font-size: 13px; color: var(--green); margin-top: 6px; font-weight: 500; }
-        .profile-card-status.offline { color: var(--dim); }
+        .profile-card-status { font-size: 13px; color: #6a9fd8; margin-top: 6px; font-weight: 400; }
+        .profile-card-status.offline { color: #a0aab4; font-weight: 400; }
         .profile-card-actions { display: flex; justify-content: center; gap: 16px; padding: 16px 20px 8px; }
         .profile-card-btn { flex: 1; max-width: 140px; padding: 10px; border-radius: 12px; border: none; cursor: pointer; font-size: 14px; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: background 0.15s; }
         .profile-card-btn svg { width: 22px; height: 22px; }
@@ -1223,10 +1229,29 @@
 <!-- CONTEXT MENU -->
 <div class="context-menu" id="ctx-menu">
     <div class="context-item" id="menu-reply">Ответить</div>
+    <div class="context-item" id="menu-forward">Переслать</div>
     <div class="context-item" id="menu-pin">Закрепить</div>
     <div class="context-item" id="menu-edit">Редактировать</div>
     <div class="context-item" id="menu-react">Реакции</div>
     <div class="context-item delete" id="menu-delete">Удалить</div>
+</div>
+
+<!-- FORWARD MODAL -->
+<div class="modal-overlay" id="forward-modal" style="display:none;">
+    <div class="modal-card" style="max-width:360px;gap:0;padding:0;overflow:hidden;border-radius:16px;">
+        <div style="padding:16px 18px 10px;border-bottom:1px solid #f0f0f0;">
+            <h3 style="font-size:16px;font-weight:700;margin:0;">Переслать в...</h3>
+            <p style="font-size:12px;color:#8a9aaa;margin:3px 0 0;">Выберите один или несколько чатов</p>
+        </div>
+        <div id="forward-chat-list" style="max-height:280px;overflow-y:auto;padding:6px 10px;display:flex;flex-direction:column;gap:2px;"></div>
+        <div style="padding:10px 14px 14px;border-top:1px solid #f0f0f0;display:flex;gap:8px;">
+            <button class="modal-btn-cancel" id="forward-cancel-btn" style="flex:1;margin:0;padding:11px 0;border-radius:12px;font-size:14px;font-weight:600;background:rgba(0,0,0,0.06);color:#8a9aaa;border:none;cursor:pointer;">Отмена</button>
+            <button id="forward-send-btn" style="flex:2;padding:11px 0;border-radius:12px;font-size:14px;font-weight:700;background:var(--blue);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;opacity:0.4;pointer-events:none;transition:opacity 0.15s;">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="#fff"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                Переслать
+            </button>
+        </div>
+    </div>
 </div>
  
 <!-- REACTIONS PICKER -->
@@ -1589,7 +1614,7 @@
                 if(u) ls.push({ev,u}); return u;
             },
             off(ev) { ls.forEach(l=>{if(!ev||l.ev===ev){try{l.u();}catch(e){}}}); if(ev) ls.splice(0,ls.length,...ls.filter(l=>l.ev!==ev)); else ls.length=0; },
-            onDisconnect() { const dc=onDisconnect(r); return {set:(v)=>dc.set(v)}; },
+            onDisconnect() { const dc=onDisconnect(r); return {set:(v)=>dc.set(v), update:(v)=>dc.set(v)}; },
             limitToLast(n) {
                 const q=query(r,limitToLast(n)), ql=[];
                 return { on(ev,cb){let u; if(ev==='child_added')u=onChildAdded(q,cb); if(u)ql.push({ev,u}); return u;}, off(){ql.forEach(l=>{try{l.u();}catch(e){}});ql.length=0;} };
@@ -2519,10 +2544,20 @@
     function strToHue(s){ let h=0; for(let i=0;i<s.length;i++) h=s.charCodeAt(i)+((h<<5)-h); return Math.abs(h)%360; }
     function formatLastSeen(ts){
         if(!ts) return 'не в сети';
-        const diff=Date.now()-ts;
-        if(diff<60000) return 'в сети';
         const d=new Date(ts);
-        return 'Посл. раз в сети '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+        const now=new Date();
+        const diff=Date.now()-ts;
+        const hh=String(d.getHours()).padStart(2,'0');
+        const mm=String(d.getMinutes()).padStart(2,'0');
+        const timeStr=hh+':'+mm;
+        if(diff<60000) return 'был(а) только что';
+        const isToday=d.toDateString()===now.toDateString();
+        const isYesterday=(new Date(now-86400000)).toDateString()===d.toDateString();
+        if(isToday) return 'был(а) в '+timeStr;
+        if(isYesterday) return 'был(а) вчера в '+timeStr;
+        const dd=String(d.getDate()).padStart(2,'0');
+        const mo=String(d.getMonth()+1).padStart(2,'0');
+        return 'был(а) '+dd+'.'+mo+' в '+timeStr;
     }
     function formatFileSize(b){ if(b<1024)return b+'B'; if(b<1048576)return (b/1024).toFixed(1)+'KB'; return (b/1048576).toFixed(1)+'MB'; }
  
@@ -2677,56 +2712,126 @@
         });
     }
  
-    /* ── PRESENCE (реальный онлайн) ── */
+    /* ── PRESENCE — нормальный через onDisconnect ── */
     function setupMyPresence(){
-        myPresenceRef=database.ref('presence/'+myFrameId);
-        const updatePresence = (online)=>{
-            if(!myPresenceRef) return;
-            myPresenceRef.set({online, lastSeen:STS(), name:myCurrentNickname});
-        };
-        database.ref('.info/connected').on('value',snap=>{
-            if(!snap.val()){
-                updatePresence(false);
-                return;
-            }
-            myPresenceRef.onDisconnect().set({online:false,lastSeen:STS()});
-            updatePresence(true);
+        const presenceRef = ref(db, 'presence_signal/' + myFrameId);
+        const connectedRef = ref(db, '.info/connected');
+
+        onValue(connectedRef, (snap) => {
+            if (snap.val() !== true) return;
+            // Сначала регистрируем onDisconnect — Firebase запишет offline автоматически
+            onDisconnect(presenceRef).set({
+                online: false,
+                lastSeen: serverTimestamp()
+            }).then(() => {
+                // Только после регистрации onDisconnect идём online
+                set(presenceRef, {
+                    online: true,
+                    lastSeen: serverTimestamp(),
+                    name: myCurrentNickname || 'User'
+                });
+            });
         });
-        window.addEventListener('beforeunload',()=>{ updatePresence(false); });
-        window.addEventListener('pagehide',()=>{ updatePresence(false); });
-        window.addEventListener('online',()=>{ updatePresence(true); });
-        window.addEventListener('offline',()=>{ updatePresence(false); });
+
+        // Явный offline при закрытии/скрытии
+        const goOffline = () => set(presenceRef, { online: false, lastSeen: serverTimestamp() });
+
+        window.addEventListener('beforeunload', goOffline);
+        window.addEventListener('pagehide', goOffline);
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') goOffline();
+            else set(presenceRef, { online: true, lastSeen: serverTimestamp(), name: myCurrentNickname||'User' });
+        });
+        window.addEventListener('offline', goOffline);
+        window.addEventListener('online', () => set(presenceRef, { online: true, lastSeen: serverTimestamp(), name: myCurrentNickname||'User' }));
+
+        window._refreshPresenceName = () => set(presenceRef, { online: true, lastSeen: serverTimestamp(), name: myCurrentNickname||'User' });
     }
  
     /* ── PEER STATUS ── */
     let peerTypingActive=false;
-    function watchPeerStatus(peerId){
-        if(peerStatusRef){peerStatusRef.off();peerStatusRef=null;}
-        if(!peerId) return;
-        peerStatusRef=database.ref('presence/'+peerId);
-        peerStatusRef.on('value',snap=>{
-            const data=snap.val();
-            if(!activeChatId) return;
-            if(data&&data.online){
+    // Global sidebar presence watchers: { peerId: ref }
+    let _sidebarPresenceRefs = {};
+    // Cache of known online states: { chatId: bool }
+    let _peerOnlineCache = {};
+    // Cache of last seen timestamps: { peerId: ts }
+    let _lastSeenCache = {};
+
+    function _formatLastSeenTime(ts){
+        // serverTimestamp() до записи на сервер может быть объектом — игнорируем
+        if(!ts || typeof ts !== 'number') return null;
+        const d = new Date(ts);
+        const hh = String(d.getHours()).padStart(2,'0');
+        const mm = String(d.getMinutes()).padStart(2,'0');
+        return hh+':'+mm;
+    }
+
+    function _applyPeerOnlineState(chatId, data){
+        const isOnline = !!(data && data.online === true);
+        _peerOnlineCache[chatId] = isOnline;
+        // Кэш lastSeen по peerId (только числовой timestamp)
+        const chat = chatsList.find(c=>c.id===chatId);
+        if(chat && chat.peerId && data && typeof data.lastSeen === 'number'){
+            _lastSeenCache[chat.peerId] = data.lastSeen;
+        }
+        // Обновить точку в сайдбаре — мгновенно
+        const dot = chatsList_el.querySelector('.chat-item[data-id="'+chatId+'"] .chat-item-online-dot');
+        if(dot){ if(isOnline) dot.classList.add('visible'); else dot.classList.remove('visible'); }
+        // Обновить шапку если это активный чат
+        if(activeChatId===chatId){
+            if(isOnline){
                 isPeerOnline=true;
                 peerStatusDot.className='status-dot online';
                 if(!peerTypingActive){
                     chatSubtitle.textContent='в сети';
                     chatSubtitle.className='header-sub';
                 }
-                const dot=chatsList_el.querySelector('.chat-item[data-id="'+activeChatId+'"] .chat-item-online-dot');
-                if(dot) dot.classList.add('visible');
             } else {
                 isPeerOnline=false;
                 peerStatusDot.className='status-dot offline';
                 if(!peerTypingActive){
-                    chatSubtitle.textContent=data&&data.lastSeen?formatLastSeen(data.lastSeen):'не в сети';
+                    const ts = (data && typeof data.lastSeen==='number') ? data.lastSeen : null;
+                    const timeStr = _formatLastSeenTime(ts);
+                    chatSubtitle.textContent = timeStr ? 'был(а) в сети: '+timeStr : 'не в сети';
                     chatSubtitle.className='header-sub offline-status';
                 }
-                const dot=chatsList_el.querySelector('.chat-item[data-id="'+activeChatId+'"] .chat-item-online-dot');
-                if(dot) dot.classList.remove('visible');
             }
+        }
+    }
+
+    // Хранилище unsubscribe-функций для sidebar watchers: { peerId: unsubFn }
+    let _sidebarPresenceUnsubs = {};
+
+    function setupSidebarPresenceWatchers(){
+        // Отписываемся от старых
+        Object.values(_sidebarPresenceUnsubs).forEach(u=>{ try{ u(); }catch(e){} });
+        _sidebarPresenceUnsubs = {};
+        _sidebarPresenceRefs = {};
+        // Слушаем presence_signal/<peerId> — тот же путь куда собеседник пишет сигнал
+        chatsList.filter(c=>!c.isGroup && c.peerId && c.id!==NOTES_CHAT_ID && c.id!==AI_CHAT_ID).forEach(chat=>{
+            const peerId = chat.peerId;
+            const chatId = chat.id;
+            const r = database.ref('presence_signal/'+peerId);
+            r.on('value', snap=>{ _applyPeerOnlineState(chatId, snap.val()); });
+            _sidebarPresenceRefs[peerId] = r;
         });
+    }
+
+    function watchPeerStatus(peerId){
+        // Для активного чата дополнительный listener не нужен —
+        // setupSidebarPresenceWatchers уже слушает всех. Просто применяем кэш.
+        if(!peerId) return;
+        const cached = _peerOnlineCache[chatsList.find(c=>c.peerId===peerId)?.id];
+        // Если кэша нет — подписываемся отдельно (например при первом открытии)
+        if(cached === undefined){
+            const r = database.ref('presence_signal/'+peerId);
+            r.on('value', snap=>{
+                if(!activeChatId) return;
+                const chat = chatsList.find(c=>c.id===activeChatId);
+                if(!chat || chat.peerId !== peerId) return;
+                _applyPeerOnlineState(activeChatId, snap.val());
+            });
+        }
     }
  
     /* ── TYPING ── */
@@ -2740,21 +2845,31 @@
                 peerTypingActive=false;
                 // restore online status in header
                 if(isPeerOnline){ chatSubtitle.textContent='в сети'; chatSubtitle.className='header-sub'; }
-                else { chatSubtitle.className='header-sub offline-status'; }
+                else {
+                    const _chat=chatsList.find(c=>c.id===activeChatId);
+                    const _ls=_lastSeenCache[_chat&&_chat.peerId];
+                    const _ts=_formatLastSeenTime(_ls);
+                    chatSubtitle.textContent=_ts?'был(а) в сети: '+_ts:'не в сети';
+                    chatSubtitle.className='header-sub offline-status';
+                }
                 return;
             }
             const others=Object.keys(d).filter(k=>k!==myFrameId);
             if(others.length>0){
-                typingText.textContent='Печатает';
-                typingBar.classList.add('visible');
                 peerTypingActive=true;
-                chatSubtitle.textContent='Печатает...';
+                chatSubtitle.innerHTML='Печатает<span class="typing-subtitle-dots"><span></span><span></span><span></span></span>';
                 chatSubtitle.className='header-sub typing-status';
             } else {
                 typingBar.classList.remove('visible');
                 peerTypingActive=false;
                 if(isPeerOnline){ chatSubtitle.textContent='в сети'; chatSubtitle.className='header-sub'; }
-                else { chatSubtitle.className='header-sub offline-status'; }
+                else {
+                    const _chat2=chatsList.find(c=>c.id===activeChatId);
+                    const _ls2=_lastSeenCache[_chat2&&_chat2.peerId];
+                    const _ts2=_formatLastSeenTime(_ls2);
+                    chatSubtitle.textContent=_ts2?'был(а) в сети: '+_ts2:'не в сети';
+                    chatSubtitle.className='header-sub offline-status';
+                }
             }
         };
         tRef.on('value',handler);
@@ -2877,6 +2992,11 @@
         item.addEventListener('click',e=>{ if(e.target.closest('.chat-item-del')) return; openChat(chat.id); closeChatsPanel(); });
         item.querySelector('.chat-item-del').addEventListener('click',e=>{ e.stopPropagation(); deleteChatTarget={id:chat.id,name:chat.name}; deleteChatName.textContent=chat.name; deleteChatModal.style.display='flex'; });
         chatsList_el.appendChild(item);
+        // Restore online dot from cache
+        if(!chat.isGroup && _peerOnlineCache[chat.id]){
+            const dot2 = item.querySelector('.chat-item-online-dot');
+            if(dot2) dot2.classList.add('visible');
+        }
     }
  
     /* ── UNREAD ── */
@@ -2968,8 +3088,15 @@
             st.textContent='участников: '+memberCount;
             st.className='profile-card-status offline';
         } else {
-            if(isPeerOnline){st.textContent='в сети';st.className='profile-card-status';}
-            else{st.textContent='не в сети';st.className='profile-card-status offline';}
+            if(isPeerOnline){
+                st.textContent='в сети';st.className='profile-card-status';
+            } else {
+                const chat_=chatsList.find(c=>c.id===activeChatId);
+                const _ls=chat_&&chat_.peerId?_lastSeenCache[chat_.peerId]:null;
+                const _cardTs=_formatLastSeenTime(_ls);
+                st.textContent=_cardTs?'был(а) в сети: '+_cardTs:'не в сети';
+                st.className='profile-card-status offline';
+            }
         }
 
         // Show/hide call button in profile card
@@ -3587,6 +3714,7 @@
         row.className='message-row'+(isMe?' my-row':'')+(isVideoCircleEarly?' vcircle-row':'');
         row.id='msg-'+id; row.dataset.id=id;
         const replyHTML=data.replyToText?'<div class="reply-in-bubble"><b>'+escapeHtml(data.replyToAuthor)+'</b>: '+escapeHtml(data.replyToText)+'</div>':'';
+        const forwardedHTML=data.forwarded?'<div class="forwarded-label">➤ Пересланное сообщение</div>':'';
         const editedLabel=data.edited?' <span style="opacity:.55;font-style:italic;font-size:10px">ред.</span>':
             (data.isAiBot?' <span class="ai-label">ИИ</span>':'');
         let mediaHTML='';
@@ -3633,7 +3761,7 @@
         const isAudioMsg = data.mediaType === 'audio';
         const tickHTML = isMe && !isVideoCircle && !isAudioMsg ? '<span class="message-status sent" title="Отправлено"></span>' : '';
         const bubbleStyle = '';
-        row.innerHTML='<div class="message-bubble"'+bubbleStyle+'>'+replyHTML+(isVideoCircle?'':('<div class="author-name" data-pid="'+escapeHtml(data.frameId||'')+'" data-orig-name="'+escapeHtml(data.author)+'">'+escapeHtml(getDisplayAuthorName(data))+getAuthorTagHTML(data.frameId)+'</div>'))+mediaHTML+textPart+((isVideoCircle||isAudioMsg)?'':'<div class="message-meta-info"><span>'+data.time+editedLabel+'</span>'+tickHTML+'</div>')+'</div><div class="swipe-indicator"><svg viewBox="0 0 24 24"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg></div>';
+        row.innerHTML='<div class="message-bubble"'+bubbleStyle+'>'+replyHTML+forwardedHTML+(isVideoCircle?'':('<div class="author-name" data-pid="'+escapeHtml(data.frameId||'')+'" data-orig-name="'+escapeHtml(data.author)+'">'+escapeHtml(getDisplayAuthorName(data))+getAuthorTagHTML(data.frameId)+'</div>'))+mediaHTML+textPart+((isVideoCircle||isAudioMsg)?'':'<div class="message-meta-info"><span>'+data.time+editedLabel+'</span>'+tickHTML+'</div>')+'</div><div class="swipe-indicator"><svg viewBox="0 0 24 24"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg></div>';
         // reaction badge
         if(data.reaction){
             const badge=document.createElement('div'); badge.className='msg-reaction'; badge.textContent=data.reaction;
@@ -3676,7 +3804,7 @@
         const bubble=row.querySelector('.message-bubble'), indicator=row.querySelector('.swipe-indicator');
         let startX=0,currentX=0,isSwiping=false,pressTimer=null,isLongPress=false,lastTap=0;
         function handleLongPress(e){
-            isLongPress=true; selectedMsgData={id:row.dataset.id,author:data.author,text:data.text||'',isMe,time:data.time||''};
+            isLongPress=true; selectedMsgData={id:row.dataset.id,author:data.author,text:data.text||'',isMe,time:data.time||'',mediaType:data.mediaType||null,_fullData:data};
             let cx=e.touches?e.touches[0].clientX:e.clientX, cy=e.touches?e.touches[0].clientY:e.clientY;
             ctxMenu.style.top=Math.min(cy,window.innerHeight-180)+'px'; ctxMenu.style.left=Math.min(cx,window.innerWidth-180)+'px'; ctxMenu.style.display='flex';
             const isAiMsg = data.frameId==='__ai__' || (!isMe && activeChatId===AI_CHAT_ID);
@@ -3686,12 +3814,14 @@
                 document.getElementById('menu-react').style.display='none';
                 document.getElementById('menu-pin').style.display='none';
                 document.getElementById('menu-reply').style.display='none';
+                document.getElementById('menu-forward').style.display='none';
             } else {
                 document.getElementById('menu-edit').style.display=isMe&&!data.mediaType?'block':'none';
                 document.getElementById('menu-delete').style.display=isMe?'block':'none';
                 document.getElementById('menu-react').style.display=isMe?'none':'block';
                 document.getElementById('menu-pin').style.display='block';
                 document.getElementById('menu-reply').style.display=(data.mediaType==='videoCircle'||data.mediaType==='audio')?'none':'block';
+                document.getElementById('menu-forward').style.display=(data.text||data.mediaType)?'block':'none';
             }
         }
         function handleDoubleTap(e){ addReaction(row.dataset.id,'❤'); showHeartAnim(bubble); }
@@ -3724,6 +3854,130 @@
  
     /* ── CONTEXT MENU ── */
     document.getElementById('menu-reply').addEventListener('click',()=>{ triggerReplyMode(selectedMsgData.id,selectedMsgData.author,selectedMsgData.text); ctxMenu.style.display='none'; });
+    // ── FORWARD MESSAGE ──
+    let _fwdSelectedChats = new Set();
+
+    function _updateFwdSendBtn(){
+        const btn = document.getElementById('forward-send-btn');
+        if(!btn) return;
+        if(_fwdSelectedChats.size > 0){
+            btn.style.opacity='1'; btn.style.pointerEvents='auto';
+            btn.innerHTML='<svg viewBox="0 0 24 24" width="16" height="16" fill="#fff"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg> Переслать ('+_fwdSelectedChats.size+')';
+        } else {
+            btn.style.opacity='0.4'; btn.style.pointerEvents='none';
+            btn.innerHTML='<svg viewBox="0 0 24 24" width="16" height="16" fill="#fff"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg> Переслать';
+        }
+    }
+
+    function openForwardModal(msgData){
+        const modal = document.getElementById('forward-modal');
+        const list = document.getElementById('forward-chat-list');
+        if(!modal||!list) return;
+        _fwdSelectedChats = new Set();
+        list.innerHTML='';
+        const targets = chatsList.filter(c=>c.id!==activeChatId && c.id!==NOTES_CHAT_ID);
+        if(!targets.length){
+            list.innerHTML='<div style="font-size:13px;color:#8a9aaa;padding:16px;text-align:center;">Нет других переписок</div>';
+        } else {
+            targets.forEach(chat=>{
+                const row = document.createElement('div');
+                row.style.cssText='display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:10px;cursor:pointer;transition:background 0.12s;user-select:none;';
+                const bg = chatAvatars[chat.id] ? 'transparent' : getAvatarBackground(chat);
+                const avatarContent = chatAvatars[chat.id]
+                    ? '<img src="'+chatAvatars[chat.id]+'" style="width:38px;height:38px;border-radius:50%;object-fit:cover;">'
+                    : '<div style="width:38px;height:38px;border-radius:50%;background:'+bg+';display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0;">'+escapeHtml(getInitial(chat.name))+'</div>';
+                const displayName = (chat.isGroup && localGroupNames[chat.id]) ? localGroupNames[chat.id] : chat.name;
+                // Checkbox circle
+                const checkId = 'fwd-chk-'+chat.id;
+                row.innerHTML=
+                    avatarContent+
+                    '<div style="flex:1;font-size:14px;font-weight:600;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+escapeHtml(displayName)+'</div>'+
+                    '<div id="'+checkId+'" style="width:22px;height:22px;border-radius:50%;border:2px solid #d0d8e4;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s;"></div>';
+                const updateCheck = (selected)=>{
+                    const el = row.querySelector('#'+checkId);
+                    if(selected){
+                        el.style.background='var(--blue)'; el.style.borderColor='var(--blue)';
+                        el.innerHTML='<svg viewBox="0 0 12 12" width="12" height="12"><path d="M1.5 6l3 3 6-6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                        row.style.background='rgba(74,127,203,0.07)';
+                    } else {
+                        el.style.background=''; el.style.borderColor='#d0d8e4';
+                        el.innerHTML='';
+                        row.style.background='';
+                    }
+                };
+                row.addEventListener('click',()=>{
+                    if(_fwdSelectedChats.has(chat.id)){
+                        _fwdSelectedChats.delete(chat.id); updateCheck(false);
+                    } else {
+                        _fwdSelectedChats.add(chat.id); updateCheck(true);
+                    }
+                    _updateFwdSendBtn();
+                });
+                list.appendChild(row);
+            });
+        }
+        _updateFwdSendBtn();
+        // Store msgData on the send button for use in send handler
+        const sendBtn = document.getElementById('forward-send-btn');
+        if(sendBtn) sendBtn._fwdMsgData = msgData;
+        modal.style.display='flex';
+    }
+    document.getElementById('forward-cancel-btn').addEventListener('click',()=>{ document.getElementById('forward-modal').style.display='none'; _fwdSelectedChats=new Set(); });
+    document.getElementById('forward-modal').addEventListener('click',e=>{ if(e.target===document.getElementById('forward-modal')){ document.getElementById('forward-modal').style.display='none'; _fwdSelectedChats=new Set(); } });
+    document.getElementById('forward-send-btn').addEventListener('click',()=>{
+        const sendBtn = document.getElementById('forward-send-btn');
+        const msgData = sendBtn._fwdMsgData;
+        if(!msgData || _fwdSelectedChats.size===0) return;
+        document.getElementById('forward-modal').style.display='none';
+        const nickname = myCurrentNickname||'User';
+        const fwdAuthor = 'Переслано от: '+(msgData.author||'User');
+        const orig = msgData._fullData || msgData;
+        let sentCount = 0;
+        _fwdSelectedChats.forEach(chatId=>{
+            const chat = chatsList.find(c=>c.id===chatId);
+            if(!chat) return;
+            const timeStr = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
+            const payload = {
+                frameId: myFrameId,
+                author: fwdAuthor,
+                text: orig.text || '',
+                time: timeStr,
+                edited: false,
+                forwarded: true,
+                forwardedFrom: orig.author || 'User',
+                forwardedBy: nickname
+            };
+            if(orig.mediaType)  payload.mediaType  = orig.mediaType;
+            if(orig.mediaData)  payload.mediaData  = orig.mediaData;
+            if(orig.mediaName)  payload.mediaName  = orig.mediaName;
+            if(orig.fileSize)   payload.fileSize   = orig.fileSize;
+            if(orig.gifUrl)     payload.gifUrl     = orig.gifUrl;
+            if(orig.isVoice)    payload.isVoice    = orig.isVoice;
+            const previewLabel = orig.mediaType==='image' ? 'Фото'
+                : orig.mediaType==='gif'         ? '🎞 GIF'
+                : orig.mediaType==='video'       ? 'Видео'
+                : orig.mediaType==='videoCircle' ? 'Видео-кружок'
+                : orig.mediaType==='audio'       ? (orig.isVoice ? 'Голосовое' : 'Аудио')
+                : orig.mediaType==='document'    ? (orig.mediaName || 'Документ')
+                : (orig.text||'').substr(0,40) || '[сообщение]';
+            if(chatId===AI_CHAT_ID){
+                payload.id='ai_'+Date.now()+'_u'; payload.isAiUser=true;
+                addAiMessage(payload); aiLastMsg=previewLabel; aiLastTime=timeStr; updateAiMeta();
+                renderAiChat();
+            } else {
+                database.ref('chats/'+chatId+'/messages').push(payload);
+                const targetChat = chatsList.find(c=>c.id===chatId);
+                if(targetChat && targetChat.peerId){
+                    database.ref('inbox/'+targetChat.peerId).push({chatId:chatId, peerId:myFrameId, senderName:nickname});
+                }
+            }
+            sentCount++;
+        });
+        _fwdSelectedChats = new Set();
+        renderChatsList();
+        showToast(sentCount===1 ? 'Переслано!' : 'Переслано в '+sentCount+' чатов');
+    });
+    document.getElementById('menu-forward').addEventListener('click',()=>{ if(selectedMsgData) openForwardModal(selectedMsgData); ctxMenu.style.display='none'; });
     document.getElementById('menu-pin').addEventListener('click',()=>{ if(selectedMsgData){ pinMessage(selectedMsgData.id, selectedMsgData.author, selectedMsgData.text||'[медиа]', selectedMsgData.isMe, selectedMsgData.time); } ctxMenu.style.display='none'; });
     document.getElementById('menu-edit').addEventListener('click',()=>{ triggerEditMode(selectedMsgData.id,selectedMsgData.text); ctxMenu.style.display='none'; });
     document.getElementById('menu-delete').addEventListener('click',()=>{
@@ -4186,6 +4440,7 @@
             incrementUnread(data.chatId);
             watchChatForIncomingCall(data.chatId, chatName);
             renderChatsList();
+            setupSidebarPresenceWatchers();
             showToast('Новая переписка: '+chatName);
         });
         // child_changed — на случай обновления имени
@@ -4255,9 +4510,9 @@
                 loader.textContent = 'Ищем пользователя...';
                 chatsList_el.appendChild(loader);
 
-                // Проверяем presence в Firebase
-                database.ref('presence/'+q).on('value', snap=>{
-                    database.ref('presence/'+q).off('value');
+                // Проверяем presence_signal в Firebase
+                database.ref('presence_signal/'+q).on('value', snap=>{
+                    database.ref('presence_signal/'+q).off('value');
                     const loaderEl = document.getElementById('search-loader');
                     if(loaderEl) loaderEl.remove();
 
@@ -5358,6 +5613,7 @@
     listenGroupKick();
     listenGroupUpdates();
     renderChatsList();
+    setupSidebarPresenceWatchers();
     initWallpaperPicker();
     applyMsgColors();
     setThemeMode(themeMode);
