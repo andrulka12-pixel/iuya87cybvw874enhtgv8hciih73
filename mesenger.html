@@ -98,14 +98,10 @@
         .typing-subtitle-dots span:nth-child(2) { animation-delay: 0.2s; }
         .typing-subtitle-dots span:nth-child(3) { animation-delay: 0.4s; }
         .header-right { display: flex; align-items: center; gap: 6px; }
-        .nickname-input { padding: 6px 10px; background: #f0f2f5; border: 1px solid #e0e0e0; border-radius: 18px; font-size: 13px; outline: none; color: #1a1a1a; width: 90px; min-width: 90px; }
+        .nickname-input { padding: 6px 10px 6px 2px; background: #f0f2f5; border: 1px solid #e0e0e0; border-radius: 18px; font-size: 13px; outline: none; color: #1a1a1a; width: 90px; min-width: 90px; }
         .nickname-input::placeholder { color: var(--dim); }
         .wallpaper-btn, .connect-id-btn { width: 34px; height: 34px; background: #f0f2f5; border: 1px solid #e0e0e0; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .wallpaper-btn svg, .connect-id-btn svg { width: 16px; height: 16px; fill: var(--blue); }
-        .call-btn { width: 34px; height: 34px; background: rgba(50,50,60,0.08); border: 1px solid rgba(50,50,60,0.15); border-radius: 50%; cursor: pointer; display: none; align-items: center; justify-content: center; transition: background 0.2s; }
-        .call-btn.visible { display: flex; }
-        .call-btn:hover { background: rgba(50,50,60,0.15); }
-        .call-btn svg { width: 16px; height: 16px; fill: #3a3a4a; }
         .wallpaper-picker-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 700; display: none; align-items: flex-end; justify-content: center; }
         .wallpaper-picker-overlay.open { display: flex; }
         .wallpaper-picker-card { width: min(100%, 520px); background: #fff; border-radius: 24px 24px 0 0; max-height: 92vh; display: flex; flex-direction: column; box-shadow: 0 -8px 40px rgba(0,0,0,0.18); animation: slideUp 0.28s ease; overflow: hidden; }
@@ -347,11 +343,7 @@
         body.dark-theme .nickname-input { background: #1d222a; border-color: #2f3642; }
         body.dark-theme .my-id-value { background: rgba(74,127,203,0.12); }
         body.dark-theme .apply-wallpaper-btn { background: #2f4ea0; }
-        .call-btn.visible { display: flex; }
-        .call-btn:hover { background: rgba(50,50,60,0.15); }
-        .call-btn svg { width: 16px; height: 16px; fill: #3a3a4a; }
- 
-        /* TYPING BAR */
+
         .typing-bar { display: none !important; }
         .typing-dots { display: inline-flex; gap: 3px; margin-left: 4px; }
         .typing-dots span { width: 4px; height: 4px; background: var(--blue); border-radius: 50%; animation: tb 1.2s infinite; }
@@ -925,7 +917,7 @@
             </div>
         </div>
         <div class="header-right">
-            <button class="call-btn" id="header-call-btn" title="Позвонить">
+            <button class="call-btn" id="header-call-btn" title="Позвонить" style="display:none !important;">
                 <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
             </button>
             <input type="text" id="nick-field" class="nickname-input" placeholder="Никнейм...">
@@ -1322,7 +1314,7 @@
                 <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
                 Позвонить
             </button>
-            <button class="profile-card-btn rename-btn-pf" id="profile-rename-btn">
+
                 <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75l11.02-11.02-3.75-3.75L3 17.25zm14.71-9.04c.39-.39.39-1.02 0-1.41l-2.5-2.5a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.99-1.67z"/></svg>
                 Переименовать
             </button>
