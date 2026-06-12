@@ -789,6 +789,9 @@
         .custom-input-confirm:hover { background: #3a6fbb; }
         .custom-input-cancel { width: 50px; background: rgba(231,76,60,0.1); color: var(--red); border: none; border-radius: 14px; padding: 13px; font-size: 18px; font-weight: 700; cursor: pointer; transition: background 0.15s; display: flex; align-items: center; justify-content: center; }
         .custom-input-cancel:hover { background: rgba(231,76,60,0.2); }
+        #nickname-modal-cancel-btn { width: auto; min-width: 72px; background: #f0f2f5; color: #6a6a6a; padding: 10px 14px; font-size: 13px; font-weight: 500; border-radius: 14px; transition: background 0.15s; }
+        #nickname-modal-cancel-btn:hover { background: #e3e7ec; }
+        #nickname-modal-confirm-btn { padding: 11px 16px; font-size: 14px; font-weight: 600; }
         /* NG AVATAR HOVER */
         #ng-avatar-preview:hover #ng-avatar-hint { opacity: 1 !important; }
 
@@ -920,8 +923,7 @@
             <button class="call-btn" id="header-call-btn" title="Позвонить" style="display:none !important;">
                 <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
             </button>
-            <input type="text" id="nick-field" class="nickname-input" placeholder="Никнейм..." style="display:none !important;">
-            <button class="wallpaper-btn" id="nick-edit-btn" title="Изменить никнейм">
+            <button class="wallpaper-btn" id="nickname-edit-btn" title="Изменить никнейм">
                 <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75l11.02-11.02-3.75-3.75L3 17.25zm14.71-9.04c.39-.39.39-1.02 0-1.41l-2.5-2.5a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.99-1.67z"/></svg>
             </button>
             <button class="wallpaper-btn" id="wallpaper-btn" title="Фон чата">
@@ -1200,6 +1202,23 @@
         <div class="modal-actions" style="display:flex;gap:10px;margin-top:16px;justify-content:flex-end;">
             <button id="rename-chat-confirm-btn">Сохранить</button>
             <button class="modal-btn-cancel" id="rename-chat-cancel-btn">Отмена</button>
+        </div>
+    </div>
+</div>
+
+<!-- NICKNAME EDIT MODAL -->
+<div class="custom-input-overlay" id="nickname-modal-overlay">
+    <div class="custom-input-card">
+        <div class="custom-input-card-handle"></div>
+        <div class="custom-input-card-title">Изменить никнейм</div>
+        <div class="custom-input-card-sub">Введите новый никнейм</div>
+        <div class="custom-input-field-wrap">
+            <div class="custom-input-field-icon">✏️</div>
+            <input class="custom-input-field" id="nickname-modal-input" placeholder="Никнейм...">
+        </div>
+        <div class="custom-input-actions">
+            <button class="custom-input-confirm" id="nickname-modal-confirm-btn">Подтвердить</button>
+            <button class="custom-input-cancel" id="nickname-modal-cancel-btn">Отмена</button>
         </div>
     </div>
 </div>
@@ -1634,6 +1653,7 @@
     let ringtoneCtx=null, ringtoneGain=null, ringtoneOsc=null, ringtoneTimer=null;
     // unread counters: { chatId: count }
     let unreadCounts = JSON.parse(localStorage.getItem('unreadCounts')||'{}');
+    let chatReadReceipts = {};
     const rtcConfig = { iceServers:[{urls:'stun:stun.l.google.com:19302'}] };
     const NOTES_CHAT_ID = 'id_notes';
     let notesChatName = localStorage.getItem('notesChatName') || 'Заметки';
@@ -1895,7 +1915,11 @@
     /* ── DOM ── */
     const chatBox=document.getElementById('chat-box');
     const msgField=document.getElementById('msg-field');
-    const nickField=document.getElementById('nick-field');
+    const nicknameEditBtn=document.getElementById('nickname-edit-btn');
+    const nicknameModalOverlay=document.getElementById('nickname-modal-overlay');
+    const nicknameModalInput=document.getElementById('nickname-modal-input');
+    const nicknameModalConfirmBtn=document.getElementById('nickname-modal-confirm-btn');
+    const nicknameModalCancelBtn=document.getElementById('nickname-modal-cancel-btn');
     const sendButton=document.getElementById('send-button');
     const actionPanel=document.getElementById('action-panel');
     const actionTitle=document.getElementById('action-title');
@@ -2772,12 +2796,6 @@
         // Обновить точку в сайдбаре — мгновенно
         const dot = chatsList_el.querySelector('.chat-item[data-id="'+chatId+'"] .chat-item-online-dot');
         if(dot){ if(isOnline) dot.classList.add('visible'); else dot.classList.remove('visible'); }
-
-        // Строка для отображения последнего визита
-        const ts = (data && typeof data.lastSeen==='number') ? data.lastSeen : null;
-        const timeStr = _formatLastSeenTime(ts);
-        const offlineText = timeStr ? 'был(а) в сети: '+timeStr : 'не в сети';
-
         // Обновить шапку если это активный чат
         if(activeChatId===chatId){
             if(isOnline){
@@ -2791,22 +2809,25 @@
                 isPeerOnline=false;
                 peerStatusDot.className='status-dot offline';
                 if(!peerTypingActive){
-                    chatSubtitle.textContent = offlineText;
+                    const ts = (data && typeof data.lastSeen==='number') ? data.lastSeen : null;
+                    const timeStr = _formatLastSeenTime(ts);
+                    chatSubtitle.textContent = timeStr ? 'был(а) в сети: '+timeStr : 'не в сети';
                     chatSubtitle.className='header-sub offline-status';
                 }
             }
         }
-
-        // Обновить карточку профиля если она открыта для этого чата
-        const profileCardOverlayEl = document.getElementById('profile-card-overlay');
-        if(profileCardOverlayEl && profileCardOverlayEl.classList.contains('open') && activeChatId===chatId){
+        // Обновить карточку профиля если она открыта
+        const profileCardOverlay = document.getElementById('profile-card-overlay');
+        if(profileCardOverlay && profileCardOverlay.classList.contains('open') && activeChatId === chatId && !chat.isGroup){
             const st = document.getElementById('profile-card-status');
             if(st){
                 if(isOnline){
                     st.textContent = 'в сети';
                     st.className = 'profile-card-status';
                 } else {
-                    st.textContent = offlineText;
+                    const ts = (data && typeof data.lastSeen === 'number') ? data.lastSeen : null;
+                    const timeStr = _formatLastSeenTime(ts);
+                    st.textContent = timeStr ? 'был(а) в сети: ' + timeStr : 'не в сети';
                     st.className = 'profile-card-status offline';
                 }
             }
@@ -2826,29 +2847,34 @@
             const peerId = chat.peerId;
             const chatId = chat.id;
             const r = database.ref('presence_signal/'+peerId);
-            // _applyPeerOnlineState уже обновляет и сайдбар и шапку — вызываем напрямую без лишних условий
             r.on('value', snap=>{ _applyPeerOnlineState(chatId, snap.val()); });
             _sidebarPresenceRefs[peerId] = r;
         });
     }
 
     function watchPeerStatus(peerId){
+        // Для активного чата дополнительный listener не нужен —
+        // setupSidebarPresenceWatchers уже слушает всех. Просто применяем кэш.
         if(!peerId) return;
         const chat = chatsList.find(c=>c.peerId===peerId);
-        const chatId = chat ? chat.id : null;
-        if(!chatId) return;
-        // Если sidebar watcher уже слушает — он мгновенно применит статус через _applyPeerOnlineState.
-        // Делаем дополнительный once() только если watcher ещё не подключён (новый чат).
-        if(!_sidebarPresenceRefs || !_sidebarPresenceRefs[peerId]){
-            const r = database.ref('presence_signal/'+peerId);
-            r.once('value', snap=>{ _applyPeerOnlineState(chatId, snap.val()); });
-            // Также добавляем постоянный watcher для этого пира
-            r.on('value', snap=>{ _applyPeerOnlineState(chatId, snap.val()); });
-            _sidebarPresenceRefs[peerId] = r;
+        if(!chat) return;
+        const cached = _peerOnlineCache[chat.id];
+        
+        // Всегда применяем текущее состояние в шапку при открытии чата
+        if(cached !== undefined){
+            // Кэш уже есть — применяем его сразу в шапку
+            const presenceData = { online: cached };
+            const lastSeenTs = _lastSeenCache[peerId];
+            if(lastSeenTs !== undefined) presenceData.lastSeen = lastSeenTs;
+            _applyPeerOnlineState(chat.id, presenceData);
         } else {
-            // Watcher уже есть — запрашиваем текущее значение немедленно чтобы обновить шапку
-            database.ref('presence_signal/'+peerId).once('value', snap=>{
-                _applyPeerOnlineState(chatId, snap.val());
+            // Если кэша нет — подписываемся на реальный listener
+            const r = database.ref('presence_signal/'+peerId);
+            r.on('value', snap=>{
+                if(!activeChatId) return;
+                const activeChat = chatsList.find(c=>c.id===activeChatId);
+                if(!activeChat || activeChat.peerId !== peerId) return;
+                _applyPeerOnlineState(activeChatId, snap.val());
             });
         }
     }
@@ -2899,10 +2925,33 @@
     /* ── NICKNAME ── */
     function initNickname(){
         const saved=localStorage.getItem('myNickname');
-        if(saved){myCurrentNickname=saved;nickField.value=saved;}
-        else{const n=Math.floor(1000+Math.random()*9000);myCurrentNickname='User_'+n;nickField.value=myCurrentNickname;localStorage.setItem('myNickname',myCurrentNickname);}
+        if(saved){myCurrentNickname=saved; nicknameModalInput.value=saved;}
+        else{const n=Math.floor(1000+Math.random()*9000);myCurrentNickname='User_'+n; nicknameModalInput.value=myCurrentNickname; localStorage.setItem('myNickname',myCurrentNickname);}
     }
-    nickField.addEventListener('change',()=>{ const v=nickField.value.trim(); if(!v) return; myCurrentNickname=v; localStorage.setItem('myNickname',v); if(myPresenceRef) myPresenceRef.update({name:v}); showToast('Никнейм: '+v); });
+    if(nicknameEditBtn){
+        nicknameEditBtn.addEventListener('click',()=>{
+            nicknameModalInput.value = myCurrentNickname || '';
+            nicknameModalOverlay.classList.add('open');
+            setTimeout(()=>nicknameModalInput.focus(),100);
+        });
+    }
+    if(nicknameModalConfirmBtn){
+        nicknameModalConfirmBtn.addEventListener('click',()=>{
+            const v=nicknameModalInput.value.trim();
+            if(!v) return;
+            myCurrentNickname=v;
+            localStorage.setItem('myNickname',v);
+            if(myPresenceRef) myPresenceRef.update({name:v});
+            showToast('Никнейм: '+v);
+            nicknameModalOverlay.classList.remove('open');
+        });
+    }
+    if(nicknameModalCancelBtn){
+        nicknameModalCancelBtn.addEventListener('click',()=>{ nicknameModalOverlay.classList.remove('open'); });
+    }
+    if(nicknameModalOverlay){
+        nicknameModalOverlay.addEventListener('click',e=>{ if(e.target===nicknameModalOverlay) nicknameModalOverlay.classList.remove('open'); });
+    }
  
     sidebarMyIdText.textContent=myFrameId;
     modalMyIdText.textContent=myFrameId;
@@ -3557,12 +3606,17 @@
         const rRef=database.ref('read/'+chatId+'/'+chat.peerId);
         const handler=snap=>{
             const ts=snap.val();
-            if(!ts) return;
+            if(!ts){
+                delete chatReadReceipts[chatId];
+                return;
+            }
+            chatReadReceipts[chatId]=ts;
             document.querySelectorAll('.message-row.my-row').forEach(row=>{
                 const statusEl=row.querySelector('.message-status');
                 if(statusEl){
                     statusEl.classList.remove('sent');
                     statusEl.classList.add('read');
+                    statusEl.title = 'Прочитано';
                 }
             });
         };
@@ -3778,7 +3832,8 @@
         const isVideoCircle = isVideoCircleEarly;
         // галочка прочитано/отправлено — только для своих
         const isAudioMsg = data.mediaType === 'audio';
-        const tickHTML = isMe && !isVideoCircle && !isAudioMsg ? '<span class="message-status sent" title="Отправлено"></span>' : '';
+        const readStatus = isMe && !isVideoCircle && !isAudioMsg && chatReadReceipts[activeChatId] ? ' read' : '';
+        const tickHTML = isMe && !isVideoCircle && !isAudioMsg ? '<span class="message-status'+readStatus+'" title="'+(readStatus?'Прочитано':'Отправлено')+'"></span>' : '';
         const bubbleStyle = '';
         row.innerHTML='<div class="message-bubble"'+bubbleStyle+'>'+replyHTML+forwardedHTML+(isVideoCircle?'':('<div class="author-name" data-pid="'+escapeHtml(data.frameId||'')+'" data-orig-name="'+escapeHtml(data.author)+'">'+escapeHtml(getDisplayAuthorName(data))+getAuthorTagHTML(data.frameId)+'</div>'))+mediaHTML+textPart+((isVideoCircle||isAudioMsg)?'':'<div class="message-meta-info"><span>'+data.time+editedLabel+'</span>'+tickHTML+'</div>')+'</div><div class="swipe-indicator"><svg viewBox="0 0 24 24"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg></div>';
         // reaction badge
@@ -4287,26 +4342,6 @@
             peerStatusDot.className='status-dot';
         } else {
             headerCallBtn.classList.add('visible');
-            // Immediately apply cached status so header is never empty
-            if(_peerOnlineCache[chatId] === true){
-                isPeerOnline = true;
-                peerStatusDot.className = 'status-dot online';
-                chatSubtitle.textContent = 'в сети';
-                chatSubtitle.className = 'header-sub';
-            } else {
-                isPeerOnline = false;
-                peerStatusDot.className = 'status-dot offline';
-                const _cachedPeerId = chat.peerId;
-                const _cachedTs = _cachedPeerId ? _lastSeenCache[_cachedPeerId] : null;
-                const _cachedTimeStr = _formatLastSeenTime(_cachedTs);
-                if(_peerOnlineCache[chatId] === false){
-                    chatSubtitle.textContent = _cachedTimeStr ? 'был(а) в сети: '+_cachedTimeStr : 'не в сети';
-                } else {
-                    // Never seen before — show "не в сети" as placeholder until real data arrives
-                    chatSubtitle.textContent = _cachedTimeStr ? 'был(а) в сети: '+_cachedTimeStr : 'не в сети';
-                }
-                chatSubtitle.className = 'header-sub offline-status';
-            }
         }
         peerTypingActive=false;
         const avatar=document.getElementById('chat-avatar');
@@ -6182,98 +6217,3 @@ window._setCpkColor = function(target, hex){
 
 </body>
 </html>
-
-<!-- NICKNAME MODAL -->
-<style>
-.nick-modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 900;
-    display: none; align-items: center; justify-content: center; padding: 20px;
-}
-.nick-modal-overlay.open { display: flex; }
-.nick-modal-card {
-    background: #fff; border-radius: 20px; width: 100%; max-width: 340px;
-    box-shadow: 0 12px 48px rgba(0,0,0,0.22);
-    animation: nickModalIn 0.22s cubic-bezier(0.4,0,0.2,1); overflow: hidden;
-}
-body.dark-theme .nick-modal-card { background: #1e2430; }
-@keyframes nickModalIn {
-    from { opacity: 0; transform: scale(0.92) translateY(12px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
-}
-.nick-modal-header { padding: 20px 20px 10px; display: flex; align-items: center; gap: 10px; }
-.nick-modal-icon { width: 38px; height: 38px; background: rgba(74,127,203,0.12); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.nick-modal-icon svg { width: 18px; height: 18px; fill: var(--blue); }
-.nick-modal-title { font-size: 16px; font-weight: 700; color: #1a1a1a; }
-.nick-modal-sub { font-size: 12px; color: var(--dim); margin-top: 2px; }
-body.dark-theme .nick-modal-title { color: #e8eef7; }
-.nick-modal-body { padding: 6px 20px 16px; }
-.nick-modal-input {
-    width: 100%; padding: 11px 14px; background: #f0f2f5;
-    border: 1.5px solid #e0e0e0; border-radius: 14px;
-    font-size: 15px; outline: none; color: #1a1a1a;
-    transition: border-color 0.18s, box-shadow 0.18s;
-}
-.nick-modal-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(74,127,203,0.13); }
-body.dark-theme .nick-modal-input { background: #252c38; border-color: #2f3a4a; color: #e8eef7; }
-.nick-modal-footer { padding: 0 16px 16px; display: flex; gap: 8px; }
-.nick-modal-cancel { flex: 1; padding: 11px; border: 1.5px solid #e0e0e0; background: transparent; border-radius: 14px; font-size: 14px; font-weight: 600; color: var(--dim); cursor: pointer; transition: background 0.15s; }
-.nick-modal-cancel:hover { background: #f5f5f5; }
-body.dark-theme .nick-modal-cancel { border-color: #2f3a4a; color: #6a7a8a; }
-.nick-modal-confirm { flex: 2; padding: 11px; border: none; background: var(--blue); border-radius: 14px; font-size: 14px; font-weight: 700; color: #fff; cursor: pointer; transition: background 0.15s; }
-.nick-modal-confirm:hover { background: #3a6fbb; }
-</style>
-
-<div class="nick-modal-overlay" id="nick-modal-overlay">
-    <div class="nick-modal-card">
-        <div class="nick-modal-header">
-            <div class="nick-modal-icon">
-                <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75l11.02-11.02-3.75-3.75L3 17.25zm14.71-9.04c.39-.39.39-1.02 0-1.41l-2.5-2.5a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.99-1.67z"/></svg>
-            </div>
-            <div>
-                <div class="nick-modal-title">Изменить никнейм</div>
-                <div class="nick-modal-sub">Это имя увидят собеседники</div>
-            </div>
-        </div>
-        <div class="nick-modal-body">
-            <input type="text" id="nick-modal-input" class="nick-modal-input" placeholder="Введите никнейм..." maxlength="32" autocomplete="off">
-        </div>
-        <div class="nick-modal-footer">
-            <button class="nick-modal-cancel" id="nick-modal-cancel">Отмена</button>
-            <button class="nick-modal-confirm" id="nick-modal-confirm">Подтвердить</button>
-        </div>
-    </div>
-</div>
-
-<script>
-(function() {
-    const overlay   = document.getElementById('nick-modal-overlay');
-    const input     = document.getElementById('nick-modal-input');
-    const btnCancel = document.getElementById('nick-modal-cancel');
-    const btnOk     = document.getElementById('nick-modal-confirm');
-    const editBtn   = document.getElementById('nick-edit-btn');
-    const nickField = document.getElementById('nick-field');
-
-    function openModal() {
-        input.value = nickField.value || '';
-        overlay.classList.add('open');
-        setTimeout(() => input.focus(), 80);
-    }
-    function closeModal() { overlay.classList.remove('open'); }
-    function confirmNick() {
-        const v = input.value.trim();
-        if (!v) return;
-        nickField.value = v;
-        nickField.dispatchEvent(new Event('change'));
-        closeModal();
-    }
-
-    editBtn.addEventListener('click', openModal);
-    btnCancel.addEventListener('click', closeModal);
-    btnOk.addEventListener('click', confirmNick);
-    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
-    input.addEventListener('keydown', e => {
-        if (e.key === 'Enter') confirmNick();
-        if (e.key === 'Escape') closeModal();
-    });
-})();
-</script>
