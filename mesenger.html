@@ -2772,6 +2772,12 @@
         // Обновить точку в сайдбаре — мгновенно
         const dot = chatsList_el.querySelector('.chat-item[data-id="'+chatId+'"] .chat-item-online-dot');
         if(dot){ if(isOnline) dot.classList.add('visible'); else dot.classList.remove('visible'); }
+
+        // Строка для отображения последнего визита
+        const ts = (data && typeof data.lastSeen==='number') ? data.lastSeen : null;
+        const timeStr = _formatLastSeenTime(ts);
+        const offlineText = timeStr ? 'был(а) в сети: '+timeStr : 'не в сети';
+
         // Обновить шапку если это активный чат
         if(activeChatId===chatId){
             if(isOnline){
@@ -2785,10 +2791,23 @@
                 isPeerOnline=false;
                 peerStatusDot.className='status-dot offline';
                 if(!peerTypingActive){
-                    const ts = (data && typeof data.lastSeen==='number') ? data.lastSeen : null;
-                    const timeStr = _formatLastSeenTime(ts);
-                    chatSubtitle.textContent = timeStr ? 'был(а) в сети: '+timeStr : 'не в сети';
+                    chatSubtitle.textContent = offlineText;
                     chatSubtitle.className='header-sub offline-status';
+                }
+            }
+        }
+
+        // Обновить карточку профиля если она открыта для этого чата
+        const profileCardOverlayEl = document.getElementById('profile-card-overlay');
+        if(profileCardOverlayEl && profileCardOverlayEl.classList.contains('open') && activeChatId===chatId){
+            const st = document.getElementById('profile-card-status');
+            if(st){
+                if(isOnline){
+                    st.textContent = 'в сети';
+                    st.className = 'profile-card-status';
+                } else {
+                    st.textContent = offlineText;
+                    st.className = 'profile-card-status offline';
                 }
             }
         }
