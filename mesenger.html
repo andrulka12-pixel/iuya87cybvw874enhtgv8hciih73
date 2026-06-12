@@ -1686,7 +1686,61 @@
             renderAiChat();
         }
 
-        // Show AI thinking indicator in header subtitle
+        await _callAiAndRespond(userPayload.id, [{role:'user',content:userText}]);
+    }
+
+    async function sendAiMediaMessage(payload){
+        // payload already saved & rendered — now call AI to analyze it
+        await _callAiAndRespond(payload.id, _buildMediaUserContent(payload));
+    }
+
+    function _buildMediaUserContent(payload){
+        const mt = payload.mediaType || '';
+        const data = payload.mediaData || '';
+
+        // Build content array for Anthropic vision API
+        if(mt === 'image' && data){
+            // OpenRouter vision format: image_url with base64 data URL
+            return [{role:'user', content:[
+                {type:'image_url', image_url:{url: data}},
+                {type:'text', text:'Проанализируй это изображение и подробно опиши что на нём.'}
+            ]}];
+        }
+        if((mt === 'audio' || (mt === 'audio' && payload.isVoice)) && data){
+            return [{role:'user', content:'Пользователь отправил голосовое/аудио сообщение. Скажи что ты его получил, что слышать аудио ты не можешь напрямую, но готов помочь если он опишет содержание или задаст вопрос словами. (Файл: '+(payload.mediaName||'audio')+')'}];
+        }
+        if(mt === 'videoCircle' && data){
+            return [{role:'user', content:'Пользователь отправил видео-кружок (короткое видео сообщение). Скажи что ты его получил и что анализировать видео ты не можешь напрямую, но готов помочь если он опишет что в нём.'}];
+        }
+        if(mt === 'video' && data){
+            return [{role:'user', content:'Пользователь отправил видеофайл («'+(payload.mediaName||'video')+'»). Скажи что ты его получил и что анализировать видео ты не можешь напрямую, но готов помочь если он опишет содержание.'}];
+        }
+        if(mt === 'gif'){
+            return [{role:'user', content:'Пользователь отправил GIF-анимацию. Отреагируй на это весело и спроси о чём она.'}];
+        }
+        if(mt === 'document' && data){
+            const match = data.match(/^data:([^;]+);base64,(.+)$/);
+            const mimeType = match ? match[1] : '';
+            const b64 = match ? match[2] : '';
+            const fname = payload.mediaName || 'document';
+            if((mimeType.startsWith('text/') || mimeType === 'application/json') && b64){
+                try{
+                    const decoded = atob(b64).substring(0, 4000);
+                    return [{role:'user', content:'Пользователь отправил текстовый файл «'+fname+'». Вот его содержимое:\n\n'+decoded+'\n\nКратко опиши или прокомментируй.'}];
+                }catch(e){}
+            }
+            return [{role:'user', content:'Пользователь отправил документ «'+fname+'» (тип: '+mimeType+'). Скажи что ты его получил и спроси как ты можешь помочь с ним.'}];
+        }
+        return [{role:'user', content:'Пользователь отправил медиафайл типа «'+mt+'». Прими его и отреагируй естественно.'}];
+    }
+
+    function _isVisionRequest(historyExtra){
+        // Check if the message contains an image_url content block
+        return historyExtra.some(m => Array.isArray(m.content) && m.content.some(c => c.type === 'image_url'));
+    }
+
+    async function _callAiAndRespond(skipMsgId, historyExtra){
+        // Show AI thinking indicator
         const thinkBar=document.getElementById('ai-thinking-bar');
         if(thinkBar) thinkBar.classList.add('visible');
         if(activeChatId===AI_CHAT_ID){
@@ -1695,21 +1749,35 @@
         }
 
         try {
-            // Build conversation history for API
-            const history=aiMessages.filter(m=>m.id!==userPayload.id).map(m=>({
+            // Build conversation history (text-only for context, last 20 msgs)
+            const historyMsgs = aiMessages.filter(m=>m.id!==skipMsgId).slice(-20).map(m=>({
                 role: m.isAiUser ? 'user' : 'assistant',
-                content: m.text
+                content: typeof m.text === 'string' ? (m.text || (m.mediaType ? '[медиа]' : '')) : '[медиа]'
             }));
-            history.push({role:'user',content:userText});
 
-            const response=await fetch('https://openrouter.ai/api/v1/chat/completions',{
-                method:'POST',
-                headers:{'Content-Type':'application/json','Authorization':'Bearer '+OPENROUTER_API_KEY,'HTTP-Referer':'https://chatter.app','X-Title':'Chatter AI'},
-                body:JSON.stringify({model:AI_MODEL,messages:[{role:'system',content:AI_SYSTEM_PROMPT},...history],max_tokens:1024})
+            // Call OpenRouter API
+            const messagesForApi = [
+                ...historyMsgs,
+                ...historyExtra
+            ];
+
+            const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer '+OPENROUTER_API_KEY,
+                    'HTTP-Referer': 'https://chatter.app',
+                    'X-Title': 'Chatter AI'
+                },
+                body: JSON.stringify({
+                    model: _isVisionRequest(historyExtra) ? 'openrouter/free' : AI_MODEL,
+                    max_tokens: 1024,
+                    messages: [{role:'system', content:AI_SYSTEM_PROMPT}, ...messagesForApi]
+                })
             });
-            const data=await response.json();
+            const data = await response.json();
             let aiText = '';
-            if(data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content){
+            if(data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content){
                 aiText = data.choices[0].message.content;
             } else if(data.error){
                 aiText = 'Ошибка API: '+(data.error.message||JSON.stringify(data.error));
@@ -1747,6 +1815,8 @@
                 addAiMessage(payload);
                 aiLastMsg = getLocalMessageLabel(payload); aiLastTime = payload.time; updateAiMeta();
                 renderAiChat(); renderChatsList();
+                // Now ask AI to analyze/react to the media
+                sendAiMediaMessage(payload);
             } else {
                 sendAiMessage(payload.text);
             }
@@ -2518,6 +2588,7 @@
                     voicePayload.id = 'ai_'+Date.now()+'_u'; voicePayload.isAiUser = true;
                     addAiMessage(voicePayload); aiLastMsg='Голосовое'; aiLastTime=timeStr; updateAiMeta();
                     renderAiChat(); renderChatsList();
+                    sendAiMediaMessage(voicePayload);
                 } else {
                     database.ref('chats/'+activeChatId+'/messages').push(voicePayload);
                     notifyPeer();
@@ -5374,6 +5445,7 @@ function stopVideoCircle(){
                 vcPayload.id = 'ai_'+Date.now()+'_u'; vcPayload.isAiUser = true;
                 addAiMessage(vcPayload); aiLastMsg='Видео-кружок'; aiLastTime=timeStr; updateAiMeta();
                 renderAiChat(); renderChatsList();
+                sendAiMediaMessage(vcPayload);
             } else {
                 database.ref('chats/'+activeChatId+'/messages').push(vcPayload);
                 notifyPeer();
