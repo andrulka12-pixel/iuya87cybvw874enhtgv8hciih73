@@ -87,6 +87,7 @@
             transition: transform 0.26s cubic-bezier(0.4,0,0.2,1);
         }
         body.dark-theme .my-profile-screen { background: #0f1318; }
+        /* dark theme для экранов правил/политики обрабатывается общими .my-profile-section правилами */
         .my-profile-screen.open { display: flex; }
         .my-profile-screen.slide-in { transform: translateX(0); }
         #privacy-screen, #privacy-option-screen { z-index: 360; }
@@ -161,6 +162,33 @@
         .my-profile-row-content { flex: 1; min-width: 0; }
         .my-profile-row-label { font-size: 13px; color: var(--dim); margin-bottom: 2px; }
         .my-profile-row-value { font-size: 15px; font-weight: 500; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* Многострочные значения для экранов документов */
+        #terms-screen .my-profile-row-value,
+        #privacy-policy-screen .my-profile-row-value {
+            white-space: normal !important;
+            overflow: visible !important;
+            text-overflow: unset !important;
+            font-size: 13px !important;
+            line-height: 1.45 !important;
+            color: var(--dim) !important;
+        }
+        body.dark-theme #terms-screen .my-profile-row-value,
+        body.dark-theme #privacy-policy-screen .my-profile-row-value { color: #8a9aaa !important; }
+        /* Убираем overflow:hidden у секций внутри документов чтобы контент не обрезался */
+        #terms-screen .my-profile-section,
+        #privacy-policy-screen .my-profile-section { overflow: visible; }
+        /* Строки в документах — не кликабельные, высота авто */
+        #terms-screen .my-profile-row,
+        #privacy-policy-screen .my-profile-row { align-items: flex-start; padding: 12px 16px; min-height: unset; height: auto; }
+        #terms-screen .my-profile-row-icon,
+        #privacy-policy-screen .my-profile-row-icon { flex-shrink: 0; margin-top: 2px; }
+        /* Хедер и контент скроллятся вместе как единый поток */
+        #terms-screen,
+        #privacy-policy-screen { display: block !important; overflow-y: auto !important; }
+        #terms-screen .my-profile-header,
+        #privacy-policy-screen .my-profile-header { position: static !important; }
+        #terms-screen .my-profile-body,
+        #privacy-policy-screen .my-profile-body { overflow-y: visible !important; height: auto !important; flex: none !important; }
         body.dark-theme .my-profile-row-value { color: #e8eef7; }
         .my-profile-row-arrow { opacity: 0.3; flex-shrink: 0; }
         .my-profile-row-arrow svg { width: 16px; height: 16px; fill: #666; }
@@ -1199,7 +1227,7 @@
         </div>
     </div>
     <div class="chats-panel-footer">
-        <div class="my-id-label">Your ID</div>
+        <div class="my-id-label">Your ID / And Profile</div>
         <div style="display:flex;align-items:center;gap:0;">
             <div class="my-id-value" id="sidebar-my-id" title="Click to copy" style="flex:1;">
                 <span id="sidebar-my-id-text"></span>
@@ -2110,6 +2138,27 @@
                     <div class="my-profile-row-value" id="my-profile-display-id" style="font-family:monospace;font-size:13px;color:var(--blue);">—</div>
                 </div>
             </div>
+        <div class="my-profile-section" style="margin-bottom:14px;">
+            <div class="my-profile-row" id="my-profile-terms-row">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#e74c3c,#c0392b);">
+                    <svg viewBox="0 0 24 24"><path fill="#fff" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">Документ</div>
+                    <div class="my-profile-row-value">Правила Использования</div>
+                </div>
+                <div class="my-profile-row-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></div>
+            </div>
+            <div class="my-profile-row" id="my-profile-privacy-policy-row">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#6c3483,#8e44ad);">
+                    <svg viewBox="0 0 24 24"><path fill="#fff" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">Документ</div>
+                    <div class="my-profile-row-value">Политика Конфиденциальности</div>
+                </div>
+                <div class="my-profile-row-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></div>
+            </div>
         </div>
     </div>
 </div>
@@ -2244,6 +2293,227 @@
                     <div class="my-profile-row-value">Видно всем пользователям</div>
                 </div>
                 <button class="cc-toggle-switch" id="privacy-toggle-everyone"><div class="cc-toggle-knob"></div></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TERMS OF USE SCREEN -->
+<div class="my-profile-screen" id="terms-screen" style="z-index:360;">
+    <div class="my-profile-header">
+        <button class="my-profile-back-btn" id="terms-back-btn">
+            <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+        <span class="my-profile-header-title">Правила Использования</span>
+    </div>
+    <div class="my-profile-body">
+        <!-- Предупреждение -->
+        <div class="my-profile-section" style="margin-top:14px;border-left:3px solid #e74c3c;">
+            <div class="my-profile-row" style="cursor:default;">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#e74c3c,#c0392b);">
+                    <svg viewBox="0 0 24 24"><path fill="#fff" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">Важно</div>
+                    <div class="my-profile-row-value" style="color:#e74c3c;font-size:13px;white-space:normal;line-height:1.45;">Нарушение любого правила — немедленное удаление с платформы без предупреждения.</div>
+                </div>
+            </div>
+        </div>
+        <!-- Правила -->
+        <div class="my-profile-section-label">Правила поведения</div>
+        <div class="my-profile-section">
+            <div class="my-profile-row" style="cursor:default;">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#e67e22,#d35400);">
+                    <svg viewBox="0 0 24 24"><path fill="#fff" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">1. Уважение к пользователям</div>
+                    <div class="my-profile-row-value" style="color:inherit;">Запрещено оскорблять, угрожать, преследовать или унижать других участников платформы.</div>
+                </div>
+            </div>
+            <div class="my-profile-row" style="cursor:default;">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#c0392b,#962d22);">
+                    <svg viewBox="0 0 24 24"><path fill="#fff" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">2. Запрет незаконного контента</div>
+                    <div class="my-profile-row-value" style="color:inherit;">Запрещены призывы к насилию, дискриминация, контент для взрослых и материалы, нарушающие законодательство.</div>
+                </div>
+            </div>
+            <div class="my-profile-row" style="cursor:default;">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#f39c12,#d68910);">
+                    <svg viewBox="0 0 24 24"><path fill="#fff" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">3. Запрет спама</div>
+                    <div class="my-profile-row-value" style="color:inherit;">Массовая рассылка нежелательных сообщений, реклама без согласия и флуд — запрещены.</div>
+                </div>
+            </div>
+            <div class="my-profile-row" style="cursor:default;">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#1abc9c,#16a085);">
+                    <svg viewBox="0 0 24 24"><path fill="#fff" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">4. Защита данных</div>
+                    <div class="my-profile-row-value" style="color:inherit;">Запрещено публиковать чужие персональные данные (телефоны, адреса, фото) без согласия владельца.</div>
+                </div>
+            </div>
+            <div class="my-profile-row" style="cursor:default;">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#3498db,#2980b9);">
+                    <svg viewBox="0 0 24 24"><path fill="#fff" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">5. Честность</div>
+                    <div class="my-profile-row-value" style="color:inherit;">Запрещается выдавать себя за других, создавать фейковые аккаунты и вводить пользователей в заблуждение.</div>
+                </div>
+            </div>
+            <div class="my-profile-row" style="cursor:default;">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#8e44ad,#6c3483);">
+                    <svg viewBox="0 0 24 24"><path fill="#fff" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">6. Безопасность платформы</div>
+                    <div class="my-profile-row-value" style="color:inherit;">Запрещены попытки взлома, обхода ограничений и использование автоматизированных ботов без разрешения.</div>
+                </div>
+            </div>
+            <div class="my-profile-row" style="cursor:default;">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#27ae60,#1e8449);">
+                    <svg viewBox="0 0 24 24"><path fill="#fff" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">7. Возрастное ограничение</div>
+                    <div class="my-profile-row-value" style="color:inherit;">Chatter! предназначен для пользователей старше 13 лет. Администрация вправе удалить аккаунт при нарушении.</div>
+                </div>
+            </div>
+        </div>
+        <!-- Примечание -->
+        <div class="my-profile-section-label">Примечание</div>
+        <div class="my-profile-section" style="margin-bottom:20px;">
+            <div class="my-profile-row" style="cursor:default;">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#7f8c8d,#636e72);">
+                    <svg viewBox="0 0 24 24"><path fill="#fff" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 7V3.5L18.5 9H13z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">Актуальность</div>
+                    <div class="my-profile-row-value" style="color:inherit;">Используя Chatter!, вы соглашаетесь с этими правилами. Платформа вправе изменять их в любое время. Продолжение использования = согласие с новой редакцией.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PRIVACY POLICY SCREEN -->
+<div class="my-profile-screen" id="privacy-policy-screen" style="z-index:360;">
+    <div class="my-profile-header">
+        <button class="my-profile-back-btn" id="privacy-policy-back-btn">
+            <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+        <span class="my-profile-header-title">Политика Конфиденциальности</span>
+    </div>
+    <div class="my-profile-body">
+        <!-- Вводная -->
+        <div class="my-profile-section" style="margin-top:14px;">
+            <div class="my-profile-row" style="cursor:default;">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#6c3483,#8e44ad);">
+                    <svg viewBox="0 0 24 24"><path fill="#fff" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">🔒 Ваша приватность</div>
+                    <div class="my-profile-row-value" style="color:inherit;">Chatter! ценит вашу конфиденциальность. Ниже описано, какие данные мы собираем и как их используем.</div>
+                </div>
+            </div>
+        </div>
+        <!-- Какие данные храним -->
+        <div class="my-profile-section-label">Какие данные мы храним</div>
+        <div class="my-profile-section">
+            <div class="my-profile-row" style="cursor:default;">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#2980b9,#1a5276);">
+                    <svg viewBox="0 0 24 24"><path fill="#fff" d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">1. Идентификатор (ID)</div>
+                    <div class="my-profile-row-value" style="color:inherit;">Генерируется автоматически при первом входе, хранится локально в браузере. Используется для идентификации аккаунта.</div>
+                </div>
+            </div>
+            <div class="my-profile-row" style="cursor:default;">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#27ae60,#1e8449);">
+                    <svg viewBox="0 0 24 24"><path fill="#fff" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">2. Никнейм и имя профиля</div>
+                    <div class="my-profile-row-value" style="color:inherit;">Отображаются другим пользователям в переписках и профиле. Вы можете изменить их в любое время.</div>
+                </div>
+            </div>
+            <div class="my-profile-row" style="cursor:default;">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#e67e22,#ca6f1e);">
+                    <svg viewBox="0 0 24 24"><path fill="#fff" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">3. Аватар и «О себе»</div>
+                    <div class="my-profile-row-value" style="color:inherit;">Публично доступны участникам платформы, если вы их установили. Вы можете изменить или удалить их в любое время.</div>
+                </div>
+            </div>
+            <div class="my-profile-row" style="cursor:default;">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#4a7fcb,#2471a3);">
+                    <svg viewBox="0 0 24 24"><path fill="#fff" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">4. Сообщения</div>
+                    <div class="my-profile-row-value" style="color:inherit;">Хранятся в Firebase и доступны участникам переписки. Мы не читаем и не анализируем личные сообщения.</div>
+                </div>
+            </div>
+            <div class="my-profile-row" style="cursor:default;">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#2ecc71,#27ae60);">
+                    <svg viewBox="0 0 24 24"><path fill="#fff" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">5. Статус онлайн</div>
+                    <div class="my-profile-row-value" style="color:inherit;">Ваш статус присутствия виден другим пользователям при стандартных настройках конфиденциальности.</div>
+                </div>
+            </div>
+        </div>
+        <!-- Ваши права -->
+        <div class="my-profile-section-label">Ваши права</div>
+        <div class="my-profile-section">
+            <div class="my-profile-row" style="cursor:default;">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#3498db,#1a5276);">
+                    <svg viewBox="0 0 24 24"><path fill="#fff" d="M3 17.25V21h3.75l11.02-11.02-3.75-3.75L3 17.25zm14.71-9.04c.39-.39.39-1.02 0-1.41l-2.5-2.5a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.99-1.67z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">Редактирование профиля</div>
+                    <div class="my-profile-row-value" style="color:inherit;">Вы можете изменить никнейм, имя, «О себе» и аватар в настройках профиля в любое время.</div>
+                </div>
+            </div>
+            <div class="my-profile-row" style="cursor:default;">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#e74c3c,#922b21);">
+                    <svg viewBox="0 0 24 24"><path fill="#fff" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">Удаление аккаунта</div>
+                    <div class="my-profile-row-value" style="color:inherit;">Вы можете удалить свой аккаунт — все ваши данные будут очищены с платформы.</div>
+                </div>
+            </div>
+            <div class="my-profile-row" style="cursor:default;">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#8e44ad,#6c3483);">
+                    <svg viewBox="0 0 24 24"><path fill="#fff" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">Настройки конфиденциальности</div>
+                    <div class="my-profile-row-value" style="color:inherit;">Ограничьте видимость своего статуса, имени, никнейма, «О себе» и аватара через раздел «Конфиденциальность».</div>
+                </div>
+            </div>
+        </div>
+        <!-- Нарушения -->
+        <div class="my-profile-section-label">Нарушения</div>
+        <div class="my-profile-section" style="border-left:3px solid #e74c3c;margin-bottom:20px;">
+            <div class="my-profile-row" style="cursor:default;">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#e74c3c,#c0392b);">
+                    <svg viewBox="0 0 24 24"><path fill="#fff" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label" style="color:#e74c3c;">Распространение чужих данных</div>
+                    <div class="my-profile-row-value" style="color:inherit;">Публикация персональных данных других пользователей без согласия является грубым нарушением и <b style="color:#e74c3c;">влечёт удаление аккаунта</b>.</div>
+                </div>
             </div>
         </div>
     </div>
@@ -4395,7 +4665,8 @@
     const myProfileBackBtn = document.getElementById('my-profile-back-btn');
 
     function openMyProfileScreen(){
-        updateMyProfileUI();
+        // Always refresh data before showing screen
+        initMyProfileUI();
         if(myProfileScreen){
             myProfileScreen.classList.add('open');
             requestAnimationFrame(()=>myProfileScreen.classList.add('slide-in'));
@@ -4510,6 +4781,44 @@
         privacyOptionBackBtn.addEventListener('click', ()=>{
             privacyOptionScreen.classList.remove('slide-in');
             setTimeout(()=>privacyOptionScreen.classList.remove('open'), 260);
+        });
+    }
+
+    /* ── TERMS OF USE ── */
+    const termsScreen = document.getElementById('terms-screen');
+    const termsBackBtn = document.getElementById('terms-back-btn');
+    const myProfileTermsRow = document.getElementById('my-profile-terms-row');
+    if(myProfileTermsRow){
+        myProfileTermsRow.addEventListener('click', ()=>{
+            if(termsScreen){
+                termsScreen.classList.add('open');
+                requestAnimationFrame(()=>termsScreen.classList.add('slide-in'));
+            }
+        });
+    }
+    if(termsBackBtn){
+        termsBackBtn.addEventListener('click', ()=>{
+            termsScreen.classList.remove('slide-in');
+            setTimeout(()=>termsScreen.classList.remove('open'), 260);
+        });
+    }
+
+    /* ── PRIVACY POLICY ── */
+    const privacyPolicyScreen = document.getElementById('privacy-policy-screen');
+    const privacyPolicyBackBtn = document.getElementById('privacy-policy-back-btn');
+    const myProfilePrivacyPolicyRow = document.getElementById('my-profile-privacy-policy-row');
+    if(myProfilePrivacyPolicyRow){
+        myProfilePrivacyPolicyRow.addEventListener('click', ()=>{
+            if(privacyPolicyScreen){
+                privacyPolicyScreen.classList.add('open');
+                requestAnimationFrame(()=>privacyPolicyScreen.classList.add('slide-in'));
+            }
+        });
+    }
+    if(privacyPolicyBackBtn){
+        privacyPolicyBackBtn.addEventListener('click', ()=>{
+            privacyPolicyScreen.classList.remove('slide-in');
+            setTimeout(()=>privacyPolicyScreen.classList.remove('open'), 260);
         });
     }
 
@@ -4821,7 +5130,7 @@
             database.ref('presence_signal/'+chat.peerId+'/meta').on('value', snap=>{
                 database.ref('presence_signal/'+chat.peerId+'/meta').off('value');
                 const meta = snap.val();
-                if(meta && meta.avatar && !chatAvatars[activeChatId] && cpAvatarBig){
+                if(meta && meta.avatar && cpAvatarBig){
                     const existImg2 = cpAvatarBig.querySelector('img');
                     if(existImg2) existImg2.remove();
                     const img = document.createElement('img');
@@ -4879,44 +5188,39 @@
         database.ref('presence_signal/'+peerId+'/meta').on('value', snap=>{
             const meta = snap.val();
             if(!meta) return;
-            // Update avatar in chat list if present and not overridden
-            if(meta.avatar && !chatAvatars[chatId]){
-                chatAvatars[chatId] = meta.avatar;
+            // Update avatar — always apply latest from Firebase (handles avatar changes & removals)
+            const newAvatar = meta.avatar || null;
+            const avatarChanged = newAvatar !== chatAvatars[chatId];
+            if(avatarChanged){
+                if(newAvatar){
+                    chatAvatars[chatId] = newAvatar;
+                } else {
+                    delete chatAvatars[chatId];
+                }
+                saveChatAvatars();
+                // Re-render sidebar item
+                renderChatsList();
                 // Live-update profile card if currently open for this chat
                 if(profileCardOverlay.classList.contains('open') && activeChatId === chatId){
                     const cardAvatar = document.getElementById('profile-card-avatar');
                     if(cardAvatar){
-                        const initSpan = cardAvatar.querySelector('span');
-                        if(initSpan) initSpan.style.display='none';
-                        let img = cardAvatar.querySelector('img.avatar-img');
-                        if(!img){ img=document.createElement('img'); img.className='avatar-img'; cardAvatar.insertBefore(img, cardAvatar.firstChild); }
-                        img.src = meta.avatar;
-                        cardAvatar.style.background = 'transparent';
+                        if(newAvatar){
+                            const initSpan = cardAvatar.querySelector('span');
+                            if(initSpan) initSpan.style.display='none';
+                            let img = cardAvatar.querySelector('img.avatar-img');
+                            if(!img){ img=document.createElement('img'); img.className='avatar-img'; cardAvatar.insertBefore(img, cardAvatar.firstChild); }
+                            img.src = newAvatar;
+                            cardAvatar.style.background = 'transparent';
+                        } else {
+                            const img = cardAvatar.querySelector('img.avatar-img');
+                            if(img) img.remove();
+                            cardAvatar.style.background = getAvatarBackground(chatsList.find(c=>c.id===chatId));
+                        }
                     }
                 }
                 // Show in header if active
                 if(activeChatId === chatId){
-                    const headerAvatar = document.getElementById('chat-avatar');
-                    if(headerAvatar && !chatAvatars[chatId]){
-                        headerAvatar.innerHTML = '';
-                        const img = document.createElement('img');
-                        img.src = meta.avatar;
-                        img.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:50%;';
-                        headerAvatar.appendChild(img);
-                    }
-                }
-                // Update sidebar
-                const dot = chatsList_el.querySelector('.chat-item[data-id="'+chatId+'"] .chat-item-avatar');
-                if(dot){
-                    dot.style.background = 'transparent';
-                    const existImg = dot.querySelector('img');
-                    if(!existImg){
-                        const img2 = document.createElement('img');
-                        img2.src = meta.avatar;
-                        img2.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%;position:absolute;inset:0;';
-                        dot.style.position='relative';
-                        dot.insertBefore(img2, dot.firstChild);
-                    }
+                    applyAvatarToHeader(chatId);
                 }
             }
             // Update profile card cover gradient
@@ -4964,8 +5268,14 @@
 
     /* ── INIT MY PROFILE UI ── */
     function initMyProfileUI(){
-        // Load display name
+        // Always reload fresh data from localStorage
         myDisplayName = localStorage.getItem('myDisplayName') || '';
+        myCurrentNickname = localStorage.getItem('myNickname') || myCurrentNickname || '';
+        myBio = localStorage.getItem('myBio') || '';
+        myAvatarData = localStorage.getItem('myAvatarData') || '';
+        myStatusEmoji = localStorage.getItem('myStatusEmoji') || '';
+        myStatusText = localStorage.getItem('myStatusText') || '';
+        myVerified = localStorage.getItem('myVerified') === '1';
         updateMyProfileUI();
         // Publish presence meta
         publishMyPresenceAvatar();
