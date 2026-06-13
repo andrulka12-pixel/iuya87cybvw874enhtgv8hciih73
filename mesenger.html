@@ -24,10 +24,11 @@
         .chats-add-btn { width: 32px; height: 32px; background: var(--blue); border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .chats-add-btn svg { fill: #fff; width: 18px; height: 18px; }
         .chats-list { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
-        .chat-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; cursor: pointer; transition: background 0.12s; position: relative; border-bottom: 1px solid #e8e8e8; }
+        .chat-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; cursor: pointer; transition: background 0.12s; position: relative; border-bottom: none; }
+        .chat-item.group-item { border-bottom: 1px solid #e8e8e8; }
         .chat-item:hover, .chat-item.active { background: #d0e6ff; }
         .chat-item-avatar { width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: #fff; position: relative; }
-        .chat-item-online-dot { position: absolute; bottom: 1px; right: 1px; width: 11px; height: 11px; border-radius: 50%; background: #008000; border: 2px solid #fff; display: none; }
+        .chat-item-online-dot { position: absolute; bottom: -0.6px; right: -0.6px; width: 14.2px; height: 14.2px; border-radius: 50%; background: #2ecc40; border: 2px solid #fff; display: none; }
         .chat-item-online-dot.visible { display: block; }
         .chat-item-info { flex: 1; overflow: hidden; min-width: 0; }
         .chat-item-name { font-size: 15px; font-weight: 600; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -84,9 +85,9 @@
         .menu-btn { width: 36px; height: 36px; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; border-radius: 8px; padding: 6px; }
         .menu-btn span { display: block; width: 20px; height: 2px; background: #8a9aaa; border-radius: 2px; }
         .avatar-container { position: relative; width: 38px; height: 38px; cursor: pointer; }
-        .avatar { width: 100%; height: 100%; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #fff; }
+        .avatar { width: 100%; height: 100%; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #fff; overflow: hidden; }
         .status-dot { position: absolute; bottom: 0; right: 0; width: 11px; height: 11px; border-radius: 50%; border: 2px solid var(--header); display: none; }
-        .status-dot.online { display: block; background: #008000; }
+        .status-dot.online { display: block; background: #2ecc40; }
         .status-dot.offline { display: none; }
         .meta-text { display: flex; flex-direction: column; line-height: 1.2; }
         .header-title { font-size: 15px; font-weight: 600; color: #1a1a1a; }
@@ -497,6 +498,12 @@
  
         /* INPUT AREA */
         .input-area { padding: 8px 10px; padding-bottom: max(8px, env(safe-area-inset-bottom)); background: var(--input-bg); border-top: 1px solid var(--border); display: flex; align-items: flex-end; gap: 6px; flex-shrink: 0; position: relative; }
+        .input-area-deleted { display: none; padding: 8px 10px; padding-bottom: max(8px, env(safe-area-inset-bottom)); background: var(--input-bg); border-top: 1px solid var(--border); align-items: center; gap: 8px; flex-shrink: 0; }
+        .input-area-deleted.visible { display: flex; }
+        .deleted-account-bar { flex: 1; background: #fff; border: 1.5px solid #e0e0e0; border-radius: 22px; padding: 11px 16px; font-size: 13px; color: #8a9aaa; line-height: 1.4; }
+        body.dark-theme .deleted-account-bar { background: #161b21; border-color: #2f3642; color: #6a7686; }
+        .deleted-account-delete-btn { flex-shrink: 0; background: #e74c3c; color: #fff; border: none; border-radius: 22px; padding: 11px 16px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+        .ghost-avatar-icon { width: 60%; height: 60%; opacity: 0.85; }
         .input-side-btn { width: 36px; height: 36px; flex-shrink: 0; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; position: relative; transition: background 0.15s; }
         .input-side-btn:hover { background: rgba(0,0,0,0.06); }
         .input-side-btn svg { width: 22px; height: 22px; fill: var(--dim); }
@@ -1023,6 +1030,10 @@
             <svg id="btn-send-icon" viewBox="0 0 24 24" fill="#fff" style="display:none"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
         </button>
     </div>
+    <div class="input-area-deleted" id="input-area-deleted">
+        <div class="deleted-account-bar">Этот аккаунт был удалён. Вы не можете написать этому пользователю больше.</div>
+        <button class="deleted-account-delete-btn" id="deleted-account-delete-chat-btn">Удалить чат</button>
+    </div>
 </div>
 
 <!-- VIDEO CIRCLE PREVIEW -->
@@ -1084,6 +1095,17 @@
         <input type="text" id="connect-peer-id-input" placeholder="ID собеседника...">
         <button id="connect-id-confirm-btn">Подключиться</button>
         <button class="modal-btn-cancel" id="connect-id-cancel-btn">Отмена</button>
+        <button id="delete-account-open-btn" style="width:100%;margin-top:10px;background:#e74c3c;color:#fff;border:none;border-radius:12px;padding:12px 0;font-size:14px;font-weight:700;cursor:pointer;">Удалить аккаунт</button>
+    </div>
+</div>
+
+<!-- DELETE ACCOUNT CONFIRM MODAL -->
+<div class="modal-overlay" id="delete-account-modal">
+    <div class="modal-card">
+        <h3>Удалить аккаунт?</h3>
+        <p style="font-size:14px;color:#8a9aaa;line-height:1.5;">Это действие <b style="color:#e74c3c;">нельзя отменить</b>. Все ваши переписки и история чатов будут удалены безвозвратно. Для остальных пользователей ваш аккаунт станет отображаться как «Удалённый аккаунт», статус «был(а) в сети давно», и Пользователи больше не смогут вам написать. ВАЖНО: Мы (Chatter!) Не несём ответственности за Ваши чаты, группы, переписки. И Т.д... Удаление аккаунта - это Ваше решение. За которое никто, кроме Вас не несёт ответственности!</p>
+        <button id="delete-account-confirm-btn" class="modal-btn-danger">Да, удалить аккаунт</button>
+        <button class="modal-btn-cancel" id="delete-account-cancel-btn">Отмена</button>
     </div>
 </div>
  
@@ -1648,6 +1670,7 @@
     let myCurrentNickname="", replyMessageId=null, editMessageId=null, selectedMsgData=null;
     let activeChatId=null, activeListeners=[], myTypingTimer=null, activePinnedData=null;
     let peerStatusRef=null, myPresenceRef=null, deleteChatTarget=null;
+    let _deletedPeersCache = {}; let _deletedPeerUnsubs = {};
     let chatsList=JSON.parse(localStorage.getItem('chatsList')||'[]');
     let localStream=null, peerConnection=null, callRef=null, isPeerOnline=false;
     let ringtoneCtx=null, ringtoneGain=null, ringtoneOsc=null, ringtoneTimer=null;
@@ -1960,6 +1983,11 @@
     const deleteChatModal=document.getElementById('delete-chat-modal');
     const deleteChatName=document.getElementById('delete-chat-name');
     const deleteChatConfirmBtn=document.getElementById('delete-chat-confirm-btn');
+    const deleteAccountOpenBtn=document.getElementById('delete-account-open-btn');
+    const deleteAccountModal=document.getElementById('delete-account-modal');
+    const deleteAccountConfirmBtn=document.getElementById('delete-account-confirm-btn');
+    const deleteAccountCancelBtn=document.getElementById('delete-account-cancel-btn');
+    const deletedAccountDeleteChatBtn=document.getElementById('deleted-account-delete-chat-btn');
     const deleteChatCancelBtn=document.getElementById('delete-chat-cancel-btn');
     const headerCallBtn=document.getElementById('header-call-btn');
     const callOverlay=document.getElementById('call-overlay');
@@ -2767,7 +2795,49 @@
         window._refreshPresenceName = () => set(presenceRef, { online: true, lastSeen: serverTimestamp(), name: myCurrentNickname||'User' });
     }
  
-    /* ── PEER STATUS ── */
+    /* ── DELETED ACCOUNTS ── */
+    const GHOST_AVATAR_SVG = '<svg viewBox="0 0 100 100" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block;border-radius:50%;overflow:hidden;"><rect width="100" height="100" fill="#a8a8a8"/><path d="M50 16c-17 0-29 12.5-29 29v37c0 2.4 2.6 3.8 4.7 2.5l7-4.4c1.6-1 3.7-0.9 5.2 0.3l3.6 2.9c1.7 1.4 4.1 1.4 5.8 0l3.6-2.9c1.5-1.2 3.6-1.3 5.2-0.3l3.6 2.3c1.6 1 3.7 0.9 5.2-0.2l3.4-2.5c1.6-1.2 3.8-1.1 5.3 0.2l6.1 5.4c2 1.8 5.3 0.4 5.3-2.3V45c0-16.5-12-29-29-29z" fill="#f5f5f5"/><circle cx="39" cy="46" r="6.5" fill="#a8a8a8"/><circle cx="61" cy="46" r="6.5" fill="#a8a8a8"/></svg>';
+    const DELETED_AVATAR_BG = 'linear-gradient(135deg,#aab2bd 0%,#8a949e 100%)';
+
+    function applyDeletedChatUI(isDeleted, chat){
+        const inputArea=document.getElementById('input-area');
+        const inputAreaDeleted=document.getElementById('input-area-deleted');
+        if(isDeleted){
+            if(inputArea) inputArea.style.display='none';
+            if(inputAreaDeleted) inputAreaDeleted.classList.add('visible');
+            chatTitle.textContent='Удалённый аккаунт';
+            chatSubtitle.textContent='был(а) в сети давно'; chatSubtitle.className='header-sub offline-status';
+            peerStatusDot.className='status-dot';
+            const avatar=document.getElementById('chat-avatar');
+            avatar.innerHTML=GHOST_AVATAR_SVG;
+            avatar.style.background=DELETED_AVATAR_BG;
+            const dot = chatsList_el.querySelector('.chat-item[data-id="'+chat.id+'"] .chat-item-online-dot');
+            if(dot) dot.classList.remove('visible');
+        } else {
+            if(inputArea) inputArea.style.display='flex';
+            if(inputAreaDeleted) inputAreaDeleted.classList.remove('visible');
+        }
+    }
+
+    function watchPeerDeleted(peerId){
+        if(!peerId || _deletedPeerUnsubs[peerId]) return;
+        const r = database.ref('deleted_accounts/'+peerId);
+        const handler = snap=>{
+            const data = snap.val();
+            const isDeleted = !!(data && data.deleted);
+            _deletedPeersCache[peerId] = isDeleted;
+            chatsList.filter(c=>!c.isGroup && c.peerId===peerId).forEach(c=>{
+                c._peerDeleted = isDeleted;
+                if(activeChatId===c.id) applyDeletedChatUI(isDeleted, c);
+            });
+            saveChatsList();
+            renderChatsList();
+        };
+        r.on('value', handler);
+        _deletedPeerUnsubs[peerId]=r;
+    }
+
+
     let peerTypingActive=false;
     // Global sidebar presence watchers: { peerId: ref }
     let _sidebarPresenceRefs = {};
@@ -2786,10 +2856,11 @@
     }
 
     function _applyPeerOnlineState(chatId, data){
+        const chat = chatsList.find(c=>c.id===chatId);
+        if(chat && chat.peerId && _deletedPeersCache[chat.peerId]) return;
         const isOnline = !!(data && data.online === true);
         _peerOnlineCache[chatId] = isOnline;
         // Кэш lastSeen по peerId (только числовой timestamp)
-        const chat = chatsList.find(c=>c.id===chatId);
         if(chat && chat.peerId && data && typeof data.lastSeen === 'number'){
             _lastSeenCache[chat.peerId] = data.lastSeen;
         }
@@ -2849,6 +2920,7 @@
             const r = database.ref('presence_signal/'+peerId);
             r.on('value', snap=>{ _applyPeerOnlineState(chatId, snap.val()); });
             _sidebarPresenceRefs[peerId] = r;
+            watchPeerDeleted(peerId);
         });
     }
 
@@ -3040,15 +3112,16 @@
     function appendChatItem(chat){
         const cnt=unreadCounts[chat.id]||0;
         const item=document.createElement('div');
-        item.className='chat-item'+(chat.id===activeChatId?' active':'');
+        item.className='chat-item'+(chat.isGroup?' group-item':'')+(chat.id===activeChatId?' active':'');
         item.dataset.id=chat.id;
-        const avatarBg = chatAvatars[chat.id] ? 'transparent' : getAvatarBackground(chat);
-        const avatarContent = chatAvatars[chat.id]
+        const isPeerDeleted = !chat.isGroup && chat.peerId && _deletedPeersCache[chat.peerId];
+        const avatarBg = isPeerDeleted ? DELETED_AVATAR_BG : (chatAvatars[chat.id] ? 'transparent' : getAvatarBackground(chat));
+        const avatarContent = isPeerDeleted ? GHOST_AVATAR_SVG : (chatAvatars[chat.id]
             ? '<img src="'+chatAvatars[chat.id]+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'
             : (chat.isGroup
                 ? '<svg viewBox="0 0 24 24" width="22" height="22" fill="#fff"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>'
-                : getInitial(chat.name));
-        const displayName = (chat.isGroup && localGroupNames[chat.id]) ? localGroupNames[chat.id] : chat.name;
+                : getInitial(chat.name)));
+        const displayName = isPeerDeleted ? 'Удалённый аккаунт' : ((chat.isGroup && localGroupNames[chat.id]) ? localGroupNames[chat.id] : chat.name);
         item.innerHTML=
             '<div class="chat-item-avatar" style="background:'+avatarBg+'">'+avatarContent+(chat.isGroup?'':'<div class="chat-item-online-dot"></div>')+'</div>'+ 
             '<div class="chat-item-info"><div class="chat-item-name">'+escapeHtml(displayName)+'</div><div class="chat-item-preview">'+escapeHtml(chat.lastMsg||'Нет сообщений')+'</div></div>'+ 
@@ -3061,7 +3134,7 @@
         item.querySelector('.chat-item-del').addEventListener('click',e=>{ e.stopPropagation(); deleteChatTarget={id:chat.id,name:chat.name}; deleteChatName.textContent=chat.name; deleteChatModal.style.display='flex'; });
         chatsList_el.appendChild(item);
         // Restore online dot from cache
-        if(!chat.isGroup && _peerOnlineCache[chat.id]){
+        if(!chat.isGroup && !isPeerDeleted && _peerOnlineCache[chat.id]){
             const dot2 = item.querySelector('.chat-item-online-dot');
             if(dot2) dot2.classList.add('visible');
         }
@@ -3099,6 +3172,38 @@
         renderChatsList(); deleteChatModal.style.display='none'; deleteChatTarget=null; showToast('Переписка «'+name+'» удалена');
     });
     deleteChatCancelBtn.addEventListener('click',()=>{deleteChatModal.style.display='none';deleteChatTarget=null;});
+
+    /* ── DELETE CHAT FROM DELETED-ACCOUNT BAR ── */
+    if(deletedAccountDeleteChatBtn){
+        deletedAccountDeleteChatBtn.addEventListener('click',()=>{
+            if(!activeChatId) return;
+            const chat=getChatById(activeChatId); if(!chat) return;
+            deleteChatTarget={id:chat.id,name:chat.name};
+            deleteChatName.textContent=chat.name;
+            deleteChatModal.style.display='flex';
+        });
+    }
+
+    /* ── DELETE ACCOUNT ── */
+    if(deleteAccountOpenBtn){
+        deleteAccountOpenBtn.addEventListener('click',()=>{
+            connectIdModal.style.display='none';
+            deleteAccountModal.style.display='flex';
+        });
+    }
+    if(deleteAccountCancelBtn){
+        deleteAccountCancelBtn.addEventListener('click',()=>{ deleteAccountModal.style.display='none'; });
+    }
+    if(deleteAccountConfirmBtn){
+        deleteAccountConfirmBtn.addEventListener('click',()=>{
+            database.ref('deleted_accounts/'+myFrameId).set({deleted:true, name: myCurrentNickname||'User', deletedAt: serverTimestamp()});
+            database.ref('presence_signal/'+myFrameId).remove();
+            deleteAccountModal.style.display='none';
+            showToast('Аккаунт удалён');
+            localStorage.clear();
+            setTimeout(()=>location.reload(), 800);
+        });
+    }
  
     /* ── UNSUBSCRIBE ── */
     function unsubscribeActiveChat(){ activeListeners.forEach(({ref,event,handler})=>ref.off(event,handler)); activeListeners=[]; setMyTyping(false); }
@@ -3170,6 +3275,16 @@
         // Show/hide call button in profile card
         const profileCallBtn = document.getElementById('profile-call-btn');
         if(profileCallBtn) profileCallBtn.style.display = isGroup ? 'none' : '';
+
+        // Deleted account overrides
+        if(!isGroup && chat._peerDeleted){
+            const cardAvatar=document.getElementById('profile-card-avatar');
+            cardAvatar.innerHTML=GHOST_AVATAR_SVG;
+            cardAvatar.style.background=DELETED_AVATAR_BG;
+            document.getElementById('profile-card-name').textContent='Удалённый аккаунт';
+            st.textContent='был(а) в сети давно'; st.className='profile-card-status offline';
+            if(profileCallBtn) profileCallBtn.style.display='none';
+        }
 
         // Show/hide rename button — only admin can rename group
         const amIAdminOfThisGroup = isGroup && (chat.adminId === myFrameId);
@@ -4306,6 +4421,7 @@
             chatSubtitle.className='header-sub offline-status'; chatSubtitle.textContent='';
             const aiDisclaimer2=document.getElementById('ai-disclaimer');
             if(aiDisclaimer2) aiDisclaimer2.classList.remove('visible');
+            applyDeletedChatUI(false, chat);
             renderNotesChat();
             renderChatsList();
             return;
@@ -4323,6 +4439,7 @@
             chatSubtitle.className='header-sub offline-status'; chatSubtitle.textContent='';
             const aiDisclaimer=document.getElementById('ai-disclaimer');
             if(aiDisclaimer) aiDisclaimer.classList.add('visible');
+            applyDeletedChatUI(false, chat);
             renderAiChat();
             renderChatsList();
             return;
@@ -4345,6 +4462,14 @@
         }
         peerTypingActive=false;
         const avatar=document.getElementById('chat-avatar');
+        if(!chat.isGroup && chat.peerId){
+            chat._peerDeleted = chat._peerDeleted || !!_deletedPeersCache[chat.peerId];
+            _deletedPeersCache[chat.peerId] = chat._peerDeleted;
+            watchPeerDeleted(chat.peerId);
+            applyDeletedChatUI(chat._peerDeleted, chat);
+        } else {
+            applyDeletedChatUI(false, chat);
+        }
         activePinnedData=null;
         const pinnedRef = database.ref('chats/'+chatId+'/pinned');
         const pinnedValueHandler = snapshot => {
@@ -4362,6 +4487,7 @@
         pinnedRef.on('value', pinnedValueHandler);
         activeListeners.push({ref:pinnedRef,event:'value',handler:pinnedValueHandler});
         applyAvatarToHeader(chatId);
+        if(!chat.isGroup && chat._peerDeleted) applyDeletedChatUI(true, chat);
         chatBox.innerHTML=''; emptyState.style.display='none';
  
         const msgsRef=database.ref('chats/'+chatId+'/messages');
@@ -4628,7 +4754,7 @@
                 const defaultName = 'User_'+String(Math.floor(1000+Math.random()*9000));
                 if(!chatsList.find(c=>c.id===chatId)){
                     chatsList.unshift({id:chatId, name:defaultName, peerId, lastMsg:'', lastTime:'', gradientIndex:getNextUniqueGradientIndex()});
-                    saveChatsList();
+                    saveChatsList();setupSidebarPresenceWatchers();
                 }
                 chatsSearchInput.value = '';
                 renderChatsList();
@@ -4655,7 +4781,7 @@
         const chatId=[myFrameId,peerId].sort().join('__');
         if(!chatsList.find(c=>c.id===chatId)){
             chatsList.unshift({id:chatId,name:'ID: '+peerId.substr(0,12)+'...',peerId,lastMsg:'',lastTime:'',gradientIndex:getNextUniqueGradientIndex()});
-            saveChatsList();renderChatsList();
+            saveChatsList();renderChatsList();setupSidebarPresenceWatchers();
         }
         connectIdModal.style.display='none'; openChat(chatId); showToast('Чат открыт!');
     });
@@ -4672,7 +4798,7 @@
         const chatId=[myFrameId,peerId].sort().join('__');
         if(chatsList.find(c=>c.id===chatId)){newChatModal.style.display='none';openChat(chatId);closeChatsPanel();showToast('Чат уже существует');return;}
         chatsList.unshift({id:chatId,name,peerId,lastMsg:'',lastTime:'',gradientIndex:getNextUniqueGradientIndex()});
-        saveChatsList();renderChatsList();
+        saveChatsList();renderChatsList();setupSidebarPresenceWatchers();
         newChatModal.style.display='none';openChat(chatId);closeChatsPanel();showToast('Переписка «'+name+'» создана!');
     });
 
