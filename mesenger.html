@@ -591,9 +591,9 @@
         /* Beautiful angle slider */
         .cc-angle-slider-wrap { flex: 1; position: relative; height: 36px; display: flex; align-items: center; }
         .cc-angle-range { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 99px; background: linear-gradient(90deg, var(--blue) 0%, #b8d4ff 100%); outline: none; cursor: pointer; border: none; transition: background 0.2s; }
-        .cc-angle-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 3px solid var(--blue); box-shadow: 0 2px 8px rgba(74,127,203,0.35); cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
-        .cc-angle-range::-webkit-slider-thumb:hover { transform: scale(1.18); box-shadow: 0 3px 14px rgba(74,127,203,0.5); }
-        .cc-angle-range::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 3px solid var(--blue); box-shadow: 0 2px 8px rgba(74,127,203,0.35); cursor: pointer; }
+        .cc-angle-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 3px solid var(--blue); cursor: pointer; transition: transform 0.15s; }
+        .cc-angle-range::-webkit-slider-thumb:hover { transform: scale(1.18); }
+        .cc-angle-range::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 3px solid var(--blue); cursor: pointer; }
         .cc-angle-range::-moz-range-track { height: 6px; border-radius: 99px; background: linear-gradient(90deg, var(--blue) 0%, #b8d4ff 100%); }
         body.dark-theme .cc-angle-range { background: linear-gradient(90deg, #5a9bff 0%, #2a3a5a 100%); }
         body.dark-theme .cc-angle-range::-webkit-slider-thumb { background: #1f252e; border-color: #5a9bff; }
@@ -786,11 +786,11 @@
         .input-wrap { flex: 1; background: #ffffff; border-radius: 22px; display: flex; align-items: flex-end; padding: 8px 14px; min-height: 40px; border: 1px solid #e0e0e0; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
         .main-input { flex: 1; background: none; border: none; outline: none; font-size: 15px; color: #1a1a1a; resize: none; max-height: 120px; line-height: 1.45; font-family: inherit; overflow-y: auto; }
         .main-input::placeholder { color: var(--dim); }
-        .send-btn { width: 42px; height: 42px; flex-shrink: 0; background: var(--blue); border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.1s, background 0.15s; box-shadow: 0 2px 8px rgba(74,127,203,0.35); user-select: none; -webkit-user-select: none; }
+        .send-btn { width: 42px; height: 42px; flex-shrink: 0; background: var(--blue); border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.1s, background 0.15s; user-select: none; -webkit-user-select: none; }
         .send-btn:active { transform: scale(0.88); }
         .send-btn svg { width: 20px; height: 20px; }
         .send-btn.recording { background: #e74c3c; animation: recPulse 1s infinite; }
-        @keyframes recPulse { 0%,100%{box-shadow:0 2px 8px rgba(231,76,60,0.4)} 50%{box-shadow:0 2px 18px rgba(231,76,60,0.7)} }
+        @keyframes recPulse { 0%,100%{} 50%{} }
         .rec-indicator { display: none; align-items: center; gap: 6px; font-size: 13px; color: #e74c3c; font-weight: 600; padding: 0 8px; }
         .rec-indicator.visible { display: flex; }
         .rec-dot { width: 8px; height: 8px; border-radius: 50%; background: #e74c3c; animation: recDot 1s infinite; }
@@ -1067,7 +1067,7 @@
         .custom-input-field { flex: 1; background: none; border: none; outline: none; font-size: 15px; color: #1a1a1a; font-family: inherit; }
         body.dark-theme .custom-input-field { color: #e8eef7; }
         .custom-input-field::placeholder { color: var(--dim); }
-        .custom-input-actions { display: flex; gap: 10px; }
+        .custom-input-actions { display: flex; gap: 8px; flex-wrap: wrap; }
         .custom-input-confirm { flex: 1; background: var(--blue); color: #fff; border: none; border-radius: 14px; padding: 13px; font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.15s; }
         .custom-input-confirm:hover { background: #3a6fbb; }
         .custom-input-confirm:disabled, .custom-input-confirm.disabled { background: #c6ccd4; cursor: not-allowed; }
@@ -1075,7 +1075,7 @@
         .field-status-msg { font-size: 12.5px; margin: -6px 0 12px 2px; min-height: 16px; transition: color 0.15s; }
         .field-status-msg.ok { color: var(--green); }
         .field-status-msg.taken { color: var(--red); font-weight: 600; }
-        .custom-input-cancel { width: 50px; background: rgba(231,76,60,0.1); color: var(--red); border: none; border-radius: 14px; padding: 13px; font-size: 18px; font-weight: 700; cursor: pointer; transition: background 0.15s; display: flex; align-items: center; justify-content: center; }
+        .custom-input-cancel { background: rgba(0,0,0,0.06); color: var(--dim); border: none; border-radius: 14px; padding: 13px 16px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.15s; display: flex; align-items: center; justify-content: center; white-space: nowrap; }
         .custom-input-cancel:hover { background: rgba(231,76,60,0.2); }
         #nickname-modal-cancel-btn { width: auto; min-width: 72px; background: #f0f2f5; color: #6a6a6a; padding: 10px 14px; font-size: 13px; font-weight: 500; border-radius: 14px; transition: background 0.15s; }
         #nickname-modal-cancel-btn:hover { background: #e3e7ec; }
@@ -1095,10 +1095,12 @@
         .profile-gradient-grid { display: flex; flex-wrap: wrap; gap: 12px; padding: 14px 16px 16px; }
         .profile-gradient-swatch { width: 38px; height: 38px; border-radius: 50%; cursor: pointer; flex-shrink: 0; border: 2px solid transparent; box-shadow: 0 1px 4px rgba(0,0,0,0.12); transition: transform 0.15s, border-color 0.15s; position: relative; overflow: hidden; }
         .profile-gradient-swatch:hover { transform: scale(1.08); }
-        .profile-gradient-swatch.active { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(74,127,203,0.35); }
+        .profile-gradient-swatch.active { border-color: var(--blue); }
         .profile-gradient-swatch.is-default { background: #fff; border: 2px solid #d6dce4; }
         body.dark-theme .profile-gradient-swatch.is-default { background: #23272f; border-color: #3a4250; }
         .profile-gradient-swatch.active::after { content: ''; position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 0 0 0 2px rgba(255,255,255,0.85); }
+        .profile-gradient-photo-swatch { background: #f0f4ff !important; border: 2px dashed #4a7fcb !important; box-shadow: none !important; overflow: visible !important; }
+        .profile-gradient-photo-swatch:hover { background: #e4ecff !important; transform: scale(1.08); }
 
         /* Emoji status modal */
         #emoji-status-overlay { align-items: center; }
@@ -1145,6 +1147,23 @@
             min-width: 0 !important;
             border-radius: 0 !important;
         }
+
+        /* ── ONLINE STATUS MODAL ── */
+        .os-option-row { display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;cursor:pointer;background:rgba(0,0,0,0.03);transition:background 0.12s;border:2px solid transparent; }
+        body.dark-theme .os-option-row { background:rgba(255,255,255,0.04); }
+        .os-option-row:hover { background:rgba(74,127,203,0.08); }
+        .os-option-row.selected { border-color:var(--blue);background:rgba(74,127,203,0.1); }
+        .os-option-dot { width:20px;height:20px;border-radius:50%;flex-shrink:0;border:2px solid rgba(0,0,0,0.1); }
+        .os-emoji-dot { background:transparent!important;border:none!important;font-size:18px;display:flex;align-items:center;justify-content:center;line-height:1; }
+        .os-option-label { flex:1;font-size:14px;font-weight:500;color:#1a1a1a; }
+        body.dark-theme .os-option-label { color:#e8eef7; }
+        .os-option-check { font-size:16px;font-weight:700;color:var(--blue);min-width:18px;text-align:right; }
+        .os-color-chip { width:30px;height:30px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform 0.15s,border-color 0.15s;flex-shrink:0; }
+        .os-color-chip:hover { transform:scale(1.12); }
+        .os-color-chip.selected { border-color:var(--blue); }
+        /* Group member avatar with image support */
+        .group-member-avatar img { width:100%;height:100%;object-fit:cover;border-radius:50%;position:absolute;inset:0; }
+        .group-member-avatar { position:relative;overflow:hidden; }
 
         /* ── AI DISCLAIMER ── */
         .ai-disclaimer {
@@ -1368,7 +1387,7 @@
 <!-- VIDEO CIRCLE PREVIEW -->
 <div id="video-circle-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:450;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
     <div style="position:relative;width:220px;height:220px;">
-        <video id="video-circle-preview" autoplay muted playsinline style="width:220px;height:220px;border-radius:50%;object-fit:cover;display:block;border:4px solid #e74c3c;box-shadow:0 0 0 4px rgba(231,76,60,0.3);"></video>
+        <video id="video-circle-preview" autoplay muted playsinline style="width:220px;height:220px;border-radius:50%;object-fit:cover;display:block;border:4px solid #e74c3c;"></video>
         <div style="position:absolute;bottom:8px;right:8px;background:#e74c3c;color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:12px;display:flex;align-items:center;gap:5px;">
             <div style="width:7px;height:7px;border-radius:50%;background:#fff;animation:recDot 1s infinite;"></div>
             <span id="vcircle-timer">0:00</span>
@@ -1980,7 +1999,177 @@
     </div>
 </div>
 
-<div class="toast" id="toast-msg"></div>
+<!-- BIRTHDAY PICKER MODAL -->
+<div class="custom-input-overlay" id="birthday-picker-overlay" style="align-items:center;">
+    <div class="custom-input-card" style="max-width:380px;border-radius:20px;animation:ceZoomIn 0.18s cubic-bezier(0.4,0,0.2,1);padding:0;overflow:hidden;">
+        <div style="padding:20px 20px 0;">
+            <div class="custom-input-card-handle" style="display:none;"></div>
+            <div class="custom-input-card-title">День рождения</div>
+            <div class="custom-input-card-sub">Выберите вашу дату рождения</div>
+        </div>
+        <!-- Beautiful date picker -->
+        <div style="padding:20px;">
+            <div class="bday-picker-wrap">
+                <div class="bday-picker-selects">
+                    <div class="bday-select-wrap">
+                        <div class="bday-select-label">День</div>
+                        <div class="bday-custom-select" id="bday-day-select">
+                            <div class="bday-select-display" id="bday-day-display">1</div>
+                            <div class="bday-select-dropdown" id="bday-day-dropdown"></div>
+                        </div>
+                    </div>
+                    <div class="bday-select-wrap bday-select-month">
+                        <div class="bday-select-label">Месяц</div>
+                        <div class="bday-custom-select" id="bday-month-select">
+                            <div class="bday-select-display" id="bday-month-display">Январь</div>
+                            <div class="bday-select-dropdown" id="bday-month-dropdown"></div>
+                        </div>
+                    </div>
+                    <div class="bday-select-wrap">
+                        <div class="bday-select-label">Год</div>
+                        <div class="bday-custom-select" id="bday-year-select">
+                            <div class="bday-select-display" id="bday-year-display">2000</div>
+                            <div class="bday-select-dropdown" id="bday-year-dropdown"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bday-preview" id="bday-preview">
+                    <span class="bday-preview-cake">🎂</span>
+                    <span class="bday-preview-text" id="bday-preview-text">1 января 2000</span>
+                </div>
+            </div>
+        </div>
+        <div class="custom-input-actions" style="padding:0 20px 20px;gap:8px;">
+            <button class="custom-input-confirm" id="bday-save-btn">Сохранить</button>
+            <button class="custom-input-cancel" id="bday-clear-btn" style="background:rgba(231,76,60,0.1);color:#e74c3c;">Удалить</button>
+            <button class="custom-input-cancel" id="bday-cancel-btn" style="background:rgba(0,0,0,0.06);color:#8a9aaa;">Отмена</button>
+        </div>
+    </div>
+</div>
+
+<!-- BIRTHDAY NOTIFICATION MODAL (not a toast, a real modal!) -->
+<div id="birthday-modal-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;">
+    <div id="birthday-modal-card" style="background:#fff;border-radius:24px;padding:28px 24px 22px;max-width:340px;width:90%;margin:auto;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:bdayModalIn 0.4s cubic-bezier(0.34,1.56,0.64,1);">
+        <div style="font-size:56px;margin-bottom:8px;animation:bdayCakeWiggle 0.8s 0.3s ease both;">🎂</div>
+        <div style="font-size:22px;font-weight:800;color:#1a1a1a;margin-bottom:8px;">С Днём Рождения!</div>
+        <div style="font-size:15px;color:#5a6a7a;line-height:1.5;margin-bottom:16px;">Сегодня весь день Вам доступен<br>специальный онлайн-кружок с тортом 🎂</div>
+        <div style="background:linear-gradient(135deg,#fff4fb 0%,#fff8e1 100%);border:1.5px solid #ffd6a5;border-radius:16px;padding:14px;margin-bottom:18px;">
+            <div style="font-size:13px;color:#c0762a;font-weight:600;">Кружок статуса с тортом доступен всем участникам чатов сегодня 🎉</div>
+        </div>
+        <button id="birthday-modal-close-btn" style="width:100%;background:linear-gradient(135deg,#ff6fa0,#ffb347);color:#fff;border:none;border-radius:16px;padding:14px 0;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(255,111,160,0.4);">🎂 Отлично!</button>
+    </div>
+</div>
+
+<!-- BIRTHDAY CELEBRATION ANIMATION -->
+<div id="bday-celebration-overlay" style="display:none;position:fixed;inset:0;z-index:9990;pointer-events:none;overflow:hidden;"></div>
+
+<!-- PROFILE PHOTO PICKER MODAL (for profile card cover) -->
+<input type="file" id="profile-cover-photo-input" accept="image/*" style="display:none">
+<div id="profile-cover-photo-overlay" style="display:none;position:fixed;inset:0;z-index:1300;background:rgba(0,0,0,0.65);align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:24px;max-width:360px;width:92%;animation:ceZoomIn 0.22s cubic-bezier(0.4,0,0.2,1);overflow:hidden;">
+        <div style="padding:18px 18px 12px;border-bottom:1px solid #f0f0f0;">
+            <div style="font-size:16px;font-weight:700;color:#1a1a1a;text-align:center;">Фото профиля</div>
+            <div style="font-size:12px;color:#8a9aaa;text-align:center;margin-top:4px;">Предварительный просмотр карточки</div>
+        </div>
+        <!-- Preview -->
+        <div style="padding:16px;">
+            <div id="profile-photo-preview-card" style="border-radius:18px;overflow:hidden;background:linear-gradient(135deg,#6fc3ff 0%,#3a7eed 100%);height:130px;position:relative;display:flex;align-items:flex-end;">
+                <img id="profile-photo-preview-img" src="" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">
+                <div style="position:relative;z-index:2;padding:12px;width:100%;background:linear-gradient(0deg,rgba(0,0,0,0.45) 0%,transparent 100%);">
+                    <div style="font-size:14px;font-weight:700;color:#fff;" id="profile-photo-preview-name">Ваше имя</div>
+                    <div style="font-size:11px;color:rgba(255,255,255,0.8);" id="profile-photo-preview-id">@id</div>
+                </div>
+            </div>
+        </div>
+        <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:8px;">
+            <button id="profile-photo-apply-btn" style="background:#4a7fcb;color:#fff;border:none;border-radius:14px;padding:13px 0;font-size:15px;font-weight:700;cursor:pointer;width:100%;">Применить</button>
+            <button id="profile-photo-choose-btn" style="background:rgba(0,0,0,0.07);color:#5a6a7a;border:none;border-radius:14px;padding:12px 0;font-size:14px;font-weight:600;cursor:pointer;width:100%;">Выбрать другую</button>
+            <button id="profile-photo-cancel-btn" style="background:rgba(0,0,0,0.05);color:#8a9aaa;border:none;border-radius:14px;padding:12px 0;font-size:14px;font-weight:600;cursor:pointer;width:100%;">Отмена</button>
+        </div>
+    </div>
+</div>
+
+<style>
+/* BIRTHDAY PICKER STYLES */
+.bday-picker-wrap { display:flex; flex-direction:column; gap:16px; }
+.bday-picker-selects { display:flex; gap:10px; }
+.bday-select-wrap { flex:1; display:flex; flex-direction:column; gap:6px; }
+.bday-select-month { flex:1.6; }
+.bday-select-label { font-size:11px; font-weight:600; color:#8a9aaa; text-transform:uppercase; letter-spacing:0.5px; }
+.bday-custom-select { position:relative; }
+.bday-select-display {
+    background:linear-gradient(135deg,#f8f9ff 0%,#f0f4ff 100%);
+    border:2px solid rgba(74,127,203,0.2);
+    border-radius:14px; padding:11px 12px;
+    font-size:14px; font-weight:600; color:#1a1a1a;
+    cursor:pointer; transition:all 0.18s;
+    display:flex; align-items:center; justify-content:space-between;
+    user-select:none;
+}
+.bday-select-display::after { content:'▾'; font-size:12px; color:#8a9aaa; }
+.bday-select-display:hover, .bday-custom-select.open .bday-select-display {
+    border-color:var(--blue);
+    background:linear-gradient(135deg,#eef3ff 0%,#e8efff 100%);
+    
+}
+body.dark-theme .bday-select-display { background:#1e2530; border-color:rgba(255,255,255,0.12); color:#e8eef7; }
+.bday-select-dropdown {
+    position:absolute; top:calc(100% + 6px); left:0; right:0; z-index:200;
+    background:#fff; border:1.5px solid rgba(74,127,203,0.2); border-radius:14px;
+    max-height:180px; overflow-y:auto; display:none;
+    box-shadow:0 8px 32px rgba(0,0,0,0.14);
+    scroll-behavior:smooth;
+}
+body.dark-theme .bday-select-dropdown { background:#1a1f27; border-color:rgba(255,255,255,0.1); }
+.bday-custom-select.open .bday-select-dropdown { display:block; animation:bdayDropIn 0.15s ease; }
+@keyframes bdayDropIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+.bday-option {
+    padding:9px 14px; font-size:14px; font-weight:500; color:#1a1a1a; cursor:pointer; transition:background 0.1s;
+}
+.bday-option:hover { background:rgba(74,127,203,0.08); }
+.bday-option.selected { background:rgba(74,127,203,0.14); color:var(--blue); font-weight:700; }
+body.dark-theme .bday-option { color:#e8eef7; }
+body.dark-theme .bday-option:hover { background:rgba(255,255,255,0.06); }
+.bday-preview {
+    display:flex; align-items:center; gap:10px;
+    background:linear-gradient(135deg,#fff4fb 0%,#fff8e1 100%);
+    border:1.5px solid #ffd6a5; border-radius:14px; padding:12px 14px;
+}
+.bday-preview-cake { font-size:24px; }
+.bday-preview-text { font-size:14px; font-weight:600; color:#c0762a; }
+body.dark-theme #birthday-picker-overlay .custom-input-card { background:#1a1f27; }
+body.dark-theme #birthday-modal-card { background:#1a1f27; color:#e8eef7; }
+
+/* BIRTHDAY CELEBRATION */
+@keyframes bdayModalIn { from { opacity:0; transform:scale(0.7); } to { opacity:1; transform:scale(1); } }
+@keyframes bdayCakeWiggle { 0%,100%{ transform:rotate(0); } 25%{ transform:rotate(-15deg) scale(1.2); } 75%{ transform:rotate(15deg) scale(1.2); } }
+.bday-particle {
+    position:absolute; font-size:28px; pointer-events:none; will-change:transform,opacity;
+    animation:bdayFly var(--dur,3s) var(--delay,0s) ease-out forwards;
+}
+@keyframes bdayFly {
+    0% { transform:translateY(110vh) rotate(0deg) scale(1); opacity:1; }
+    60% { opacity:1; }
+    100% { transform:translateY(-20vh) rotate(720deg) scale(0.6); opacity:0; }
+}
+.firework-dot {
+    position:absolute; width:6px; height:6px; border-radius:50%; pointer-events:none;
+    animation:fireworkExplode var(--dur,1.2s) var(--delay,0s) ease-out forwards;
+}
+@keyframes fireworkExplode {
+    0% { transform:translate(0,0) scale(1); opacity:1; }
+    100% { transform:translate(var(--tx,0),var(--ty,0)) scale(0); opacity:0; }
+}
+
+/* BIRTHDAY CAKE DOT — special online status for birthday */
+.bday-online-dot { font-size:12px; line-height:1; display:flex; align-items:center; justify-content:center; }
+
+/* Dark theme for profile cover photo overlay */
+body.dark-theme #profile-cover-photo-overlay > div { background:#1a1f27; }
+body.dark-theme #profile-photo-preview-name { color:#e8eef7 !important; }
+</style>
+
+
 
 <!-- VERIFICATION MODAL -->
 <div class="modal-overlay" id="verify-modal-overlay" style="z-index:900;">
@@ -2064,6 +2253,16 @@
                 </div>
                 <div class="my-profile-row-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></div>
             </div>
+            <div class="my-profile-row" id="my-profile-birthday-row">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#ff6fa0,#ffb347);">
+                    <svg viewBox="0 0 24 24" fill="#fff"><path d="M12 6c1.11 0 2-.89 2-2 0-.32-.08-.63-.23-.9L12 0l-1.77 3.1c-.15.27-.23.58-.23.9 0 1.11.89 2 2 2zm4.6 9.99l-1.07-1.07-1.08 1.07c-1.3 1.3-3.58 1.31-4.89 0l-1.07-1.07-1.09 1.07C6.75 17.27 5.88 17.5 5 17.5v1.5c1.1 0 2.1-.35 2.93-.93C9.1 19.41 10.5 20 12 20c1.5 0 2.9-.59 3.93-1.59C16.9 19.12 17.9 19.5 19 19.5V18c-.88 0-1.75-.23-2.4-.01zM20 8H4c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h.57c.69 0 1.38-.19 2.03-.56.5-.28 1.08-.44 1.68-.44h.08c.59 0 1.16.16 1.64.44.65.38 1.35.56 2 .56s1.35-.18 2-.56c.48-.28 1.05-.44 1.64-.44h.08c.6 0 1.18.16 1.68.44.65.37 1.34.56 2.03.56H20c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">День рождения (видно всем)</div>
+                    <div class="my-profile-row-value" id="my-profile-display-birthday">Не указан</div>
+                </div>
+                <div class="my-profile-row-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></div>
+            </div>
             <div class="my-profile-row" id="my-profile-gradient-row">
                 <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#ff9a8b,#a18cd1);">
                     <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.34-9.65A9 9 0 0 0 12 3z"/></svg>
@@ -2128,17 +2327,16 @@
                 </div>
                 <div class="my-profile-row-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></div>
             </div>
-        </div>
-            <div class="my-profile-row" style="cursor:default;">
-                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#888,#aaa);">
-                    <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+            <div class="my-profile-row" id="my-profile-online-status-row">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#2ecc71,#27ae60);">
+                    <svg viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="12" r="7"/></svg>
                 </div>
                 <div class="my-profile-row-content">
-                    <div class="my-profile-row-label">Мой ID</div>
-                    <div class="my-profile-row-value" id="my-profile-display-id" style="font-family:monospace;font-size:13px;color:var(--blue);">—</div>
+                    <div class="my-profile-row-label">Онлайн статус</div>
+                    <div class="my-profile-row-value" id="my-profile-online-status-value">Зелёный кружок</div>
                 </div>
+                <div class="my-profile-row-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></div>
             </div>
-        <div class="my-profile-section" style="margin-bottom:14px;">
             <div class="my-profile-row" id="my-profile-terms-row">
                 <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#e74c3c,#c0392b);">
                     <svg viewBox="0 0 24 24"><path fill="#fff" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
@@ -2159,6 +2357,87 @@
                 </div>
                 <div class="my-profile-row-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></div>
             </div>
+        </div>
+        <div class="my-profile-section" style="margin-bottom:14px;">
+            <div class="my-profile-row" style="cursor:default;">
+                <div class="my-profile-row-icon" style="background:linear-gradient(135deg,#888,#aaa);">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                </div>
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">Мой ID</div>
+                    <div class="my-profile-row-value" id="my-profile-display-id" style="font-family:monospace;font-size:13px;color:var(--blue);">—</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ONLINE STATUS MODAL -->
+<div class="custom-input-overlay" id="online-status-overlay" style="align-items:center;">
+    <div class="custom-input-card" style="max-width:380px;border-radius:20px;animation:ceZoomIn 0.18s cubic-bezier(0.4,0,0.2,1);">
+        <div class="custom-input-card-handle" style="display:none;"></div>
+        <div class="custom-input-card-title">Онлайн статус</div>
+        <div class="custom-input-card-sub">Выберите как будет выглядеть ваш статус у других</div>
+        <!-- Preview header strip -->
+        <div id="os-preview-strip" style="background:var(--header);border:1px solid var(--border);border-radius:14px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;">
+            <div style="position:relative;flex-shrink:0;">
+                <div id="os-preview-avatar" style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#6fc3ff,#3a7eed);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#fff;overflow:hidden;position:relative;">
+                    <span id="os-preview-avatar-letter"></span>
+                    <img id="os-preview-avatar-img" src="" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:50%;display:none;">
+                </div>
+                <div id="os-preview-dot" style="position:absolute;bottom:-1px;right:-1px;width:13px;height:13px;border-radius:50%;border:2px solid #fff;background:#2ecc40;display:flex;align-items:center;justify-content:center;font-size:9px;line-height:1;"></div>
+            </div>
+            <div style="flex:1;min-width:0;">
+                <div style="font-size:14px;font-weight:700;color:#1a1a1a;" id="os-preview-name">Вы</div>
+                <div style="font-size:12px;color:#6a9fd8;">в сети</div>
+            </div>
+        </div>
+        <!-- Options -->
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+            <div class="os-option-row" id="os-opt-green" data-type="green">
+                <div class="os-option-dot" style="background:#2ecc40;"></div>
+                <span class="os-option-label">Стандартный (зелёный)</span>
+                <div class="os-option-check" id="os-check-green">✓</div>
+            </div>
+            <div class="os-option-row" id="os-opt-color" data-type="color">
+                <div class="os-option-dot" id="os-color-swatch" style="background:#4a7fcb;"></div>
+                <span class="os-option-label">Свой цвет кружка</span>
+                <div class="os-option-check" id="os-check-color"></div>
+            </div>
+            <div class="os-option-row" id="os-opt-emoji" data-type="emoji">
+                <div class="os-option-dot os-emoji-dot" id="os-emoji-preview-dot">😊</div>
+                <span class="os-option-label">Смайлик вместо кружка</span>
+                <div class="os-option-check" id="os-check-emoji"></div>
+            </div>
+        </div>
+        <!-- Color picker (when color selected) -->
+        <div id="os-color-row" style="display:none;margin-bottom:12px;">
+            <div style="font-size:12px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Выберите цвет</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+                <div class="os-color-chip" style="background:#2ecc40;" data-color="#2ecc40"></div>
+                <div class="os-color-chip" style="background:#3498db;" data-color="#3498db"></div>
+                <div class="os-color-chip" style="background:#e74c3c;" data-color="#e74c3c"></div>
+                <div class="os-color-chip" style="background:#f39c12;" data-color="#f39c12"></div>
+                <div class="os-color-chip" style="background:#9b59b6;" data-color="#9b59b6"></div>
+                <div class="os-color-chip" style="background:#1abc9c;" data-color="#1abc9c"></div>
+                <div class="os-color-chip" style="background:#e91e63;" data-color="#e91e63"></div>
+                <div class="os-color-chip" style="background:#ff5722;" data-color="#ff5722"></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+                <div id="os-custom-color-preview" class="cc-picker-swatch" style="width:44px;height:44px;flex:none;background:#4a7fcb;" onclick="window.openCPK('os')">
+                    <span class="cc-picker-swatch-icon"><svg viewBox="0 0 24 24"><path d="M12 3C6.5 3 2 7.5 2 13a10 10 0 0010 10c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.97-4.03-10-9-10zm-5.5 10c-.83 0-1.5-.67-1.5-1.5S5.67 10 6.5 10s1.5.67 1.5 1.5S7.33 13 6.5 13zm3-4C8.67 9 8 8.33 8 7.5S8.67 6 9.5 6s1.5.67 1.5 1.5S10.33 9 9.5 9zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 6 14.5 6s1.5.67 1.5 1.5S15.33 9 14.5 9zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 10 17.5 10s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg></span>
+                </div>
+                <span style="font-size:13px;color:var(--dim);">Нажмите на палитру для кастомного цвета</span>
+            </div>
+        </div>
+        <!-- Emoji picker (when emoji selected) -->
+        <div id="os-emoji-row" style="display:none;margin-bottom:12px;">
+            <div style="font-size:12px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Выберите смайлик (только лица)</div>
+            <div class="es-emoji-grid" id="os-emoji-grid" style="max-height:180px;"></div>
+        </div>
+        <div class="custom-input-actions">
+            <button class="custom-input-confirm" id="os-save-btn">Сохранить</button>
+            <button class="es-cancel-btn" id="os-cancel-btn">Отмена</button>
         </div>
     </div>
 </div>
@@ -2210,11 +2489,11 @@
                     <div class="contact-profile-info-value" id="cp-info-id" style="font-family:monospace;font-size:13px;">—</div>
                 </div>
             </div>
-            <div class="contact-profile-info-row" id="cp-info-bio-row" style="display:none;">
-                <div class="contact-profile-info-row-icon"><svg viewBox="0 0 24 24"><path d="M14 17H4v2h10v-2zm6-8H4v2h16V9zM4 15h16v-2H4v2zM4 5v2h16V5H4z"/></svg></div>
+            <div class="contact-profile-info-row" id="cp-info-birthday-row" style="display:none;">
+                <div class="contact-profile-info-row-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 6c1.11 0 2-.89 2-2 0-.32-.08-.63-.23-.9L12 0l-1.77 3.1c-.15.27-.23.58-.23.9 0 1.11.89 2 2 2zm4.6 9.99l-1.07-1.07-1.08 1.07c-1.3 1.3-3.58 1.31-4.89 0l-1.07-1.07-1.09 1.07C6.75 17.27 5.88 17.5 5 17.5v1.5c1.1 0 2.1-.35 2.93-.93C9.1 19.41 10.5 20 12 20c1.5 0 2.9-.59 3.93-1.59C16.9 19.12 17.9 19.5 19 19.5V18c-.88 0-1.75-.23-2.4-.01zM20 8H4c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h.57c.69 0 1.38-.19 2.03-.56.5-.28 1.08-.44 1.68-.44h.08c.59 0 1.16.16 1.64.44.65.38 1.35.56 2 .56s1.35-.18 2-.56c.48-.28 1.05-.44 1.64-.44h.08c.6 0 1.18.16 1.68.44.65.37 1.34.56 2.03.56H20c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2z"/></svg></div>
                 <div class="contact-profile-info-content">
-                    <div class="contact-profile-info-label">О себе</div>
-                    <div class="contact-profile-info-value" id="cp-info-bio">—</div>
+                    <div class="contact-profile-info-label">День рождения</div>
+                    <div class="contact-profile-info-value" id="cp-info-birthday">—</div>
                 </div>
             </div>
         </div>
@@ -2256,6 +2535,13 @@
                 <div class="my-profile-row-content">
                     <div class="my-profile-row-label">Кто может видеть моё "О Себе"</div>
                     <div class="my-profile-row-value" data-privacy-value="bio">—</div>
+                </div>
+                <div class="my-profile-row-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></div>
+            </div>
+            <div class="my-profile-row" data-privacy-key="birthday">
+                <div class="my-profile-row-content">
+                    <div class="my-profile-row-label">Кто может видеть мой день рождения</div>
+                    <div class="my-profile-row-value" data-privacy-value="birthday">—</div>
                 </div>
                 <div class="my-profile-row-arrow"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></div>
             </div>
@@ -2583,6 +2869,7 @@
     /* ── STATE ── */
     let myFrameId = localStorage.getItem('myFrameId');
     if(!myFrameId){ myFrameId="id_"+Math.random().toString(36).substr(2,9); localStorage.setItem('myFrameId',myFrameId); }
+    window.myFrameId = myFrameId;
 
     // Returns the name shown to others: custom "Имя" if set, otherwise the nickname (e.g. User_XXXX)
     function getMyEffectiveName(){ return (typeof myDisplayName !== 'undefined' && myDisplayName) ? myDisplayName : (myCurrentNickname || 'User'); }
@@ -2592,6 +2879,7 @@
     let peerStatusRef=null, myPresenceRef=null, deleteChatTarget=null;
     let _deletedPeersCache = {}; let _deletedPeerUnsubs = {};
     let chatsList=JSON.parse(localStorage.getItem('chatsList')||'[]');
+    window.chatsList = chatsList;
     let localStream=null, peerConnection=null, callRef=null, isPeerOnline=false;
     let ringtoneCtx=null, ringtoneGain=null, ringtoneOsc=null, ringtoneTimer=null;
     // unread counters: { chatId: count }
@@ -3608,7 +3896,7 @@
     /* ── UTILS ── */
     function showToast(msg,d=2200){ toastEl.textContent=msg; toastEl.classList.add('show'); setTimeout(()=>toastEl.classList.remove('show'),d); }
     function copyText(t){ if(navigator.clipboard){navigator.clipboard.writeText(t).then(()=>showToast('ID скопирован!'));}else{const e=document.createElement('textarea');e.value=t;document.body.appendChild(e);e.select();document.execCommand('copy');document.body.removeChild(e);showToast('ID скопирован!');} }
-    function saveChatsList(){ localStorage.setItem('chatsList',JSON.stringify(chatsList)); }
+    function saveChatsList(){ localStorage.setItem('chatsList',JSON.stringify(chatsList)); window.chatsList = chatsList; }
     function saveUnread(){ localStorage.setItem('unreadCounts',JSON.stringify(unreadCounts)); }
     function getInitial(n){ return n?n.charAt(0).toUpperCase():'?'; }
     function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -3890,7 +4178,15 @@
         }
         // Обновить точку в сайдбаре — мгновенно
         const dot = chatsList_el.querySelector('.chat-item[data-id="'+chatId+'"] .chat-item-online-dot');
-        if(dot){ if(isOnline) dot.classList.add('visible'); else dot.classList.remove('visible'); }
+        if(dot){
+            if(isOnline){
+                dot.classList.add('visible');
+            } else {
+                dot.classList.remove('visible');
+                // Сбрасываем кастомные стили когда пир уходит оффлайн
+                dot.textContent=''; dot.style.background=''; dot.style.border=''; dot.style.fontSize=''; dot.style.width=''; dot.style.height=''; dot.style.display=''; dot.style.alignItems=''; dot.style.justifyContent=''; dot.style.lineHeight='';
+            }
+        }
         // Обновить шапку если это активный чат
         if(activeChatId===chatId){
             if(isOnline){
@@ -4025,6 +4321,7 @@
         const saved=localStorage.getItem('myNickname');
         if(saved){myCurrentNickname=saved; nicknameModalInput.value=saved;}
         else{const n=Math.floor(1000+Math.random()*9000);myCurrentNickname='User_'+n; nicknameModalInput.value=myCurrentNickname; localStorage.setItem('myNickname',myCurrentNickname);}
+        window.myCurrentNickname = myCurrentNickname;
         // Claim/refresh our nickname in the global uniqueness registry
         setTimeout(()=>{ try{ claimNickname(normalizeNick(myCurrentNickname)); }catch(e){} }, 500);
     }
@@ -4395,6 +4692,10 @@
     let myStatusEmoji = localStorage.getItem('myStatusEmoji') || '';
     let myStatusText = localStorage.getItem('myStatusText') || '';
     let myVerified = localStorage.getItem('myVerified') === '1';
+    let myBirthday = localStorage.getItem('myBirthday') || ''; // stored as "DD.MM.YYYY"
+    let myCoverPhoto = localStorage.getItem('myCoverPhoto') || ''; // base64 cover photo
+    window.myBirthday = myBirthday;
+    window.myCoverPhoto = myCoverPhoto;
     let chatVerified = {};
     try{ chatVerified = JSON.parse(localStorage.getItem('chatVerified')||'{}') || {}; }catch(e){ chatVerified = {}; }
     function saveChatVerified(){ try{ localStorage.setItem('chatVerified', JSON.stringify(chatVerified)); }catch(e){} }
@@ -4554,6 +4855,9 @@
         if(dispNick) dispNick.textContent = nickname;
         if(dispBio) dispBio.textContent = myBio || 'Не указано';
         if(dispId) dispId.textContent = myFrameId;
+        // birthday
+        const dispBday = document.getElementById('my-profile-display-birthday');
+        if(dispBday) dispBday.textContent = myBirthday ? formatBirthday(myBirthday) : 'Не указан';
         applyMyAvatar();
         applyMyStatusUI();
         const verifyStatusEl = document.getElementById('my-profile-verify-status');
@@ -4601,11 +4905,18 @@
     if(verifyDoneBtn) verifyDoneBtn.addEventListener('click', ()=>{ verifyModalOverlay.style.display='none'; });
 
     function publishMyPresenceAvatar(){
-        // Publish avatar to presence_signal so peers can see it
+        // Publish avatar to presence_signal so peers can see it (ephemeral, cleared on disconnect)
         if(typeof database !== 'undefined'){
             try{
-                const payload = { avatar: myAvatarData || null, name: myCurrentNickname || 'User', displayName: myDisplayName || myCurrentNickname || 'User', bio: myBio || '', coverGradient: myCoverGradient || null, statusEmoji: myStatusEmoji || null, statusText: myStatusText || null, verified: !!myVerified };
+                let privacySettingsObj = {};
+                try{ privacySettingsObj = JSON.parse(localStorage.getItem('privacySettings')||'{}') || {}; }catch(e){}
+                const birthdayPrivacy = privacySettingsObj.birthday || 'everyone';
+                const birthdayToPublish = birthdayPrivacy === 'nobody' ? null : (myBirthday || null);
+                const payload = { avatar: myAvatarData || null, name: myCurrentNickname || 'User', displayName: myDisplayName || myCurrentNickname || 'User', bio: myBio || '', coverGradient: myCoverGradient || null, coverPhoto: myCoverPhoto || null, statusEmoji: myStatusEmoji || null, statusText: myStatusText || null, verified: !!myVerified, birthday: birthdayToPublish };
                 database.ref('presence_signal/'+myFrameId+'/meta').set(payload);
+                // Also save to persistent user_profiles node — stays even when offline
+                const persistPayload = { name: myCurrentNickname || 'User', displayName: myDisplayName || myCurrentNickname || 'User', bio: myBio || '', verified: !!myVerified, avatar: myAvatarData || null, coverGradient: myCoverGradient || null, coverPhoto: myCoverPhoto || null, statusEmoji: myStatusEmoji || null, statusText: myStatusText || null, birthday: birthdayToPublish };
+                database.ref('user_profiles/'+myFrameId).set(persistPayload);
             }catch(e){}
         }
     }
@@ -4685,7 +4996,7 @@
     }
 
     /* ── PRIVACY ── */
-    const PRIVACY_KEYS = ['status','name','nick','bio','avatar'];
+    const PRIVACY_KEYS = ['status','name','nick','bio','avatar','birthday'];
     let privacySettings = {};
     try{ privacySettings = JSON.parse(localStorage.getItem('privacySettings')||'{}') || {}; }catch(e){ privacySettings={}; }
     PRIVACY_KEYS.forEach(k=>{ if(privacySettings[k]!==('nobody') && privacySettings[k]!==('everyone')) privacySettings[k]='everyone'; });
@@ -5075,10 +5386,18 @@
         setNameWithBadge(document.getElementById('contact-profile-name'), chat.name, !!chatVerified[activeChatId]);
         const cpUser = document.getElementById('contact-profile-username');
         const cpStatus = document.getElementById('contact-profile-status');
-        // Try get nickname from Firebase presence
+        // Reset nickname area — will fill from cache or Firebase below
         cpUser.textContent = '';
         cpStatus.className = 'contact-profile-status';
-        if(cpBioRow) cpBioRow.style.display = 'none';
+        // Show cached bio immediately (if available) while Firebase loads
+        if(cpBioRow){
+            if(!isGroup && chat._cachedBio){
+                document.getElementById('cp-info-bio').textContent = chat._cachedBio;
+                cpBioRow.style.display = '';
+            } else {
+                cpBioRow.style.display = 'none';
+            }
+        }
 
         if(isGroup){
             const cnt = chat.members ? Object.keys(chat.members).length : 0;
@@ -5097,7 +5416,10 @@
 
         // Info rows
         document.getElementById('cp-info-id').textContent = chat.peerId || chat.groupId || '—';
-        document.getElementById('cp-info-username').textContent = chat.name;
+        // Show cached @nickname if available, otherwise fall back to chat.name
+        const cachedNick = chat._cachedNickname;
+        document.getElementById('cp-info-username').textContent = cachedNick ? '@'+cachedNick : chat.name;
+        if(cachedNick) cpUser.textContent = '@'+cachedNick;
 
         // Show/hide call
         const cpCallBtn = document.getElementById('cp-call-btn');
@@ -5105,37 +5427,95 @@
         const cpRenameBtn = document.getElementById('cp-rename-btn');
         if(cpRenameBtn) cpRenameBtn.style.display = (!isGroup || (isGroup && chat.adminId===myFrameId)) ? '' : 'none';
 
+        // Helper: apply meta (avatar, nickname, bio) to contact profile UI
+        function _applyMetaToContactProfile(meta, isLiveSignal){
+            if(!meta) return;
+            if(meta.avatar && cpAvatarBig){
+                const existImg2 = cpAvatarBig.querySelector('img');
+                if(existImg2) existImg2.remove();
+                const img = document.createElement('img');
+                img.src = meta.avatar;
+                cpAvatarBig.insertBefore(img, cpAvatarBig.firstChild);
+                cpAvatarBig.style.background = 'transparent';
+                const ic = cpAvatarBig.querySelector('svg');
+                if(ic) ic.style.display='none';
+            }
+            // Always show @nickname in the username info row
+            if(meta.name) document.getElementById('cp-info-username').textContent = '@'+meta.name;
+            // Show @nickname under the display name (top of screen)
+            if(meta.name){
+                cpUser.textContent = '@'+meta.name;
+            }
+            if(cpBioRow){
+                if(meta.bio){
+                    document.getElementById('cp-info-bio').textContent = meta.bio;
+                    cpBioRow.style.display = '';
+                } else if(!isLiveSignal){
+                    // Только из user_profiles скрываем, если bio нет
+                    // (из presence_signal не скрываем — оффлайн не значит нет bio)
+                    cpBioRow.style.display = 'none';
+                }
+            }
+            // Show birthday from profile data (persistent)
+            if(meta.birthday !== undefined){
+                const bdRow = document.getElementById('cp-info-birthday-row');
+                const bdVal = document.getElementById('cp-info-birthday');
+                const privacyBirthday = meta.privacyBirthday || 'everyone';
+                if(meta.birthday && privacyBirthday !== 'nobody'){
+                    if(bdRow) bdRow.style.display = '';
+                    if(bdVal){
+                        const isToday = window._isBirthdayToday && window._isBirthdayToday(meta.birthday);
+                        bdVal.textContent = (window.formatBirthday ? window.formatBirthday(meta.birthday) : meta.birthday) + (isToday ? ' 🎂 Сегодня!' : '');
+                    }
+                    // Update peer cache too
+                    const peerId = chat.peerId;
+                    if(peerId){
+                        if(!window._peerProfileCache) window._peerProfileCache = {};
+                        if(!window._peerProfileCache[peerId]) window._peerProfileCache[peerId] = {};
+                        window._peerProfileCache[peerId].birthday = meta.birthday;
+                        try{ localStorage.setItem('_peerProfileCache', JSON.stringify(window._peerProfileCache)); }catch(e){}
+                    }
+                } else if(!meta.birthday && !isLiveSignal){
+                    if(bdRow) bdRow.style.display = 'none';
+                }
+            }
+        }
+
         // Try to get peer avatar/nickname/bio from Firebase
         if(!isGroup && chat.peerId){
-            database.ref('presence_signal/'+chat.peerId+'/meta').on('value', snap=>{
-                database.ref('presence_signal/'+chat.peerId+'/meta').off('value');
-                const meta = snap.val();
-                if(meta && meta.avatar && cpAvatarBig){
-                    const existImg2 = cpAvatarBig.querySelector('img');
-                    if(existImg2) existImg2.remove();
-                    const img = document.createElement('img');
-                    img.src = meta.avatar;
-                    cpAvatarBig.insertBefore(img, cpAvatarBig.firstChild);
-                    cpAvatarBig.style.background = 'transparent';
-                    const ic = cpAvatarBig.querySelector('svg');
-                    if(ic) ic.style.display='none';
+            // 1) First try persistent user_profiles (works even when peer is offline)
+            database.ref('user_profiles/'+chat.peerId).once('value', snap=>{
+                const profile = snap.val();
+                if(profile){
+                    _applyMetaToContactProfile(profile, false);
                 }
-                if(meta && meta.name) document.getElementById('cp-info-username').textContent = '@'+meta.name;
-                if(meta && meta.displayName && meta.displayName !== meta.name){
-                    cpUser.textContent = '@'+(meta.name||'');
-                }
-                if(cpBioRow){
-                    if(meta && meta.bio){
-                        document.getElementById('cp-info-bio').textContent = meta.bio;
-                        cpBioRow.style.display = '';
-                    } else {
-                        cpBioRow.style.display = 'none';
+                // 2) Also check presence_signal/meta (may have fresher live data if online)
+                database.ref('presence_signal/'+chat.peerId+'/meta').once('value', snap2=>{
+                    const meta = snap2.val();
+                    if(meta){
+                        _applyMetaToContactProfile(meta, true);
                     }
-                }
+                });
             });
         }
 
         contactProfileScreen.classList.add('open');
+        // Set peerId for birthday lookup
+        if(!isGroup && chat.peerId){
+            contactProfileScreen.dataset.peerId = chat.peerId;
+            // Update birthday from cache
+            const pData = window._peerProfileCache && window._peerProfileCache[chat.peerId];
+            const bdRow = document.getElementById('cp-info-birthday-row');
+            const bdVal = document.getElementById('cp-info-birthday');
+            if(pData && pData.birthday){
+                const isToday = window._isBirthdayToday && window._isBirthdayToday(pData.birthday);
+                if(bdRow) bdRow.style.display='';
+                if(bdVal) bdVal.textContent = (window.formatBirthday ? window.formatBirthday(pData.birthday) : pData.birthday) + (isToday?' 🎂 Сегодня!':'');
+            } else {
+                if(bdRow) bdRow.style.display='none';
+            }
+            if(window._watchPeerBirthday) window._watchPeerBirthday(chat.peerId);
+        }
     }
     function closeContactProfileScreen(){
         if(contactProfileScreen) contactProfileScreen.classList.remove('open');
@@ -5161,88 +5541,110 @@
     });
 
     /* ── WATCH PEER AVATAR from Firebase meta ── */
+    // Shared helper: apply meta (avatar, name, bio, etc.) from any source to peer's UI
+    function _applyPeerMetaUpdate(meta, chatId){
+        if(!meta) return;
+        // Update avatar
+        const newAvatar = meta.avatar || null;
+        const avatarChanged = newAvatar !== chatAvatars[chatId];
+        if(avatarChanged){
+            if(newAvatar){
+                chatAvatars[chatId] = newAvatar;
+            } else {
+                delete chatAvatars[chatId];
+            }
+            saveChatAvatars();
+            renderChatsList();
+            if(profileCardOverlay.classList.contains('open') && activeChatId === chatId){
+                const cardAvatar = document.getElementById('profile-card-avatar');
+                if(cardAvatar){
+                    if(newAvatar){
+                        const initSpan = cardAvatar.querySelector('span');
+                        if(initSpan) initSpan.style.display='none';
+                        let img = cardAvatar.querySelector('img.avatar-img');
+                        if(!img){ img=document.createElement('img'); img.className='avatar-img'; cardAvatar.insertBefore(img, cardAvatar.firstChild); }
+                        img.src = newAvatar;
+                        cardAvatar.style.background = 'transparent';
+                    } else {
+                        const img = cardAvatar.querySelector('img.avatar-img');
+                        if(img) img.remove();
+                        cardAvatar.style.background = getAvatarBackground(chatsList.find(c=>c.id===chatId));
+                    }
+                }
+            }
+            if(activeChatId === chatId) applyAvatarToHeader(chatId);
+        }
+        // Update profile card cover gradient
+        if(typeof meta.coverGradient !== 'undefined'){
+            chatCoverGradients[chatId] = meta.coverGradient || null;
+            saveChatCoverGradients();
+            if(profileCardOverlay.classList.contains('open') && activeChatId === chatId) applyProfileCardCover(chatId);
+        }
+        // Update profile card custom emoji status
+        if(meta.statusEmoji || meta.statusText){
+            chatCustomStatus[chatId] = { emoji: meta.statusEmoji||'', text: meta.statusText||'' };
+            saveChatCustomStatus();
+            if(profileCardOverlay.classList.contains('open') && activeChatId === chatId) applyProfileCardCustomStatus(chatId);
+        }
+        // Update verified badge
+        if(typeof meta.verified !== 'undefined'){
+            chatVerified[chatId] = !!meta.verified;
+            saveChatVerified();
+            if(profileCardOverlay.classList.contains('open') && activeChatId === chatId){
+                setNameWithBadge(document.getElementById('profile-card-name'), chatsList.find(c=>c.id===chatId)?.name || '', chatVerified[chatId]);
+            }
+            if(contactProfileScreen.classList.contains('open') && activeChatId === chatId){
+                setNameWithBadge(document.getElementById('contact-profile-name'), chatsList.find(c=>c.id===chatId)?.name || '', chatVerified[chatId]);
+            }
+        }
+        // Update display name in sidebar/card if not locally renamed by us
+        if(meta.displayName || meta.name){
+            const chatObj = chatsList.find(c=>c.id===chatId);
+            if(chatObj && !chatObj._localRenamed){
+                const peerName = meta.displayName || meta.name;
+                if(peerName && peerName !== chatObj.name){
+                    chatObj.name = peerName;
+                    saveChatsList();
+                    renderChatsList();
+                    if(activeChatId === chatId) updateCurrentChatName(chatObj);
+                }
+            }
+        }
+        // Persist nickname and bio into a cache so contact profile screen can show them offline
+        if(meta.name){
+            const chatObj = chatsList.find(c=>c.id===chatId);
+            if(chatObj){
+                chatObj._cachedNickname = meta.name;
+                chatObj._cachedBio = meta.bio || chatObj._cachedBio || '';
+                saveChatsList();
+            }
+        }
+        // Cache birthday data for birthday system
+        if(typeof meta.birthday !== 'undefined'){
+            const chatObj = chatsList.find(c=>c.id===chatId);
+            const peerId = chatObj && chatObj.peerId;
+            if(peerId){
+                if(!window._peerProfileCache) window._peerProfileCache = {};
+                if(!window._peerProfileCache[peerId]) window._peerProfileCache[peerId]={};
+                window._peerProfileCache[peerId].birthday = meta.birthday;
+                try{ localStorage.setItem('_peerProfileCache',JSON.stringify(window._peerProfileCache)); }catch(e){}
+            }
+        }
+    }
+
     function watchPeerMeta(peerId, chatId){
         if(!peerId) return;
         if(_metaWatchedPeers[peerId]) return;
         _metaWatchedPeers[peerId] = true;
+        // Load persistent profile data (works even when peer is offline)
+        database.ref('user_profiles/'+peerId).on('value', snap=>{
+            const profile = snap.val();
+            if(profile) _applyPeerMetaUpdate(profile, chatId);
+        });
+        // Also watch live presence meta (may have fresher data while online)
         database.ref('presence_signal/'+peerId+'/meta').on('value', snap=>{
             const meta = snap.val();
-            if(!meta) return;
-            // Update avatar — always apply latest from Firebase (handles avatar changes & removals)
-            const newAvatar = meta.avatar || null;
-            const avatarChanged = newAvatar !== chatAvatars[chatId];
-            if(avatarChanged){
-                if(newAvatar){
-                    chatAvatars[chatId] = newAvatar;
-                } else {
-                    delete chatAvatars[chatId];
-                }
-                saveChatAvatars();
-                // Re-render sidebar item
-                renderChatsList();
-                // Live-update profile card if currently open for this chat
-                if(profileCardOverlay.classList.contains('open') && activeChatId === chatId){
-                    const cardAvatar = document.getElementById('profile-card-avatar');
-                    if(cardAvatar){
-                        if(newAvatar){
-                            const initSpan = cardAvatar.querySelector('span');
-                            if(initSpan) initSpan.style.display='none';
-                            let img = cardAvatar.querySelector('img.avatar-img');
-                            if(!img){ img=document.createElement('img'); img.className='avatar-img'; cardAvatar.insertBefore(img, cardAvatar.firstChild); }
-                            img.src = newAvatar;
-                            cardAvatar.style.background = 'transparent';
-                        } else {
-                            const img = cardAvatar.querySelector('img.avatar-img');
-                            if(img) img.remove();
-                            cardAvatar.style.background = getAvatarBackground(chatsList.find(c=>c.id===chatId));
-                        }
-                    }
-                }
-                // Show in header if active
-                if(activeChatId === chatId){
-                    applyAvatarToHeader(chatId);
-                }
-            }
-            // Update profile card cover gradient
-            if(typeof meta.coverGradient !== 'undefined'){
-                chatCoverGradients[chatId] = meta.coverGradient || null;
-                saveChatCoverGradients();
-                if(profileCardOverlay.classList.contains('open') && activeChatId === chatId){
-                    applyProfileCardCover(chatId);
-                }
-            }
-            // Update profile card custom emoji status
-            if(meta.statusEmoji || meta.statusText){
-                chatCustomStatus[chatId] = { emoji: meta.statusEmoji||'', text: meta.statusText||'' };
-                saveChatCustomStatus();
-                if(profileCardOverlay.classList.contains('open') && activeChatId === chatId){
-                    applyProfileCardCustomStatus(chatId);
-                }
-            }
-            // Update verified badge
-            if(typeof meta.verified !== 'undefined'){
-                chatVerified[chatId] = !!meta.verified;
-                saveChatVerified();
-                if(profileCardOverlay.classList.contains('open') && activeChatId === chatId){
-                    setNameWithBadge(document.getElementById('profile-card-name'), chatsList.find(c=>c.id===chatId)?.name || '', chatVerified[chatId]);
-                }
-                if(contactProfileScreen.classList.contains('open') && activeChatId === chatId){
-                    setNameWithBadge(document.getElementById('contact-profile-name'), chatsList.find(c=>c.id===chatId)?.name || '', chatVerified[chatId]);
-                }
-            }
-            // Update display name in sidebar/card if not locally renamed by us
-            if(meta.displayName || meta.name){
-                const chatObj = chatsList.find(c=>c.id===chatId);
-                if(chatObj && !chatObj._localRenamed){
-                    const peerName = meta.displayName || meta.name;
-                    if(peerName && peerName !== chatObj.name){
-                        chatObj.name = peerName;
-                        saveChatsList();
-                        renderChatsList();
-                        if(activeChatId === chatId) updateCurrentChatName(chatObj);
-                    }
-                }
-            }
+            if(meta) _applyPeerMetaUpdate(meta, chatId);
         });
     }
 
@@ -6339,6 +6741,7 @@
     function openChat(chatId){
         if(activeChatId===chatId) return;
         unsubscribeActiveChat(); activeChatId=chatId;
+        window.activeChatId = chatId; // expose globally
         subscribePoopListener(chatId);
         subscribeHeartListener(chatId);
         subscribeFireListener(chatId);
@@ -6474,7 +6877,7 @@
         renderChatsList();
         if(!chat.isGroup) setupCallListener(chatId);
     }
- 
+    window.openChat = openChat; // expose globally
     /* ── LISTEN GROUP UPDATES (name, avatar, admin) ── */
     function listenGroupUpdates(){
         chatsList.filter(c=>c.isGroup).forEach(chat=>{
@@ -6522,6 +6925,29 @@
             if(chat && chat.adminId !== adminId){
                 chat.adminId = adminId;
                 saveChatsList();
+            }
+        });
+        // members — sync when admin adds/removes members so all group members see updates
+        database.ref('groups/'+chatId+'/members').on('value', snap=>{
+            const membersData = snap.val();
+            if(!membersData) return;
+            const chat = chatsList.find(c=>c.id===chatId);
+            if(!chat) return;
+            // Merge: add new members, don't remove existing (removals handled by kick listener)
+            let changed = false;
+            Object.entries(membersData).forEach(([pid, info])=>{
+                if(!chat.members) chat.members = {};
+                if(!chat.members[pid]){
+                    chat.members[pid] = info;
+                    changed = true;
+                }
+            });
+            if(changed){
+                saveChatsList();
+                if(activeChatId===chatId) renderGroupMembers(chat);
+                // update subtitle
+                const cnt = Object.keys(chat.members).length;
+                if(activeChatId===chatId) chatSubtitle.textContent='участников: '+cnt;
             }
         });
         // memberTags — sync admin-set tags to all members
@@ -7067,8 +7493,29 @@
                 tagsHTML += '<span class="member-tag custom-member">'+escapeHtml(customTag)+'</span>';
             }
 
+            // Build avatar HTML (use presence avatar for this member if cached)
+            const memberAvatarData = (window._memberAvatarCache && window._memberAvatarCache[pid]) || null;
+            let avatarInnerHTML;
+            if(memberAvatarData){
+                avatarInnerHTML = '<img src="'+memberAvatarData+'" alt="">';
+            } else {
+                avatarInnerHTML = initial;
+                // Async load avatar from presence_signal
+                database.ref('presence_signal/'+pid+'/meta').once('value').then(s=>{
+                    const meta = s.val();
+                    if(meta && meta.avatarData){
+                        if(!window._memberAvatarCache) window._memberAvatarCache={};
+                        window._memberAvatarCache[pid] = meta.avatarData;
+                        // Update existing rendered avatar if still in DOM
+                        const avatarEl = document.querySelector('.group-member-row[data-pid="'+pid+'"] .group-member-avatar');
+                        if(avatarEl){ avatarEl.innerHTML='<img src="'+meta.avatarData+'" alt="">'; }
+                    }
+                }).catch(()=>{});
+            }
+
+            row.setAttribute('data-pid', pid);
             row.innerHTML=
-                '<div class="group-member-avatar" style="background:'+bg+'">'+initial+'</div>'+
+                '<div class="group-member-avatar" style="background:'+bg+'">'+avatarInnerHTML+'</div>'+
                 '<div class="group-member-info" style="flex:1;min-width:0;">'+
                     '<div class="group-member-name">'+escapeHtml(displayName)+tagsHTML+'</div>'+
                     '<div class="group-member-id">ID: '+escapeHtml(pid)+'</div>'+
@@ -7742,6 +8189,209 @@
         });
     }
  
+    /* ── ONLINE STATUS CUSTOMIZATION ── */
+    (function(){
+        // Face-only emojis for status
+        const FACE_EMOJIS = [
+            '😀','😃','😄','😁','😆','😅','😂','🤣','😊','😇',
+            '🙂','🙃','😉','😌','😍','🥰','😘','😗','😙','😚',
+            '😋','😛','😜','🤪','😝','🤑','🤗','🤭','🤫','🤔',
+            '🤐','🤨','😐','😑','😶','😏','😒','🙄','😬','🤥',
+            '😔','😪','🤤','😴','😷','🤒','🤕','🤢','🤮','🤧',
+            '🥵','🥶','🥴','😵','🤯','🤠','🥳','😎','🤓','🧐',
+            '😕','😟','🙁','☹️','😮','😯','😲','😳','🥺','😦',
+            '😧','😨','😰','😥','😢','😭','😱','😖','😣','😞',
+            '😓','😩','😫','🥱','😤','😡','😠','🤬','😈','👿'
+        ];
+
+        // Load saved status
+        let osType = localStorage.getItem('onlineStatusType') || 'green'; // green | color | emoji
+        let osColor = localStorage.getItem('onlineStatusColor') || '#2ecc40';
+        let osEmoji = localStorage.getItem('onlineStatusEmoji') || '😊';
+        let osPendingType = osType, osPendingColor = osColor, osPendingEmoji = osEmoji;
+
+        // Apply to all dots on page
+        function applyOnlineStatus(){
+            // Header dot — применяем только если пир онлайн
+            const headerDotEl = document.getElementById('peer-status-dot');
+            // Sidebar dots — только те что видимы (онлайн)
+            const sidebarDots = document.querySelectorAll('.chat-item-online-dot.visible');
+
+            if(osType === 'green'){
+                if(headerDotEl){ headerDotEl.style.background=''; headerDotEl.textContent=''; headerDotEl.style.fontSize=''; headerDotEl.style.width=''; headerDotEl.style.height=''; headerDotEl.style.border=''; headerDotEl.style.display=''; headerDotEl.style.alignItems=''; headerDotEl.style.justifyContent=''; headerDotEl.style.lineHeight=''; }
+                sidebarDots.forEach(d=>{ d.style.background='#2ecc40'; d.textContent=''; d.style.fontSize=''; d.style.border=''; d.style.width=''; d.style.height=''; d.style.display=''; d.style.alignItems=''; d.style.justifyContent=''; });
+            } else if(osType === 'color'){
+                if(headerDotEl && headerDotEl.classList.contains('online')){ headerDotEl.style.background=osColor; headerDotEl.textContent=''; headerDotEl.style.fontSize=''; headerDotEl.style.width=''; headerDotEl.style.height=''; headerDotEl.style.border=''; headerDotEl.style.display=''; headerDotEl.style.alignItems=''; headerDotEl.style.justifyContent=''; }
+                sidebarDots.forEach(d=>{ d.style.background=osColor; d.textContent=''; d.style.fontSize=''; d.style.border=''; d.style.width=''; d.style.height=''; d.style.display=''; d.style.alignItems=''; d.style.justifyContent=''; });
+            } else if(osType === 'emoji'){
+                // Header dot — только если онлайн, сохраняем размер как в CSS (11px)
+                if(headerDotEl && headerDotEl.classList.contains('online')){
+                    headerDotEl.style.background='transparent';
+                    headerDotEl.style.border='none';
+                    headerDotEl.textContent=osEmoji;
+                    headerDotEl.style.fontSize='9px';
+                    headerDotEl.style.width='11px';
+                    headerDotEl.style.height='11px';
+                    headerDotEl.style.display='flex';
+                    headerDotEl.style.alignItems='center';
+                    headerDotEl.style.justifyContent='center';
+                    headerDotEl.style.lineHeight='1';
+                }
+                // Sidebar — только видимые (онлайн пиры)
+                sidebarDots.forEach(d=>{
+                    d.style.background='transparent';
+                    d.style.border='none';
+                    d.textContent=osEmoji;
+                    d.style.fontSize='9px';
+                    d.style.width='14px';
+                    d.style.height='14px';
+                    d.style.display='flex';
+                    d.style.alignItems='center';
+                    d.style.justifyContent='center';
+                    d.style.lineHeight='1';
+                });
+            }
+            // Update the profile display row label
+            const valEl = document.getElementById('my-profile-online-status-value');
+            if(valEl){
+                if(osType==='green') valEl.textContent='Зелёный кружок';
+                else if(osType==='color') valEl.textContent='Свой цвет: '+osColor;
+                else valEl.textContent='Смайлик: '+osEmoji;
+            }
+        }
+
+        // Patch _applyPeerOnlineState to reapply custom status after dot is set
+        const _origSetClass = HTMLElement.prototype; // placeholder
+        // Use MutationObserver to watch .status-dot class changes
+        const headerDot = document.getElementById('peer-status-dot');
+        if(headerDot){
+            const obs = new MutationObserver(()=>{
+                if(headerDot.classList.contains('online')) applyOnlineStatus();
+            });
+            obs.observe(headerDot, {attributes:true, attributeFilter:['class','style']});
+        }
+
+        // Also observe sidebar dots
+        const chatsList_el2 = document.getElementById('chats-list');
+        if(chatsList_el2){
+            const obs2 = new MutationObserver(()=>{ if(osType!=='green') applyOnlineStatus(); });
+            obs2.observe(chatsList_el2, {childList:true, subtree:true, attributes:true, attributeFilter:['class']});
+        }
+
+        applyOnlineStatus(); // apply on load
+
+        // Open modal
+        const osRow = document.getElementById('my-profile-online-status-row');
+        const osOverlay = document.getElementById('online-status-overlay');
+        const osCancelBtn = document.getElementById('os-cancel-btn');
+        const osSaveBtn = document.getElementById('os-save-btn');
+        const osEmojiGrid = document.getElementById('os-emoji-grid');
+
+        // Populate emoji grid
+        FACE_EMOJIS.forEach(em=>{
+            const span = document.createElement('span');
+            span.className='es-emoji-item';
+            span.textContent=em;
+            span.addEventListener('click',()=>{
+                osPendingEmoji=em;
+                document.getElementById('os-emoji-preview-dot').textContent=em;
+                osEmojiGrid.querySelectorAll('.es-emoji-item').forEach(s=>s.classList.remove('selected'));
+                span.classList.add('selected');
+                updateOsPreviewDot();
+            });
+            osEmojiGrid.appendChild(span);
+        });
+
+        function setOsPendingType(type){
+            osPendingType = type;
+            ['green','color','emoji'].forEach(t=>{
+                const row = document.getElementById('os-opt-'+t);
+                const chk = document.getElementById('os-check-'+t);
+                if(row) row.classList.toggle('selected', t===type);
+                if(chk) chk.textContent = t===type ? '✓' : '';
+            });
+            document.getElementById('os-color-row').style.display = type==='color' ? '' : 'none';
+            document.getElementById('os-emoji-row').style.display = type==='emoji' ? '' : 'none';
+            updateOsPreviewDot();
+        }
+
+        function updateOsPreviewDot(){
+            const dot = document.getElementById('os-preview-dot');
+            if(!dot) return;
+            if(osPendingType==='green'){
+                dot.style.background='#2ecc40'; dot.textContent=''; dot.style.fontSize=''; dot.style.border='2px solid #fff'; dot.style.width='13px'; dot.style.height='13px';
+            } else if(osPendingType==='color'){
+                dot.style.background=osPendingColor; dot.textContent=''; dot.style.fontSize=''; dot.style.border='2px solid #fff'; dot.style.width='13px'; dot.style.height='13px';
+            } else {
+                dot.style.background='transparent'; dot.style.border='none';
+                dot.textContent=osPendingEmoji; dot.style.fontSize='14px';
+                dot.style.width='16px'; dot.style.height='16px';
+                dot.style.display='flex'; dot.style.alignItems='center'; dot.style.justifyContent='center';
+            }
+        }
+
+        ['green','color','emoji'].forEach(type=>{
+            const row = document.getElementById('os-opt-'+type);
+            if(row) row.addEventListener('click',()=>setOsPendingType(type));
+        });
+
+        // Color chips
+        document.querySelectorAll('.os-color-chip').forEach(chip=>{
+            chip.addEventListener('click',()=>{
+                osPendingColor = chip.dataset.color;
+                document.getElementById('os-color-swatch').style.background=osPendingColor;
+                document.getElementById('os-custom-color-preview').style.background=osPendingColor;
+                document.querySelectorAll('.os-color-chip').forEach(c=>c.classList.remove('selected'));
+                chip.classList.add('selected');
+                updateOsPreviewDot();
+            });
+        });
+
+        // Callback from CPK palette when 'os' target
+        window._osSetPendingColor = function(hex){
+            osPendingColor = hex;
+            document.getElementById('os-custom-color-preview').style.background = hex;
+            const dotSwatch = document.getElementById('os-color-swatch');
+            if(dotSwatch) dotSwatch.style.background = hex;
+            updateOsPreviewDot();
+        };
+
+        function openOnlineStatusModal(){
+            // Sync pending state with current saved state
+            osPendingType=osType; osPendingColor=osColor; osPendingEmoji=osEmoji;
+            // Update preview avatar
+            const previewName = document.getElementById('os-preview-name');
+            const previewLetter = document.getElementById('os-preview-avatar-letter');
+            const previewImg = document.getElementById('os-preview-avatar-img');
+            const myName = localStorage.getItem('myDisplayName') || localStorage.getItem('myNickname') || 'Я';
+            if(previewName) previewName.textContent = myName;
+            if(previewLetter) previewLetter.textContent = myName.charAt(0).toUpperCase();
+            const myAvatar = localStorage.getItem('myAvatarData');
+            if(previewImg){ if(myAvatar){previewImg.src=myAvatar;previewImg.style.display='';}else{previewImg.style.display='none';} }
+
+            setOsPendingType(osPendingType);
+            document.getElementById('os-color-swatch').style.background=osPendingColor;
+            document.getElementById('os-custom-color-preview').style.background=osPendingColor;
+            document.getElementById('os-emoji-preview-dot').textContent=osPendingEmoji;
+            // Select correct emoji
+            osEmojiGrid.querySelectorAll('.es-emoji-item').forEach(s=>{ s.classList.toggle('selected', s.textContent===osPendingEmoji); });
+            updateOsPreviewDot();
+            osOverlay.style.display='flex';
+        }
+
+        if(osRow) osRow.addEventListener('click', openOnlineStatusModal);
+        if(osCancelBtn) osCancelBtn.addEventListener('click',()=>{ osOverlay.style.display='none'; });
+        if(osOverlay) osOverlay.addEventListener('click',e=>{ if(e.target===osOverlay) osOverlay.style.display='none'; });
+        if(osSaveBtn) osSaveBtn.addEventListener('click',()=>{
+            osType=osPendingType; osColor=osPendingColor; osEmoji=osPendingEmoji;
+            localStorage.setItem('onlineStatusType',osType);
+            localStorage.setItem('onlineStatusColor',osColor);
+            localStorage.setItem('onlineStatusEmoji',osEmoji);
+            applyOnlineStatus();
+            osOverlay.style.display='none';
+        });
+    })();
+
     /* ── INIT ── */
     initNickname();
     initMyProfileUI();
@@ -8243,6 +8893,16 @@ window._setCpkColor = function(target, hex){
 
     function applyPickedColor(hex) {
         if (!cpkTarget) return;
+        // Online status dot color
+        if (cpkTarget === 'os') {
+            const swatch = document.getElementById('os-custom-color-preview');
+            if (swatch) swatch.style.background = hex;
+            const dotSwatch = document.getElementById('os-color-swatch');
+            if (dotSwatch) dotSwatch.style.background = hex;
+            document.querySelectorAll('.os-color-chip').forEach(c=>c.classList.remove('selected'));
+            if (typeof window._osSetPendingColor === 'function') window._osSetPendingColor(hex);
+            return;
+        }
         // Обновляем свотч
         const swatchId = { out: 'cc-swatch-out', in: 'cc-swatch-in', out2: 'cc-swatch-out2' }[cpkTarget];
         const swatch = document.getElementById(swatchId);
@@ -8256,13 +8916,19 @@ window._setCpkColor = function(target, hex){
     /* Глобальная функция открытия */
     window.openCPK = function(target) {
         cpkTarget = target;
-        const titles = { out: 'Цвет моих сообщений', in: 'Цвет сообщений собеседника', out2: 'Второй цвет градиента' };
+        const titles = { out: 'Цвет моих сообщений', in: 'Цвет сообщений собеседника', out2: 'Второй цвет градиента', os: 'Цвет кружка статуса' };
         titleEl.textContent = titles[target] || 'Палитра';
 
-        // Читаем текущий цвет свотча
-        const swatchId = { out: 'cc-swatch-out', in: 'cc-swatch-in', out2: 'cc-swatch-out2' }[target];
-        const swatch = document.getElementById(swatchId);
-        let hex = swatch ? swatch.style.background : '#4a7fcb';
+        // Читаем текущий цвет
+        let hex = '#4a7fcb';
+        if (target === 'os') {
+            const swatch = document.getElementById('os-custom-color-preview');
+            hex = (swatch && swatch.style.background) || '#4a7fcb';
+        } else {
+            const swatchId = { out: 'cc-swatch-out', in: 'cc-swatch-in', out2: 'cc-swatch-out2' }[target];
+            const swatch = document.getElementById(swatchId);
+            hex = swatch ? swatch.style.background : '#4a7fcb';
+        }
         // background может быть rgb(...) — конвертируем
         if (hex.startsWith('rgb')) {
             const m = hex.match(/\d+/g);
@@ -8277,7 +8943,544 @@ window._setCpkColor = function(target, hex){
         setTimeout(() => { resizeCanvas(); updateAll(); }, 30);
     };
 })();
+
+/* ═══════════════════════════════════════════════════
+   BIRTHDAY SYSTEM
+   ═══════════════════════════════════════════════════ */
+(function(){
+    const MONTHS_RU = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+    const MONTHS_GEN = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+
+    // Make format function global so updateMyProfileUI can use it
+    window.formatBirthday = function(bdStr){
+        if(!bdStr) return '';
+        const [d,m,y] = bdStr.split('.');
+        if(!d||!m||!y) return bdStr;
+        return d+' '+MONTHS_GEN[parseInt(m)-1]+' '+y;
+    };
+
+    function isTodayBirthday(bdStr){
+        if(!bdStr) return false;
+        const [d,m] = bdStr.split('.');
+        const now = new Date();
+        return parseInt(d)===now.getDate() && parseInt(m)===(now.getMonth()+1);
+    }
+
+    /* ── BIRTHDAY PICKER ── */
+    let bdayDay=1, bdayMonth=1, bdayYear=2000;
+    let bdayDropOpenId = null;
+
+    function buildBdayDropdown(id, items, selected, onSelect){
+        const sel = document.getElementById(id+'-select');
+        const disp = document.getElementById(id+'-display');
+        const drop = document.getElementById(id+'-dropdown');
+        if(!sel||!disp||!drop) return;
+        drop.innerHTML='';
+        items.forEach((item,i)=>{
+            const el = document.createElement('div');
+            el.className='bday-option'+(item.val===selected?' selected':'');
+            el.textContent = item.label;
+            el.addEventListener('click',e=>{
+                e.stopPropagation();
+                onSelect(item.val);
+                disp.textContent=item.label;
+                sel.classList.remove('open');
+                bdayDropOpenId=null;
+                updateBdayPreview();
+                // update days in month
+                if(id==='bday-month'||id==='bday-year') rebuildDayDropdown();
+            });
+            drop.appendChild(el);
+        });
+        // scroll to selected
+        setTimeout(()=>{
+            const active = drop.querySelector('.selected');
+            if(active) active.scrollIntoView({block:'nearest'});
+        },50);
+    }
+
+    function getDaysInMonth(m,y){ return new Date(y,m,0).getDate(); }
+
+    function buildDayItems(){
+        const days = getDaysInMonth(bdayMonth,bdayYear);
+        if(bdayDay>days) bdayDay=days;
+        return Array.from({length:days},(_,i)=>({val:i+1,label:String(i+1)}));
+    }
+
+    function rebuildDayDropdown(){
+        buildBdayDropdown('bday-day', buildDayItems(), bdayDay, v=>{ bdayDay=v; });
+        const disp = document.getElementById('bday-day-display');
+        if(disp) disp.textContent = String(bdayDay);
+    }
+
+    function updateBdayPreview(){
+        const el = document.getElementById('bday-preview-text');
+        if(el) el.textContent = bdayDay+' '+MONTHS_GEN[bdayMonth-1]+' '+bdayYear;
+    }
+
+    function openBdayPicker(){
+        // load current value
+        const saved = window.myBirthday || localStorage.getItem('myBirthday') || '';
+        if(saved){ const [d,m,y]=saved.split('.'); bdayDay=parseInt(d)||1; bdayMonth=parseInt(m)||1; bdayYear=parseInt(y)||2000; }
+        else { bdayDay=1; bdayMonth=1; bdayYear=2000; }
+        // build dropdowns
+        buildBdayDropdown('bday-day', buildDayItems(), bdayDay, v=>bdayDay=v);
+        buildBdayDropdown('bday-month', MONTHS_RU.map((l,i)=>({val:i+1,label:l})), bdayMonth, v=>{ bdayMonth=v; });
+        const thisYear = new Date().getFullYear();
+        buildBdayDropdown('bday-year', Array.from({length:100},(_,i)=>({val:thisYear-i,label:String(thisYear-i)})), bdayYear, v=>bdayYear=v);
+        // Update displays
+        document.getElementById('bday-day-display').textContent=String(bdayDay);
+        document.getElementById('bday-month-display').textContent=MONTHS_RU[bdayMonth-1];
+        document.getElementById('bday-year-display').textContent=String(bdayYear);
+        updateBdayPreview();
+        const ov = document.getElementById('birthday-picker-overlay');
+        if(ov) ov.style.display='flex';
+    }
+
+    // open/close dropdowns
+    ['bday-day','bday-month','bday-year'].forEach(id=>{
+        const sel = document.getElementById(id+'-select');
+        if(!sel) return;
+        const disp = sel.querySelector('.bday-select-display');
+        if(disp) disp.addEventListener('click',e=>{
+            e.stopPropagation();
+            const isOpen = sel.classList.contains('open');
+            // close all
+            document.querySelectorAll('.bday-custom-select').forEach(s=>s.classList.remove('open'));
+            bdayDropOpenId=null;
+            if(!isOpen){ sel.classList.add('open'); bdayDropOpenId=id; }
+        });
+    });
+    document.addEventListener('click',()=>{
+        document.querySelectorAll('.bday-custom-select').forEach(s=>s.classList.remove('open'));
+        bdayDropOpenId=null;
+    });
+
+    // Save button
+    const bdaySaveBtn = document.getElementById('bday-save-btn');
+    if(bdaySaveBtn) bdaySaveBtn.addEventListener('click',()=>{
+        const val = String(bdayDay).padStart(2,'0')+'.'+String(bdayMonth).padStart(2,'0')+'.'+bdayYear;
+        // Стираем старый ДР из всех кэшей перед записью нового
+        if(window.myBirthday && window.myBirthday !== val){
+            // Сбрасываем кэш дня рождения для себя у всех пиров
+            if(typeof database !== 'undefined' && typeof myFrameId !== 'undefined'){
+                try{
+                    // Удаляем старое значение из persistent профиля сначала
+                    database.ref('user_profiles/'+myFrameId+'/birthday').remove();
+                    database.ref('presence_signal/'+myFrameId+'/meta/birthday').remove();
+                }catch(e){}
+            }
+        }
+        window.myBirthday = val;
+        localStorage.setItem('myBirthday', val);
+        document.getElementById('birthday-picker-overlay').style.display='none';
+        // update UI
+        const dispBday = document.getElementById('my-profile-display-birthday');
+        if(dispBday) dispBday.textContent = window.formatBirthday(val);
+        // Публикуем новый ДР (перезаписывает старый в Firebase)
+        if(typeof publishMyPresenceAvatar==='function') publishMyPresenceAvatar();
+        showToast('День рождения сохранён!');
+        // check if today is their birthday
+        if(isTodayBirthday(val)) showBirthdayModalForMe();
+    });
+
+    // Clear button
+    const bdayClearBtn = document.getElementById('bday-clear-btn');
+    if(bdayClearBtn) bdayClearBtn.addEventListener('click',()=>{
+        window.myBirthday = '';
+        localStorage.removeItem('myBirthday');
+        document.getElementById('birthday-picker-overlay').style.display='none';
+        const dispBday = document.getElementById('my-profile-display-birthday');
+        if(dispBday) dispBday.textContent = 'Не указан';
+        if(typeof publishMyPresenceAvatar==='function') publishMyPresenceAvatar();
+        showToast('День рождения удалён');
+    });
+
+    // Cancel
+    const bdayCancelBtn = document.getElementById('bday-cancel-btn');
+    if(bdayCancelBtn) bdayCancelBtn.addEventListener('click',()=>{
+        document.getElementById('birthday-picker-overlay').style.display='none';
+    });
+    const bdayOverlay = document.getElementById('birthday-picker-overlay');
+    if(bdayOverlay) bdayOverlay.addEventListener('click',e=>{ if(e.target===bdayOverlay) bdayOverlay.style.display='none'; });
+
+    // Row click
+    const bdayRow = document.getElementById('my-profile-birthday-row');
+    if(bdayRow) bdayRow.addEventListener('click', openBdayPicker);
+
+    /* ── BIRTHDAY NOTIFICATION FOR MYSELF ── */
+    function showBirthdayModalForMe(){
+        const shownKey = 'bdayModalShown_'+new Date().toDateString();
+        if(localStorage.getItem(shownKey)) return;
+        localStorage.setItem(shownKey,'1');
+        const ov = document.getElementById('birthday-modal-overlay');
+        if(ov) ov.style.display='flex';
+    }
+
+    const bdayModalClose = document.getElementById('birthday-modal-close-btn');
+    if(bdayModalClose) bdayModalClose.addEventListener('click',()=>{
+        document.getElementById('birthday-modal-overlay').style.display='none';
+    });
+
+    // Check on load if it's my birthday
+    setTimeout(()=>{
+        const bd = localStorage.getItem('myBirthday');
+        if(bd && isTodayBirthday(bd)) showBirthdayModalForMe();
+    }, 1200);
+
+    /* ── BIRTHDAY CAKE ONLINE DOT ── */
+    // Patch chat-item-online-dot rendering to show cake emoji on birthday
+    window._isBirthdayToday = function(bdStr){ return isTodayBirthday(bdStr); };
+
+    /* ── BIRTHDAY CELEBRATION ANIMATION ── */
+    const BDAY_EMOJIS = ['🎂','🎉','🎊','🥳','🎈','🍰','✨','🎁','🪅','🎶'];
+    const FIREWORK_COLORS = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#ff9a3c','#c77dff','#fff'];
+
+    window.launchBirthdayCelebration = function(){
+        const container = document.getElementById('bday-celebration-overlay');
+        if(!container) return;
+        container.style.display='block';
+        container.innerHTML='';
+        const W = window.innerWidth, H = window.innerHeight;
+
+        // Floating emojis from bottom
+        for(let i=0;i<30;i++){
+            const el = document.createElement('div');
+            el.className='bday-particle';
+            el.textContent=BDAY_EMOJIS[Math.floor(Math.random()*BDAY_EMOJIS.length)];
+            const dur = 2.5+Math.random()*2;
+            const delay = Math.random()*1.5;
+            el.style.cssText=`left:${Math.random()*100}%;bottom:0;--dur:${dur}s;--delay:${delay}s;animation-delay:${delay}s;font-size:${24+Math.random()*20}px;`;
+            container.appendChild(el);
+        }
+
+        // Fireworks
+        for(let f=0;f<8;f++){
+            const cx = 10+Math.random()*80;
+            const cy = 10+Math.random()*60;
+            const fDelay = 0.2+Math.random()*2;
+            for(let d=0;d<16;d++){
+                const dot = document.createElement('div');
+                dot.className='firework-dot';
+                const angle = (d/16)*Math.PI*2;
+                const dist = 60+Math.random()*80;
+                const tx = Math.cos(angle)*dist+'px';
+                const ty = Math.sin(angle)*dist+'px';
+                dot.style.cssText=`left:${cx}%;top:${cy}%;background:${FIREWORK_COLORS[Math.floor(Math.random()*FIREWORK_COLORS.length)]};--tx:${tx};--ty:${ty};--dur:${0.8+Math.random()*0.6}s;--delay:${fDelay}s;animation-delay:${fDelay}s;`;
+                container.appendChild(dot);
+            }
+        }
+
+        setTimeout(()=>{
+            container.style.display='none';
+            container.innerHTML='';
+        }, 5000);
+    };
+
+    /* ── AUTO-FILL "Happy Birthday" IN INPUT ── */
+    // Called when opening a chat — check if peer has birthday today
+    window._checkAndSetBirthdayGreeting = function(peerId, chatId){
+        // Check peer birthday from cached profile data
+        const profileData = window._peerProfileCache && window._peerProfileCache[peerId];
+        if(!profileData) return;
+        const bd = profileData.birthday;
+        if(!bd || !isTodayBirthday(bd)) return;
+
+        // Check if we already sent or dismissed for today
+        const sentKey = 'bdaySent_'+chatId+'_'+new Date().toDateString();
+        const dismissedKey = 'bdayDismissed_'+chatId+'_'+new Date().toDateString();
+        if(localStorage.getItem(sentKey)||localStorage.getItem(dismissedKey)) return;
+
+        const msgField = document.getElementById('msg-field');
+        if(!msgField) return;
+        // only set if field is empty
+        if(!msgField.value.trim()){
+            msgField.value = 'С днём рождения! 🎂🎉';
+            msgField.dispatchEvent(new Event('input'));
+            // Mark as auto-filled; if user clears — we store dismissed
+            msgField.dataset.bdayGreeting = '1';
+            msgField.dataset.bdayKey = dismissedKey;
+            // if user clears it manually
+            const clearHandler = ()=>{
+                if(msgField.dataset.bdayGreeting==='1' && !msgField.value.includes('С днём рождения')){
+                    localStorage.setItem(dismissedKey,'1');
+                    delete msgField.dataset.bdayGreeting;
+                    msgField.removeEventListener('input',clearHandler);
+                }
+            };
+            msgField.addEventListener('input', clearHandler);
+        }
+    };
+
+    // Patch sendChatMessage to detect birthday greeting and launch celebration
+    const _origSend = window.sendChatMessage;
+    // We hook into the send button instead via a flag
+    window._onBdaySend = function(text, chatId, peerId){
+        if(!text.includes('С днём рождения')) return;
+        const profileData = window._peerProfileCache && window._peerProfileCache[peerId];
+        if(!profileData || !isTodayBirthday(profileData.birthday)) return;
+        const sentKey = 'bdaySent_'+chatId+'_'+new Date().toDateString();
+        localStorage.setItem(sentKey,'1');
+        // Launch celebration after short delay
+        setTimeout(()=>window.launchBirthdayCelebration(), 300);
+        // Notify peer via firebase that celebration should happen
+        try{
+            if(typeof database!=='undefined'){
+                database.ref('birthday_celebrate/'+chatId).set({ts:Date.now(),from:window.myFrameId||''});
+                setTimeout(()=>database.ref('birthday_celebrate/'+chatId).remove(),6000);
+            }
+        }catch(e){}
+    };
+
+    // Listen for birthday celebrate signal
+    setTimeout(()=>{
+        if(typeof database==='undefined') return;
+        // We'll hook into openChat listener
+        window._setupBdayCelebrateListener = function(chatId){
+            if(!chatId) return;
+            try{
+                database.ref('birthday_celebrate/'+chatId).on('value', snap=>{
+                    const d = snap.val();
+                    if(!d) return;
+                    if(d.from === (window.myFrameId||'')) return; // we sent it already
+                    window.launchBirthdayCelebration();
+                });
+            }catch(e){}
+        };
+    }, 500);
+
+    /* ── CAKE BIRTHDAY DOT FOR ONLINE STATUS ── */
+    // Expose helper for rendering dot in chat list
+    window._getBdayDotClass = function(peerId){
+        const profileData = window._peerProfileCache && window._peerProfileCache[peerId];
+        if(!profileData || !isTodayBirthday(profileData.birthday)) return null;
+        return '🎂';
+    };
+
+})();
+
+/* ═══════════════════════════════════════════════════
+   PROFILE COVER PHOTO
+   ═══════════════════════════════════════════════════ */
+(function(){
+    let _pendingCoverPhoto = '';
+
+    const coverInput = document.getElementById('profile-cover-photo-input');
+    const coverOverlay = document.getElementById('profile-cover-photo-overlay');
+    const previewImg = document.getElementById('profile-photo-preview-img');
+    const applyBtn = document.getElementById('profile-photo-apply-btn');
+    const chooseBtn = document.getElementById('profile-photo-choose-btn');
+    const cancelBtn = document.getElementById('profile-photo-cancel-btn');
+
+    function openCoverPhotoOverlay(dataUrl){
+        _pendingCoverPhoto = dataUrl;
+        if(previewImg) previewImg.src = dataUrl;
+        // preview name/id
+        const previewName = document.getElementById('profile-photo-preview-name');
+        const previewId = document.getElementById('profile-photo-preview-id');
+        if(previewName) previewName.textContent = window.myDisplayName || window.myCurrentNickname || 'Ваше имя';
+        if(previewId) previewId.textContent = '@'+(window.myFrameId||'id');
+        if(coverOverlay) coverOverlay.style.display='flex';
+    }
+
+    if(coverInput){
+        coverInput.addEventListener('change',function(){
+            const file = this.files[0]; if(!file) return;
+            const reader = new FileReader();
+            reader.onload = ev => openCoverPhotoOverlay(ev.target.result);
+            reader.readAsDataURL(file);
+            this.value='';
+        });
+    }
+
+    if(applyBtn) applyBtn.addEventListener('click',()=>{
+        window.myCoverPhoto = _pendingCoverPhoto;
+        localStorage.setItem('myCoverPhoto', _pendingCoverPhoto);
+        if(coverOverlay) coverOverlay.style.display='none';
+        if(typeof publishMyPresenceAvatar==='function') publishMyPresenceAvatar();
+        showToast('Фото профиля обновлено!');
+    });
+
+    if(chooseBtn) chooseBtn.addEventListener('click',()=>{
+        if(coverInput) coverInput.click();
+    });
+
+    if(cancelBtn) cancelBtn.addEventListener('click',()=>{
+        if(coverOverlay) coverOverlay.style.display='none';
+    });
+
+    // Expose function to open photo picker
+    window.openProfileCoverPhotoPicker = function(){
+        if(coverInput) coverInput.click();
+    };
+})();
+
+/* ══ Patch gradient grid to add photo option ══ */
+(function(){
+    const origRender = window._origRenderGrad || null;
+    // Hook after gradient grid is rendered: add photo circle
+    const _addPhotoSwatch = function(){
+        const grid = document.getElementById('profile-gradient-grid');
+        if(!grid || grid.dataset.photoAdded) return;
+        grid.dataset.photoAdded='1';
+        const photoSw = document.createElement('div');
+        photoSw.className='profile-gradient-swatch profile-gradient-photo-swatch';
+        photoSw.title='Загрузить фото';
+        photoSw.style.cssText='background:#f0f4ff;border:2px dashed #4a7fcb;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;';
+        photoSw.innerHTML='<span style="pointer-events:none">+</span>';
+        photoSw.addEventListener('click',()=>window.openProfileCoverPhotoPicker && window.openProfileCoverPhotoPicker());
+        grid.appendChild(photoSw);
+    };
+    // Wait for grid to be built
+    const orig = window.renderProfileGradientGrid;
+    // We'll just observe
+    const obs = new MutationObserver(()=>_addPhotoSwatch());
+    const grid = document.getElementById('profile-gradient-grid');
+    if(grid) obs.observe(grid,{childList:true});
+})();
+
+/* ══ Hook send button to detect birthday greeting ══ */
+(function(){
+    const sendBtn = document.getElementById('send-button');
+    const msgField = document.getElementById('msg-field');
+    if(!sendBtn||!msgField) return;
+    sendBtn.addEventListener('click',()=>{
+        const text = msgField.value;
+        // find active chat peer
+        if(!window.activeChatId || !window.chatsList) return;
+        const chat = window.chatsList.find(c=>c.id===window.activeChatId);
+        if(!chat || !chat.peerId) return;
+        if(text && text.includes('С днём рождения') && window._onBdaySend){
+            window._onBdaySend(text, window.activeChatId, chat.peerId);
+        }
+    }, true); // capture so we see it before default handler
+})();
+
+/* ══ Birthday message tap-to-replay animation ══ */
+document.addEventListener('click', function(e){
+    const bubble = e.target.closest('.message-bubble');
+    if(!bubble) return;
+    const row = bubble.closest('.message-row');
+    if(!row) return;
+    // Check if text contains birthday greeting
+    const textEl = bubble.querySelector('.msg-text') || bubble;
+    const txt = textEl.textContent || '';
+    if(!txt.includes('С днём рождения')) return;
+    // Replay celebration
+    if(window.launchBirthdayCelebration) window.launchBirthdayCelebration();
+    // Also send signal to peer
+    if(window.activeChatId && typeof database!=='undefined'){
+        try{
+            database.ref('birthday_celebrate/'+window.activeChatId).set({ts:Date.now(),from:window.myFrameId||''});
+            setTimeout(()=>database.ref('birthday_celebrate/'+window.activeChatId).remove(),6000);
+        }catch(e){}
+    }
+});
+
+/* ══ Cache peer profile data including birthday ══ */
+(function(){
+    window._peerProfileCache = JSON.parse(localStorage.getItem('_peerProfileCache')||'{}');
+    function _savePeerCache(){ try{ localStorage.setItem('_peerProfileCache',JSON.stringify(window._peerProfileCache)); }catch(e){} }
+
+    // Patch openContactProfile / showContactProfile to read birthday
+    const _origOpenCP = window.openContactProfile;
+
+    // Monitor user_profiles for birthday data
+    window._watchPeerBirthday = function(peerId){
+        if(!peerId || typeof database==='undefined') return;
+        try{
+            database.ref('user_profiles/'+peerId).once('value').then(snap=>{
+                const d = snap.val();
+                if(!d) return;
+                if(!window._peerProfileCache[peerId]) window._peerProfileCache[peerId]={};
+                Object.assign(window._peerProfileCache[peerId], d);
+                _savePeerCache();
+                // Show birthday in contact profile if open
+                _updateCpBirthday(peerId);
+                // Set up birthday celebrate listener
+                if(window.activeChatId && window._setupBdayCelebrateListener) window._setupBdayCelebrateListener(window.activeChatId);
+                // Set birthday greeting if in this person's chat
+                if(window.activeChatId){
+                    const chat = window.chatsList && window.chatsList.find(c=>c.id===window.activeChatId);
+                    if(chat && chat.peerId===peerId){
+                        setTimeout(()=>window._checkAndSetBirthdayGreeting && window._checkAndSetBirthdayGreeting(peerId, window.activeChatId), 400);
+                    }
+                }
+                // Update cake dot in chat list
+                _updateCakeDot(peerId);
+            });
+            // Also listen for presence_signal meta
+            database.ref('presence_signal/'+peerId+'/meta').on('value', snap=>{
+                const d = snap.val();
+                if(!d) return;
+                if(!window._peerProfileCache[peerId]) window._peerProfileCache[peerId]={};
+                if(d.birthday!==undefined) window._peerProfileCache[peerId].birthday = d.birthday;
+                _savePeerCache();
+                _updateCpBirthday(peerId);
+                _updateCakeDot(peerId);
+            });
+        }catch(e){}
+    };
+
+    function _updateCpBirthday(peerId){
+        const cpScreen = document.getElementById('contact-profile-screen');
+        if(!cpScreen || !cpScreen.classList.contains('open')) return;
+        const cpId = cpScreen.dataset.peerId;
+        if(cpId!==peerId) return;
+        const d = window._peerProfileCache[peerId];
+        if(!d) return;
+        const privacyBirthday = d.privacyBirthday || 'everyone';
+        const bdRow = document.getElementById('cp-info-birthday-row');
+        const bdVal = document.getElementById('cp-info-birthday');
+        if(d.birthday && privacyBirthday!=='nobody'){
+            if(bdRow) bdRow.style.display='';
+            if(bdVal){
+                const isToday = window._isBirthdayToday && window._isBirthdayToday(d.birthday);
+                bdVal.textContent = (window.formatBirthday ? window.formatBirthday(d.birthday) : d.birthday) + (isToday?' Сегодня!':'');
+            }
+        } else {
+            if(bdRow) bdRow.style.display='none';
+        }
+    }
+
+    function _updateCakeDot(peerId){
+        // Update online dot in chat list for this peer
+        const chat = window.chatsList && window.chatsList.find(c=>c.peerId===peerId);
+        if(!chat) return;
+        const dot = document.querySelector('.chat-item[data-id="'+chat.id+'"] .chat-item-online-dot');
+        if(!dot) return;
+        const d = window._peerProfileCache[peerId];
+        const isBday = d && d.birthday && window._isBirthdayToday && window._isBirthdayToday(d.birthday);
+        if(isBday){
+            dot.innerHTML = '🎂';
+            dot.style.cssText = 'position:absolute;bottom:-1px;right:-1px;width:18px;height:18px;border-radius:50%;border:2px solid #fff;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1;';
+        } else {
+            dot.innerHTML='';
+            dot.style.cssText='';
+        }
+    }
+
+    // Hook into openChat to watch peer birthday and check for greeting
+    const _origOpenChat = window.openChat;
+    if(typeof _origOpenChat==='function'){
+        window.openChat = function(chatId){
+            _origOpenChat(chatId);
+            const chat = window.chatsList && window.chatsList.find(c=>c.id===chatId);
+            if(chat && chat.peerId){
+                window._watchPeerBirthday(chat.peerId);
+                setTimeout(()=>{
+                    if(window._checkAndSetBirthdayGreeting) window._checkAndSetBirthdayGreeting(chat.peerId, chatId);
+                    if(window._setupBdayCelebrateListener) window._setupBdayCelebrateListener(chatId);
+                }, 300);
+            }
+        };
+    }
+})();
+
 </script>
+
+<!-- TOAST NOTIFICATION -->
+<div class="toast" id="toast-msg"></div>
 
 </body>
 </html>
